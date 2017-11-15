@@ -79,7 +79,7 @@ struct AddressBook {
 # 编译
 
 ```
-	go get -u -v github.com/davyxu/proto++
+	go get -u -v github.com/davyxu/protoplus
 ```
 
 # 下载
