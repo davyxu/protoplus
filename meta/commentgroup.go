@@ -12,7 +12,7 @@ type TaggedComment struct {
 }
 
 type CommentGroup struct {
-	Pos golexer.TokenPos
+	Pos golexer.TokenPos `json:"-"`
 
 	Leading  string
 	Trailing string

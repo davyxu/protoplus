@@ -20,14 +20,14 @@ type Descriptor struct {
 	Type    DescriptorType
 
 	Fields      []*FieldDescriptor
-	FieldByName map[string]*FieldDescriptor
-	FieldByTag  map[int]*FieldDescriptor
+	FieldByName map[string]*FieldDescriptor `json:"-"`
+	FieldByTag  map[int]*FieldDescriptor    `json:"-"`
 
-	File *FileDescriptor
+	File *FileDescriptor `json:"-"`
 
-	TagBase int
+	TagBase int `json:"-"`
 
-	EnumValueIgnoreType bool
+	EnumValueIgnoreType bool `json:"-"`
 }
 
 func (self *Descriptor) MaxTag() (ret int) {
@@ -101,9 +101,8 @@ func (self *Descriptor) AddField(fd *FieldDescriptor) {
 
 func NewDescriptor(f *FileDescriptor) *Descriptor {
 	return &Descriptor{
-		CommentGroup: NewCommentGroup(),
-		File:         f,
-		FieldByName:  make(map[string]*FieldDescriptor),
-		FieldByTag:   make(map[int]*FieldDescriptor),
+		File:        f,
+		FieldByName: make(map[string]*FieldDescriptor),
+		FieldByTag:  make(map[int]*FieldDescriptor),
 	}
 }

@@ -7,18 +7,18 @@ type FileDescriptor struct {
 
 	Structs []*Descriptor
 
-	StructByName map[string]*Descriptor
+	StructByName map[string]*Descriptor `json:"-"`
 
 	Enums []*Descriptor
 
-	EnumByName map[string]*Descriptor
+	EnumByName map[string]*Descriptor `json:"-"`
 
-	ObjectsBySrcName map[string]*Descriptor
+	ObjectsBySrcName map[string]*Descriptor `json:"-"`
 	Objects          []*Descriptor
 
-	FileSet *FileDescriptorSet
+	FileSet *FileDescriptorSet `json:"-"`
 
-	FileTag []string
+	FileTag []string `json:"-"`
 }
 
 func (self *FileDescriptor) MatchTag(tag string) bool {

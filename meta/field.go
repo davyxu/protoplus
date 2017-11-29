@@ -8,12 +8,12 @@ type FieldDescriptor struct {
 	*CommentGroup
 	Name    string
 	Type    FieldType
-	Tag     int
-	AutoTag int
-	Repeatd bool
-	Complex *Descriptor
+	Tag     int         `json:",omitempty"`
+	AutoTag int         `json:",omitempty"`
+	Repeatd bool        `json:",omitempty"`
+	Complex *Descriptor `json:",omitempty"`
 
-	Struct *Descriptor
+	Struct *Descriptor `json:"-"`
 }
 
 func (self *FieldDescriptor) TagNumber() int {
@@ -92,8 +92,7 @@ func (self *FieldDescriptor) parseType(name string) (ft FieldType, structType *D
 
 func NewFieldDescriptor(d *Descriptor) *FieldDescriptor {
 	return &FieldDescriptor{
-		CommentGroup: NewCommentGroup(),
-		Struct:       d,
-		AutoTag:      -1,
+		Struct:  d,
+		AutoTag: -1,
 	}
 }

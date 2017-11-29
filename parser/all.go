@@ -12,19 +12,10 @@ func ParseFile(fileName string) (*meta.FileDescriptorSet, error) {
 
 	fileset := meta.NewFileDescriptorSet()
 
-	fileD := meta.NewFileDescriptor()
-	fileD.FileName = fileName
-	fileset.AddFile(fileD)
-
-	err := rawPaseFile(fileD, fileName)
-	if err != nil {
-		return nil, err
-	}
-
-	return fileset, fileset.ResolveAll()
+	return fileset, ParseFileList(fileset, fileName)
 }
 
-func ParseFileList(fileset *meta.FileDescriptorSet, filelist []string) (string, error) {
+func ParseFileList(fileset *meta.FileDescriptorSet, filelist ...string) error {
 
 	for _, filename := range filelist {
 
@@ -33,12 +24,12 @@ func ParseFileList(fileset *meta.FileDescriptorSet, filelist []string) (string, 
 		fileset.AddFile(fileD)
 
 		if err := rawPaseFile(fileD, filename); err != nil {
-			return filename, err
+			return err
 		}
 
 	}
 
-	return "", fileset.ResolveAll()
+	return fileset.ResolveAll()
 
 }
 

@@ -107,6 +107,10 @@ func (self *protoParser) CommentGroupByLine(line int) *meta.CommentGroup {
 
 	cg.Leading = buff.String()
 
+	if cg.Leading == "" && cg.Trailing == "" {
+		return nil
+	}
+
 	return cg
 }
 
