@@ -5,7 +5,8 @@ import (
 	"errors"
 
 	"github.com/davyxu/golexer"
-	"github.com/davyxu/protoplus/meta"
+	"github.com/davyxu/protoplus/model"
+	"strings"
 )
 
 // 自定义的token id
@@ -29,7 +30,6 @@ const (
 	Token_Dot         // .
 	Token_Enum        // enum
 	Token_Struct      // struct
-	Token_FileTag     // fileTag
 	Token_Assign      // =
 )
 
@@ -69,13 +69,12 @@ func (self *protoParser) NextToken() {
 
 }
 
-func (self *protoParser) CommentGroupByLine(line int) *meta.CommentGroup {
+func (self *protoParser) CommentGroupByLine(line int) model.Comment {
 
-	cg := meta.NewCommentGroup()
+	var comment model.Comment
 
-	if comment, ok := self.commentsByLine[line]; ok {
-		cg.AddLineComment(comment)
-		cg.Trailing = comment
+	if commentStr, ok := self.commentsByLine[line]; ok {
+		comment.Trailing = strings.TrimSpace(commentStr)
 	}
 
 	var buff bytes.Buffer
@@ -83,6 +82,7 @@ func (self *protoParser) CommentGroupByLine(line int) *meta.CommentGroup {
 	start := line - 1
 	var end int
 
+	// 从当前行往上找连在一起的注释
 	for i := line - 1; i >= 1; i-- {
 
 		if _, ok := self.commentsByLine[i]; !ok {
@@ -100,18 +100,12 @@ func (self *protoParser) CommentGroupByLine(line int) *meta.CommentGroup {
 			buff.WriteString("\n")
 		}
 
-		cg.AddLineComment(comment)
-
-		buff.WriteString(comment)
+		buff.WriteString(strings.TrimSpace(comment))
 	}
 
-	cg.Leading = buff.String()
+	comment.Leading = buff.String()
 
-	if cg.Leading == "" && cg.Trailing == "" {
-		return nil
-	}
-
-	return cg
+	return comment
 }
 
 func newProtoParser(srcName string) *protoParser {
@@ -139,7 +133,6 @@ func newProtoParser(srcName string) *protoParser {
 	l.AddMatcher(golexer.NewSignMatcher(Token_Colon, ":"))
 	l.AddMatcher(golexer.NewKeywordMatcher(Token_Enum, "enum"))
 	l.AddMatcher(golexer.NewKeywordMatcher(Token_Struct, "struct"))
-	l.AddMatcher(golexer.NewKeywordMatcher(Token_FileTag, "filetag"))
 
 	l.AddMatcher(golexer.NewIdentifierMatcher(Token_Identifier))
 

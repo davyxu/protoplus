@@ -2,67 +2,37 @@ package parser
 
 import (
 	"errors"
-	"fmt"
-	"github.com/davyxu/protoplus/meta"
 )
 
-func parseStructField(p *protoParser, d *meta.Descriptor) {
+func parseStructField(ctx *Context) {
 
-	fd := meta.NewFieldDescriptor(d)
+	// 注释
+	nameToken := ctx.RawToken()
 
-	nameToken := p.RawToken()
 	// 字段名
-	fd.Name = p.Expect(Token_Identifier).Value()
+	ctx.FieldDescriptor.Name = ctx.Expect(Token_Identifier).Value()
 
-	if _, ok := d.FieldByName[fd.Name]; ok {
-		panic(errors.New("Duplicate field name: " + d.Name))
+	if ctx.FieldNameExists(ctx.FieldDescriptor.Name) {
+		panic(errors.New("Duplicate field name: " + ctx.FieldDescriptor.Name))
 	}
 
-	// 自动生成字段Tag
-	if len(d.Fields) == 0 {
-		fd.AutoTag = 0
-	} else {
-		fd.AutoTag = d.MaxTag() + 1
+	tp := ctx.TokenPos()
+
+	// [  数组类型
+	if ctx.TokenID() == Token_BracketL {
+		ctx.NextToken()
+		ctx.Expect(Token_BracketR)
+		ctx.Repeatd = true
 	}
 
-	tp := p.TokenPos()
+	// 延后在所有解析完后，检查TypeName是否合法，通过symbol还原位置并报错
+	ctx.FieldDescriptor.ParseType(ctx.Expect(Token_Identifier).Value())
 
-	var typeName string
+	ctx.FieldDescriptor.Comment = ctx.CommentGroupByLine(nameToken.Line())
 
-	switch p.TokenID() {
-	case Token_BracketL: // [  数组类型
-		p.NextToken()
-		p.Expect(Token_BracketR)
-		fd.Repeatd = true
-	}
+	ctx.AddSymbol(ctx.FieldDescriptor, tp)
 
-	typeName = p.Expect(Token_Identifier).Value()
-
-	// 根据类型名查找类型及结构体类型
-
-	pf := meta.NewLazyField(typeName, fd, d, tp)
-
-	fd.CommentGroup = p.CommentGroupByLine(nameToken.Line())
-
-	// 尝试首次解析
-	if need2Pass, _ := pf.Resolve(1); need2Pass {
-		d.File.FileSet.AddLazyField(pf)
-	}
-
-	checkField(d, fd)
-
-	d.AddField(fd)
+	ctx.AddField(ctx.FieldDescriptor)
 
 	return
-}
-
-func checkField(d *meta.Descriptor, fd *meta.FieldDescriptor) {
-
-	if _, ok := d.FieldByName[fd.Name]; ok {
-		panic(errors.New(fmt.Sprintf("Duplicate field name: %s in %s", fd.Name, d.Name)))
-	}
-
-	if _, ok := d.FieldByTag[fd.TagNumber()]; ok {
-		panic(errors.New(fmt.Sprintf("Duplicate field tag: %d in %s", fd.TagNumber(), d.Name)))
-	}
 }

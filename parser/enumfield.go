@@ -2,48 +2,44 @@ package parser
 
 import (
 	"errors"
-	"github.com/davyxu/protoplus/meta"
 )
 
-func parseEnumField(p *protoParser, d *meta.Descriptor) {
+func parseEnumField(ctx *Context) {
 
-	fd := meta.NewFieldDescriptor(d)
-
-	nameToken := p.RawToken()
+	// 注释
+	nameToken := ctx.RawToken()
 
 	// 字段名
-	fd.Name = p.Expect(Token_Identifier).Value()
+	ctx.FieldDescriptor.Name = ctx.Expect(Token_Identifier).Value()
 
-	if _, ok := d.FieldByName[fd.Name]; ok {
-		panic(errors.New("Duplicate field name: " + d.Name))
+	if ctx.FieldNameExists(ctx.FieldDescriptor.Name) {
+		panic(errors.New("Duplicate field name: " + ctx.FieldDescriptor.Name))
 	}
 
 	// 有等号
-	if p.TokenID() == Token_Assign {
-		p.NextToken()
+	if ctx.TokenID() == Token_Assign {
+		ctx.NextToken()
 
 		// tag
-		fd.Tag = p.Expect(Token_Numeral).ToInt()
+		ctx.FieldDescriptor.Tag = ctx.Expect(Token_Numeral).ToInt()
 
 	} else { // 没等号自动生成枚举序号
 
-		if len(d.Fields) == 0 {
-			fd.AutoTag = 0
+		if len(ctx.Fields) == 0 {
+			//fd.AutoTag = 0
 		} else {
 
 			// 按前面的序号+1
-			fd.AutoTag = d.MaxTag() + 1
+			//fd.AutoTag = d.MaxTag() + 1
 		}
 
 	}
 
-	fd.Type = meta.FieldType_Int32
+	ctx.FieldDescriptor.Comment = ctx.CommentGroupByLine(nameToken.Line())
 
-	fd.CommentGroup = p.CommentGroupByLine(nameToken.Line())
+	ctx.FieldDescriptor.ParseType("int32")
 
-	checkField(d, fd)
-
-	d.AddField(fd)
+	ctx.AddField(ctx.FieldDescriptor)
 
 	return
 }
