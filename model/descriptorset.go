@@ -1,7 +1,7 @@
 package model
 
 type DescriptorSet struct {
-	Objects []*Descriptor
+	Objects []*Descriptor `json:",omitempty"`
 }
 
 func (self *DescriptorSet) Structs() (ret []*Descriptor) {

@@ -2,6 +2,7 @@ package codegen
 
 import (
 	"bytes"
+	"fmt"
 	"go/parser"
 	"go/printer"
 	"go/token"
@@ -95,6 +96,8 @@ func (self *CodeGen) WriteOutputFile(outputFileName string) *CodeGen {
 	if self.err != nil {
 		return self
 	}
+
+	fmt.Printf("%s\n", outputFileName)
 
 	return self
 

@@ -29,11 +29,11 @@ func ParseString(script string) (*model.DescriptorSet, error) {
 func ParseFileList(dset *model.DescriptorSet, filelist ...string) error {
 
 	ctx := newContext()
+	ctx.DescriptorSet = dset
 
 	for _, filename := range filelist {
 
 		ctx.SourceName = filename
-		ctx.DescriptorSet = dset
 
 		if file, err := os.Open(filename); err != nil {
 			return err

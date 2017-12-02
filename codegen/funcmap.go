@@ -6,8 +6,10 @@ import (
 	"text/template"
 )
 
-var UsefulFunc = template.FuncMap{
-	"ObjectLeadingComment": func(raw interface{}) (ret string) {
+var UsefulFunc = template.FuncMap{}
+
+func init() {
+	UsefulFunc["ObjectLeadingComment"] = func(raw interface{}) (ret string) {
 
 		d := raw.(*model.Descriptor)
 
@@ -24,9 +26,9 @@ var UsefulFunc = template.FuncMap{
 		}
 
 		return
-	},
+	}
 
-	"FieldTrailingComment": func(raw interface{}) string {
+	UsefulFunc["FieldTrailingComment"] = func(raw interface{}) string {
 
 		fd := raw.(*model.FieldDescriptor)
 
@@ -35,37 +37,5 @@ var UsefulFunc = template.FuncMap{
 		}
 
 		return ""
-	},
-
-	"GoFieldName": func(raw interface{}) string {
-
-		fd := raw.(*model.FieldDescriptor)
-
-		return ExportSymbolName(fd.Name)
-	},
-
-	"GoTypeName": func(raw interface{}) (ret string) {
-
-		fd := raw.(*model.FieldDescriptor)
-
-		if fd.Repeatd {
-			ret += "[]"
-		}
-
-		ret += GoTypeName(fd)
-		return
-	},
-
-	"CSTypeName": func(raw interface{}) (ret string) {
-
-		fd := raw.(*model.FieldDescriptor)
-
-		ret += CSTypeName(fd)
-
-		if fd.Repeatd {
-			ret += "[]"
-		}
-
-		return
-	},
+	}
 }

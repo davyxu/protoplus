@@ -1,16 +1,20 @@
 package model
 
+// 结构体或枚举
 type Descriptor struct {
 	Comment
 	TagSet
 
 	Name string
 
+	// 枚举或结构体
 	Kind Kind
 
+	// 归属的文件名
 	SrcName string
 
-	Fields []*FieldDescriptor
+	// 字段集合
+	Fields []*FieldDescriptor `json:",omitempty"`
 }
 
 func (self *Descriptor) FieldByName(name string) *FieldDescriptor {

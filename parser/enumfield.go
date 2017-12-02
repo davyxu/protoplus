@@ -37,6 +37,7 @@ func parseEnumField(ctx *Context) {
 
 	ctx.FieldDescriptor.Comment = ctx.CommentGroupByLine(nameToken.Line())
 
+	// 枚举值类型，始终为int32
 	ctx.FieldDescriptor.ParseType("int32")
 
 	ctx.AddField(ctx.FieldDescriptor)

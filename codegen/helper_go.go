@@ -17,3 +17,24 @@ func GoTypeName(fd *model.FieldDescriptor) string {
 		return fd.Type
 	}
 }
+
+func init() {
+	UsefulFunc["GoTypeName"] = func(raw interface{}) (ret string) {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		if fd.Repeatd {
+			ret += "[]"
+		}
+
+		ret += GoTypeName(fd)
+		return
+	}
+
+	UsefulFunc["GoFieldName"] = func(raw interface{}) string {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		return ExportSymbolName(fd.Name)
+	}
+}

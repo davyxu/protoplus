@@ -4,7 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/davyxu/golog"
-	"github.com/davyxu/protoplus/parser"
+	"github.com/davyxu/protoplus/util"
+	"os"
 )
 
 var log = golog.New("main")
@@ -24,6 +25,9 @@ func main() {
 		return
 	}
 
-	parser.ParseFileList()
+	if err := util.RunGenerator(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 }

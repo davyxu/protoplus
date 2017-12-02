@@ -2,11 +2,13 @@ package model
 
 import "strconv"
 
+// 标记
 type Tag struct {
 	Key   string
 	Value string
 }
 
+// 标记集合
 type TagSet struct {
 	Tags []Tag `json:",omitempty"`
 }

@@ -9,7 +9,7 @@ const (
 	Kind_Enum           = "enum"
 )
 
-var Str2Type = map[string]string{
+var SchemeType2Type = map[string]string{
 	"int32":   "int32",
 	"int64":   "int64",
 	"uint32":  "uint32",
