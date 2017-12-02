@@ -38,4 +38,39 @@ func init() {
 
 		return ""
 	}
+
+	UsefulFunc["TagNumber"] = func(rawD, rawFD interface{}) (tag int) {
+		d := rawD.(*model.Descriptor)
+		fd := rawFD.(*model.FieldDescriptor)
+
+		for _, libfd := range d.Fields {
+
+			if libfd == fd {
+				return tag
+			}
+
+			if libfd.Tag != 0 {
+				tag = libfd.Tag
+			} else {
+				tag++
+			}
+		}
+
+		return 0
+	}
+
+	UsefulFunc["StructMsgID"] = func(raw interface{}) (msgid int) {
+		d := raw.(*model.Descriptor)
+
+		if d.Kind == model.Kind_Struct {
+			return d.TagValueInt("MsgID")
+		}
+
+		return 0
+	}
+
+	UsefulFunc["IsMessage"] = func(raw interface{}) bool {
+		d := raw.(*model.Descriptor)
+		return strings.HasSuffix(d.Name, "REQ") || strings.HasSuffix(d.Name, "ACK")
+	}
 }

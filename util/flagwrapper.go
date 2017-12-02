@@ -19,18 +19,24 @@ type Generator struct {
 
 	flagStr *string
 
+	flagBool *bool
+
 	builtin bool
 
 	useBoolFlag bool
 }
 
 func (self *Generator) flagString() string {
+	if self.flagStr == nil {
+		return ""
+	}
+
 	return *self.flagStr
 }
 
 func (self *Generator) gen(dset *model.DescriptorSet) error {
 
-	if self.useBoolFlag {
+	if self.useBoolFlag && *self.flagBool {
 		return self.GenFunc(dset, "")
 	} else if self.flagString() != "" {
 
@@ -47,7 +53,7 @@ func (self *Generator) gen(dset *model.DescriptorSet) error {
 func (self *Generator) init() {
 
 	if self.useBoolFlag {
-		flag.Bool(self.FlagName, false, self.FlagComment)
+		self.flagBool = flag.Bool(self.FlagName, false, self.FlagComment)
 	} else {
 		self.flagStr = flag.String(self.FlagName, "", self.FlagComment)
 	}
