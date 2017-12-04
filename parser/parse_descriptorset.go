@@ -55,11 +55,15 @@ func rawParse(ctx *Context, reader io.Reader) (retErr error) {
 	return nil
 }
 
-func check(ctx *Context) error {
+func checkAndFix(ctx *Context) error {
 
 	for _, d := range ctx.Objects {
 
+		d.DescriptorSet = ctx.DescriptorSet
+
 		for _, fd := range d.Fields {
+			fd.Descriptor = d
+
 			if fd.Kind == "" {
 
 				// 将字段中使用的结构体的Kind确认为struct

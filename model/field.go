@@ -11,6 +11,8 @@ type FieldDescriptor struct {
 
 	Tag     int  `json:",omitempty"`
 	Repeatd bool `json:",omitempty"`
+
+	Descriptor *Descriptor `json:"-"`
 }
 
 func (self *FieldDescriptor) ParseType(str string) {

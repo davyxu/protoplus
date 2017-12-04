@@ -15,6 +15,8 @@ type Descriptor struct {
 
 	// 字段集合
 	Fields []*FieldDescriptor `json:",omitempty"`
+
+	DescriptorSet *DescriptorSet `json:"-"`
 }
 
 func (self *Descriptor) FieldByName(name string) *FieldDescriptor {

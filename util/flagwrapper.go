@@ -107,7 +107,28 @@ func init() {
 		})
 }
 
-func RunGenerator() error {
+func errorCatcher(errFunc func(error)) {
+
+	err := recover()
+
+	switch err.(type) {
+	// 运行时错误
+	case interface {
+		RuntimeError()
+	}:
+
+		// 继续外抛， 方便调试
+		panic(err)
+
+	case error:
+		errFunc(err.(error))
+	case nil:
+	default:
+		panic(err)
+	}
+}
+
+func RunGenerator() (retErr error) {
 
 	flag.Parse()
 
@@ -117,6 +138,12 @@ func RunGenerator() error {
 	if err != nil {
 		return err
 	}
+
+	defer errorCatcher(func(genErr error) {
+
+		retErr = genErr
+
+	})
 
 	for _, gen := range generators {
 

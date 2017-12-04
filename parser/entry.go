@@ -23,7 +23,7 @@ func ParseString(script string) (*model.DescriptorSet, error) {
 		return nil, err
 	}
 
-	return ctx.DescriptorSet, check(ctx)
+	return ctx.DescriptorSet, checkAndFix(ctx)
 }
 
 func ParseFileList(dset *model.DescriptorSet, filelist ...string) error {
@@ -51,5 +51,5 @@ func ParseFileList(dset *model.DescriptorSet, filelist ...string) error {
 
 	}
 
-	return check(ctx)
+	return checkAndFix(ctx)
 }

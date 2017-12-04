@@ -43,27 +43,18 @@ func init() {
 		d := rawD.(*model.Descriptor)
 		fd := rawFD.(*model.FieldDescriptor)
 
+		tag = -1
 		for _, libfd := range d.Fields {
-
-			if libfd == fd {
-				return tag
-			}
 
 			if libfd.Tag != 0 {
 				tag = libfd.Tag
 			} else {
 				tag++
 			}
-		}
 
-		return 0
-	}
-
-	UsefulFunc["StructMsgID"] = func(raw interface{}) (msgid int) {
-		d := raw.(*model.Descriptor)
-
-		if d.Kind == model.Kind_Struct {
-			return d.TagValueInt("MsgID")
+			if libfd == fd {
+				return tag
+			}
 		}
 
 		return 0
