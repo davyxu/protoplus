@@ -175,3 +175,32 @@ struct Node{
 	`)
 
 }
+
+func TestTagsNoColon(t *testing.T) {
+
+	ds := checkString(t, `
+
+	[MsgID:201 AutoMsgID  CSRequestOnce Dir:"client->game"]
+	struct s1 {
+
+	}
+
+`)
+
+	if ds.ObjectByName("s1").TagValueInt("MsgID") != 201 {
+		t.FailNow()
+	}
+
+	if _, exists := ds.ObjectByName("s1").TagValueByKey("AutoMsgID"); exists != true {
+		t.FailNow()
+	}
+
+	if _, exists := ds.ObjectByName("s1").TagValueByKey("CSRequestOnce"); exists != true {
+		t.FailNow()
+	}
+
+	if ds.ObjectByName("s1").TagValueString("Dir") != "client->game" {
+		t.FailNow()
+	}
+
+}

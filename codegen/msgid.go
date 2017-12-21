@@ -1,13 +1,17 @@
 package codegen
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"github.com/davyxu/protoplus/model"
 	"io/ioutil"
+	"os"
 )
 
 var flagAutoMsgIDCacheFile = flag.String("AutoMsgIDCacheFile", "AutoMsgIDCacheFile.json", "Specifies auto msgid cache file")
+var skipDupMsgIDTips bool // 跳过重复消息ID的警告提示
 
 type MsgInfo struct {
 	Name  string
@@ -40,9 +44,31 @@ func (self *AutoMsgIDCacheFile) ExistsMsgID(name string) int {
 	return 0
 }
 
+func (self *AutoMsgIDCacheFile) GetNameByID(msgid int) string {
+
+	for _, m := range self.Caches {
+		if m.MsgID == msgid {
+			return m.Name
+		}
+	}
+
+	return ""
+}
+
 func (self *AutoMsgIDCacheFile) AddNewMsg(name string, msgid int) {
 
 	self.Caches = append(self.Caches, MsgInfo{name, msgid})
+}
+
+func (self *AutoMsgIDCacheFile) ModifyByMsgID(msgid int, name string) {
+
+	for index, m := range self.Caches {
+		if m.MsgID == msgid {
+			self.Caches[index].Name = name
+			return
+		}
+	}
+
 }
 
 // MsgId:100 Descriptor  FileA
@@ -50,18 +76,44 @@ func (self *AutoMsgIDCacheFile) AddNewMsg(name string, msgid int) {
 // MsgID:200 Descriptor FileB
 // Descriptor		<- auto gen 201
 
-func genMsgID(d *model.Descriptor) int {
+func genMsgID(d *model.Descriptor, cacheFileName string, cachedMsgIDs *AutoMsgIDCacheFile) int {
 
 	var msgid = 0
 	for _, obj := range d.DescriptorSet.Objects {
 
-		if userMsgID := obj.TagValueInt("MsgID"); userMsgID != 0 {
+		userMsgID := obj.TagValueInt("MsgID")
+
+		if userMsgID == 0 && !obj.TagExists("AutoMsgID") {
+			continue
+		}
+
+		if userMsgID > 0 {
 			msgid = userMsgID
 		} else {
 			msgid++
 		}
 
 		if obj == d {
+
+			if existsName := cachedMsgIDs.GetNameByID(msgid); existsName != "" {
+
+				if !skipDupMsgIDTips {
+
+					fmt.Println("warning: auto generate msg id has exists in automsgidcache file, the file will be overwrited.")
+					bufio.NewReader(os.Stdin).ReadString('\n')
+
+					skipDupMsgIDTips = true
+				}
+
+				// msgid已存在,msgid拿给该消息使用
+				cachedMsgIDs.ModifyByMsgID(msgid, d.Name)
+			} else {
+				// msgid不存在，添加
+				cachedMsgIDs.AddNewMsg(d.Name, msgid)
+			}
+
+			cachedMsgIDs.Save(cacheFileName)
+
 			return msgid
 		}
 	}
@@ -83,10 +135,7 @@ func autogenMsgIDByCacheFile(cacheFileName string, d *model.Descriptor) (newMsgI
 
 	switch {
 	case userMsgID == 0 && existsMsgID == 0: // 缓冲无记录，用户没有指定ID，生成新ID
-		newMsgID = genMsgID(d)
-		cachedMsgIDs.AddNewMsg(d.Name, newMsgID)
-
-		cachedMsgIDs.Save(cacheFileName)
+		newMsgID = genMsgID(d, cacheFileName, &cachedMsgIDs)
 	case userMsgID != 0 && existsMsgID == 0: // 缓冲无记录，用户指定ID，用用户指定的ID
 		return userMsgID
 	case userMsgID == 0 && existsMsgID != 0: // 缓冲有记录ID，用户没有指定ID，用缓冲ID

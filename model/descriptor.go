@@ -60,3 +60,8 @@ func (self *Descriptor) FieldTagExists(tag int) bool {
 func (self *Descriptor) AddField(fd *FieldDescriptor) {
 	self.Fields = append(self.Fields, fd)
 }
+
+func (self *Descriptor) SizeOf(fd *FieldDescriptor) int32 {
+
+	return 0
+}

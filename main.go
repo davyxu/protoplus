@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/davyxu/golog"
+	_ "github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/util"
 	"os"
 )

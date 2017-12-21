@@ -16,13 +16,17 @@ func parseTagSet(ctx *Context) (ts model.TagSet) {
 		var tag model.Tag
 		tag.Key = ctx.Expect(Token_Identifier).Value()
 
-		ctx.Expect(Token_Colon).Value()
+		if ctx.TokenID() == Token_Colon {
 
-		tag.Value = ctx.TokenValue()
+			ctx.Expect(Token_Colon).Value()
+
+			tag.Value = ctx.TokenValue()
+
+			ctx.NextToken()
+		}
 
 		ts.AddTag(tag)
 
-		ctx.NextToken()
 	}
 
 	ctx.Expect(Token_BracketR)

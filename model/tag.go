@@ -23,6 +23,15 @@ func (self *TagSet) TagValueByKey(key string) (string, bool) {
 	return "", false
 }
 
+func (self *TagSet) TagExists(key string) bool {
+	for _, tag := range self.Tags {
+		if tag.Key == key {
+			return true
+		}
+	}
+	return false
+}
+
 func (self *TagSet) TagValueInt(key string) int {
 	if v, ok := self.TagValueByKey(key); ok {
 		if r, err := strconv.Atoi(v); err == nil {
