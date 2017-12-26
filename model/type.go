@@ -10,8 +10,10 @@ const (
 )
 
 var SchemeType2Type = map[string]string{
+	"int16":   "int16",
 	"int32":   "int32",
 	"int64":   "int64",
+	"uint16":  "uint16",
 	"uint32":  "uint32",
 	"uint64":  "uint64",
 	"float32": "float32",
@@ -19,4 +21,30 @@ var SchemeType2Type = map[string]string{
 	"bool":    "bool",
 	"string":  "string",
 	"bytes":   "bytes",
+}
+
+func TypeSize(t string) int32 {
+	switch t {
+	case "int16":
+		return 2
+	case "int32":
+		return 4
+	case "int64":
+		return 8
+	case "uint16":
+		return 2
+	case "uint32":
+		return 4
+	case "uint64":
+		return 8
+	case "float32":
+		return 4
+	case "float64":
+		return 8
+	case "bool":
+		return 1
+	default:
+		return 0
+
+	}
 }

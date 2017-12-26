@@ -27,6 +27,25 @@ struct ItemAddREQ2
 }
 
 [AutoMsgID]
+struct ItemAddREQ3
+{
+	
+}
+
+[AutoMsgID]
+struct ItemAddREQ4
+{
+	
+}
+
+[AutoMsgID]
+struct ItemAddREQ5
+{
+	
+}
+
+
+[AutoMsgID]
 struct PartyAddREQ2
 {
 	PartyID 	int64

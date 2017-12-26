@@ -34,11 +34,13 @@ fi
 cd ${CURR_DIR}
 
 
-#${BIN_DIR}/protoplusgen --json_out=./msg.json \
+#--json_out=./msg.json \
 
 echo "生成协议...."
-${BIN_DIR}/protoplusgen --go_out=./msg.go \
+${BIN_DIR}/protoplusgen \
+--go_out=./msg.go \
 --AutoMsgIDCacheFile=automsgidcache.json \
+--ShowOverWriteCacheFileWarning=true \
 sample.sp \
 sample2.sp
 if [ $? -ne 0 ] ; then read -rsp $'Errors occurred...\n' ; fi

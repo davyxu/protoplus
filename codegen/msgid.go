@@ -11,6 +11,7 @@ import (
 )
 
 var flagAutoMsgIDCacheFile = flag.String("AutoMsgIDCacheFile", "AutoMsgIDCacheFile.json", "Specifies auto msgid cache file")
+var flagShowOverWriteCacheFileWarning = flag.Bool("ShowOverWriteCacheFileWarning", false, "show warning when over write auto msgid cahce file , default is false")
 var skipDupMsgIDTips bool // 跳过重复消息ID的警告提示
 
 type MsgInfo struct {
@@ -97,9 +98,9 @@ func genMsgID(d *model.Descriptor, cacheFileName string, cachedMsgIDs *AutoMsgID
 
 			if existsName := cachedMsgIDs.GetNameByID(msgid); existsName != "" {
 
-				if !skipDupMsgIDTips {
+				if !skipDupMsgIDTips && *flagShowOverWriteCacheFileWarning {
 
-					fmt.Println("warning: auto generate msg id has exists in automsgidcache file, the file will be overwrited.")
+					fmt.Println("Warning: auto generate msg id has exists in automsgidcache file, the file will be overwrited.")
 					bufio.NewReader(os.Stdin).ReadString('\n')
 
 					skipDupMsgIDTips = true

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"encoding/json"
+	"github.com/davyxu/golexer"
 	"github.com/davyxu/protoplus/model"
 	"strings"
 	"testing"
@@ -200,6 +201,85 @@ func TestTagsNoColon(t *testing.T) {
 	}
 
 	if ds.ObjectByName("s1").TagValueString("Dir") != "client->game" {
+		t.FailNow()
+	}
+
+}
+
+func sizeOfMustError(t *testing.T, script, name string, expectErrStr string) {
+
+	ds := checkString(t, script)
+
+	defer golexer.ErrorCatcher(func(err error) {
+
+		if err == nil || !strings.Contains(err.Error(), expectErrStr) {
+			t.Log("[error not match]", err)
+			t.FailNow()
+		}
+
+	})
+
+	ds.ObjectByName(name).Size()
+
+}
+
+func TestSizeOfNonsupport(t *testing.T) {
+
+	sizeOfMustError(t, `
+
+		struct PhoneNumber {
+
+			number string
+
+			type int32
+		}
+	`, "PhoneNumber", "Nonsupport string")
+
+	sizeOfMustError(t, `
+
+		struct PhoneNumber {
+
+			number []int64
+
+			type int32
+		}
+	`, "PhoneNumber", "Nonsupport repeated")
+
+}
+
+func TestSizeOf(t *testing.T) {
+
+	ds := checkString(t, `
+
+enum Sex
+{
+	Man
+	Woman
+}
+
+struct PhoneNumber {
+
+	number int64
+
+	type int32
+}
+
+
+struct Person {
+
+	id  int32
+
+	phone PhoneNumber
+
+	phone2 PhoneNumber
+
+	sex Sex
+
+}
+
+`)
+
+	if size := ds.ObjectByName("Person").Size(); size != 32 {
 		t.FailNow()
 	}
 
