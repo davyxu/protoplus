@@ -91,10 +91,6 @@ struct AddressBook {
 # 使用方法
 
 
-# 例子
-
-https://github.com/davyxu/proto++/tree/master/example
-
 
 # 备注
 
@@ -104,4 +100,4 @@ https://github.com/davyxu/proto++/tree/master/example
 
 知乎: http://www.zhihu.com/people/sunicdavy
 
-提交bug及特性: https://github.com/davyxu/proto++/issues
+提交bug及特性: https://github.com/davyxu/protoplus/issues
