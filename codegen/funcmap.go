@@ -63,8 +63,6 @@ func init() {
 	UsefulFunc["IsMessage"] = func(raw interface{}) bool {
 		d := raw.(*model.Descriptor)
 
-		//return strings.HasSuffix(d.Name, "REQ") || strings.HasSuffix(d.Name, "ACK")
-
 		return d.TagValueInt("MsgID") > 0 || d.TagExists("AutoMsgID")
 
 	}
