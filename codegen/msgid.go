@@ -3,6 +3,7 @@ package codegen
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/davyxu/protoplus/model"
@@ -11,8 +12,14 @@ import (
 )
 
 var flagAutoMsgIDCacheFile = flag.String("AutoMsgIDCacheFile", "AutoMsgIDCacheFile.json", "Specifies auto msgid cache file")
-var flagShowOverWriteCacheFileWarning = flag.Bool("ShowOverWriteCacheFileWarning", false, "show warning when over write auto msgid cahce file , default is false")
-var skipDupMsgIDTips bool // 跳过重复消息ID的警告提示
+var flagShowOverWriteCacheFileWarning = flag.Bool("ShowOverWriteCacheFileWarning", false, "Show warning when over write auto msgid cahce file, default is false")
+var FlagGenSuggestMsgID = flag.Bool("GenSuggestMsgID", false, "Generate suggest msgid, default is false")
+var flagSuggestMsgIDStart = flag.Int("SuggestMsgIDStart", 0, "Suggest msgid start, default is 0")
+var flagCheckDuplicateMsgID = flag.Bool("CheckDuplicateMsgID", false, "Check duplicate msgid, default is false")
+
+var skipDupCacheMsgIDTips bool // 跳过重复缓存消息ID的警告提示
+
+var msgNameByMsgID = map[int]string{}
 
 type MsgInfo struct {
 	Name  string
@@ -98,12 +105,12 @@ func genMsgID(d *model.Descriptor, cacheFileName string, cachedMsgIDs *AutoMsgID
 
 			if existsName := cachedMsgIDs.GetNameByID(msgid); existsName != "" {
 
-				if !skipDupMsgIDTips && *flagShowOverWriteCacheFileWarning {
+				if !skipDupCacheMsgIDTips && *flagShowOverWriteCacheFileWarning {
 
 					fmt.Println("Warning: auto generate msg id has exists in automsgidcache file, the file will be overwrited.")
 					bufio.NewReader(os.Stdin).ReadString('\n')
 
-					skipDupMsgIDTips = true
+					skipDupCacheMsgIDTips = true
 				}
 
 				// msgid已存在,msgid拿给该消息使用
@@ -148,6 +155,41 @@ func autogenMsgIDByCacheFile(cacheFileName string, d *model.Descriptor) (newMsgI
 	return
 }
 
+func GenSuggestMsgID(dset *model.DescriptorSet) {
+
+	// 段: MsgID/100
+
+	sectionMap := make(map[int]bool)
+
+	for _, d := range dset.Objects {
+
+		if d.Kind != model.Kind_Struct {
+			continue
+		}
+		userMsgID := d.TagValueInt("MsgID")
+
+		if userMsgID == 0 {
+			continue
+		}
+
+		sectionMap[userMsgID/100] = true
+	}
+
+	var section = *flagSuggestMsgIDStart / 100
+
+	for ; ; section++ {
+
+		if _, ok := sectionMap[section]; ok {
+			continue
+		}
+
+		fmt.Println("Suggest msgid:", section*100+1)
+
+		return
+	}
+
+}
+
 func init() {
 
 	UsefulFunc["StructMsgID"] = func(raw interface{}) (msgid int) {
@@ -159,6 +201,17 @@ func init() {
 
 		if *flagAutoMsgIDCacheFile != "" {
 			msgid = autogenMsgIDByCacheFile(*flagAutoMsgIDCacheFile, d)
+		}
+
+		if *flagCheckDuplicateMsgID {
+
+			oldName, exists := msgNameByMsgID[msgid]
+			if exists && d.Name != oldName {
+				panic(errors.New(fmt.Sprintf("%s's msgid(%d) has used by %s", d.Name, msgid, oldName)))
+			}
+
+			msgNameByMsgID[msgid] = d.Name
+
 		}
 
 		return

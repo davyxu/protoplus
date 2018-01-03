@@ -5,6 +5,7 @@ cd ../../../../../
 export GOPATH=`pwd`
 BIN_DIR=`pwd`/bin
 
+#----------------------------------------------------------------------
 #if false;then
 if true;then
 
@@ -25,25 +26,56 @@ else
 fi
 
 
+
 echo "编译协议生成器..."
 go build -v -p 4 -o ${BIN_DIR}/protoplusgen github.com/davyxu/protoplus/tests
 if [ $? -ne 0 ] ; then read -rsp $'Errors occurred...\n' ; fi
 
 fi
 
+
 cd ${CURR_DIR}
 
 
+#----------------------------------------------------------------------
+
 #--json_out=./msg.json \
+
+if true;then
 
 echo "生成协议...."
 ${BIN_DIR}/protoplusgen \
 --go_out=./msg.go \
 --AutoMsgIDCacheFile=automsgidcache.json \
---ShowOverWriteCacheFileWarning=true \
-sample.sp \
-sample2.sp
+--ShowOverWriteCacheFileWarning \
+--CheckDuplicateMsgID \
+`source ./filelist.sh`
 if [ $? -ne 0 ] ; then read -rsp $'Errors occurred...\n' ; fi
 
-read name
+fi
+
+
+#----------------------------------------------------------------------
+
+
+if true; then
+
+echo "生成建议消息ID...."
+${BIN_DIR}/protoplusgen --GenSuggestMsgID=true \
+--SuggestMsgIDStart=8000 \
+`source ./filelist.sh`
+
+if [ $? -ne 0 ] ; then read -rsp $'Errors occurred...\n' ; fi
+
+
+fi
+
+
+#----------------------------------------------------------------------
+
+
+
+
+
+read -rsp $''
 

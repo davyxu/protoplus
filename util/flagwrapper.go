@@ -128,16 +128,7 @@ func errorCatcher(errFunc func(error)) {
 	}
 }
 
-func RunGenerator() (retErr error) {
-
-	flag.Parse()
-
-	var dset model.DescriptorSet
-
-	err := parser.ParseFileList(&dset, flag.Args()...)
-	if err != nil {
-		return err
-	}
+func RunGenerator(dset *model.DescriptorSet) (retErr error) {
 
 	defer errorCatcher(func(genErr error) {
 
@@ -147,11 +138,22 @@ func RunGenerator() (retErr error) {
 
 	for _, gen := range generators {
 
-		if err := gen.gen(&dset); err != nil {
+		if err := gen.gen(dset); err != nil {
 			return err
 		}
 
 	}
 
 	return nil
+}
+
+func ParseFileList(dset *model.DescriptorSet) (retErr error) {
+
+	err := parser.ParseFileList(dset, flag.Args()...)
+	if err != nil {
+		return err
+	}
+
+	return
+
 }

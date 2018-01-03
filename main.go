@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/davyxu/golog"
 	_ "github.com/davyxu/protoplus/codegen"
+	"github.com/davyxu/protoplus/model"
 	"github.com/davyxu/protoplus/util"
 	"os"
 )
@@ -20,14 +21,20 @@ func main() {
 
 	flag.Parse()
 
+	var dset model.DescriptorSet
+	if err := util.ParseFileList(&dset); err != nil {
+		fmt.Println("ParseFileList error: ", err)
+		os.Exit(1)
+	}
+
 	// 版本
 	if *flagVersion {
 		fmt.Println(Version)
 		return
 	}
 
-	if err := util.RunGenerator(); err != nil {
-		fmt.Println(err)
+	if err := util.RunGenerator(&dset); err != nil {
+		fmt.Println("Generate error: ", err)
 		os.Exit(1)
 	}
 
