@@ -2,6 +2,7 @@ package codegen
 
 import (
 	"github.com/davyxu/protoplus/model"
+	"reflect"
 	"strings"
 	"text/template"
 )
@@ -64,6 +65,20 @@ func init() {
 		d := raw.(*model.Descriptor)
 
 		return d.TagValueInt("MsgID") > 0 || d.TagExists("AutoMsgID")
-
 	}
+
+	// 生成Json尾巴的逗号，rawIdx为当前遍历索引，rawSlice传切片
+	UsefulFunc["GenJsonTailComma"] = func(rawIdx, rawSlice interface{}) string {
+
+		index := rawIdx.(int)
+
+		total := reflect.Indirect(reflect.ValueOf(rawSlice)).Len()
+
+		if index < total-1 {
+			return ","
+		}
+
+		return ""
+	}
+
 }
