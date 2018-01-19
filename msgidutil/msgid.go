@@ -1,21 +1,15 @@
-package codegen
+package msgidutil
 
 import (
 	"bufio"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
+	"github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/model"
 	"io/ioutil"
 	"os"
 )
-
-var flagAutoMsgIDCacheFile = flag.String("AutoMsgIDCacheFile", "AutoMsgIDCacheFile.json", "Specifies auto msgid cache file")
-var flagShowOverWriteCacheFileWarning = flag.Bool("ShowOverWriteCacheFileWarning", false, "Show warning when over write auto msgid cahce file, default is false")
-var FlagGenSuggestMsgID = flag.Bool("GenSuggestMsgID", false, "Generate suggest msgid, default is false")
-var flagSuggestMsgIDStart = flag.Int("SuggestMsgIDStart", 0, "Suggest msgid start, default is 0")
-var flagCheckDuplicateMsgID = flag.Bool("CheckDuplicateMsgID", false, "Check duplicate msgid, default is false")
 
 var skipDupCacheMsgIDTips bool // 跳过重复缓存消息ID的警告提示
 
@@ -155,44 +149,9 @@ func autogenMsgIDByCacheFile(cacheFileName string, d *model.Descriptor) (newMsgI
 	return
 }
 
-func GenSuggestMsgID(dset *model.DescriptorSet) {
-
-	// 段: MsgID/100
-
-	sectionMap := make(map[int]bool)
-
-	for _, d := range dset.Objects {
-
-		if d.Kind != model.Kind_Struct {
-			continue
-		}
-		userMsgID := d.TagValueInt("MsgID")
-
-		if userMsgID == 0 {
-			continue
-		}
-
-		sectionMap[userMsgID/100] = true
-	}
-
-	var section = *flagSuggestMsgIDStart / 100
-
-	for ; ; section++ {
-
-		if _, ok := sectionMap[section]; ok {
-			continue
-		}
-
-		fmt.Println("Suggest msgid:", section*100+1)
-
-		return
-	}
-
-}
-
 func init() {
 
-	UsefulFunc["StructMsgID"] = func(raw interface{}) (msgid int) {
+	codegen.UsefulFunc["StructMsgID"] = func(raw interface{}) (msgid int) {
 		d := raw.(*model.Descriptor)
 
 		if d.Kind == model.Kind_Struct {
