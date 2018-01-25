@@ -149,30 +149,34 @@ func autogenMsgIDByCacheFile(cacheFileName string, d *model.Descriptor) (newMsgI
 	return
 }
 
+func StructMsgID(d *model.Descriptor) (msgid int) {
+	if !codegen.IsMessage(d) {
+		return 0
+	}
+
+	if d.Kind == model.Kind_Struct {
+		msgid = d.TagValueInt("MsgID")
+	}
+
+	if *flagAutoMsgIDCacheFile != "" {
+		msgid = autogenMsgIDByCacheFile(*flagAutoMsgIDCacheFile, d)
+	}
+
+	if *flagCheckDuplicateMsgID {
+
+		oldName, exists := msgNameByMsgID[msgid]
+		if exists && d.Name != oldName {
+			panic(errors.New(fmt.Sprintf("%s's msgid(%d) has used by %s", d.Name, msgid, oldName)))
+		}
+
+		msgNameByMsgID[msgid] = d.Name
+
+	}
+
+	return
+}
+
 func init() {
 
-	codegen.UsefulFunc["StructMsgID"] = func(raw interface{}) (msgid int) {
-		d := raw.(*model.Descriptor)
-
-		if d.Kind == model.Kind_Struct {
-			msgid = d.TagValueInt("MsgID")
-		}
-
-		if *flagAutoMsgIDCacheFile != "" {
-			msgid = autogenMsgIDByCacheFile(*flagAutoMsgIDCacheFile, d)
-		}
-
-		if *flagCheckDuplicateMsgID {
-
-			oldName, exists := msgNameByMsgID[msgid]
-			if exists && d.Name != oldName {
-				panic(errors.New(fmt.Sprintf("%s's msgid(%d) has used by %s", d.Name, msgid, oldName)))
-			}
-
-			msgNameByMsgID[msgid] = d.Name
-
-		}
-
-		return
-	}
+	codegen.UsefulFunc["StructMsgID"] = StructMsgID
 }

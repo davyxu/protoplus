@@ -61,11 +61,7 @@ func init() {
 		return 0
 	}
 
-	UsefulFunc["IsMessage"] = func(raw interface{}) bool {
-		d := raw.(*model.Descriptor)
-
-		return d.TagValueInt("MsgID") > 0 || d.TagExists("AutoMsgID")
-	}
+	UsefulFunc["IsMessage"] = IsMessage
 
 	// 生成Json尾巴的逗号，rawIdx为当前遍历索引，rawSlice传切片
 	UsefulFunc["GenJsonTailComma"] = func(rawIdx, rawSlice interface{}) string {
@@ -81,4 +77,8 @@ func init() {
 		return ""
 	}
 
+}
+
+func IsMessage(d *model.Descriptor) bool {
+	return d.TagValueInt("MsgID") > 0 || d.TagExists("AutoMsgID")
 }
