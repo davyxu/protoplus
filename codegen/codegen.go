@@ -89,7 +89,7 @@ func (self *CodeGen) WriteOutputFile(outputFileName string) *CodeGen {
 		return self
 	}
 
-	os.MkdirAll(filepath.Dir(outputFileName), 666)
+	os.MkdirAll(filepath.Dir(outputFileName), 0766)
 
 	self.err = ioutil.WriteFile(outputFileName, self.buffer.Bytes(), 0666)
 
