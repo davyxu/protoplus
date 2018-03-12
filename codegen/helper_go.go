@@ -37,4 +37,10 @@ func init() {
 
 		return ExportSymbolName(fd.Name)
 	}
+
+	UsefulFunc["GoStructTag"] = func(raw interface{}) string {
+
+		fd := raw.(*model.FieldDescriptor)
+		return fd.TagValueString("GoStructTag")
+	}
 }
