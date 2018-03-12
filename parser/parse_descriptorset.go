@@ -69,7 +69,7 @@ func checkAndFix(ctx *Context) error {
 				// 将字段中使用的结构体的Kind确认为struct
 				findD := ctx.ObjectByName(fd.Type)
 				if findD == nil {
-					return errors.New(fmt.Sprintf("type not found: %s at %s", d.Name, ctx.QuerySymbolPosString(fd)))
+					return errors.New(fmt.Sprintf("type not found: %s at %s", fd.Type, ctx.QuerySymbolPosString(fd)))
 				}
 
 				fd.Kind = findD.Kind

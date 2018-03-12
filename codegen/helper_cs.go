@@ -33,17 +33,22 @@ func CSTypeName(fd *model.FieldDescriptor) string {
 	}
 }
 
+func CSTypeNameFull(fd *model.FieldDescriptor) (ret string) {
+
+	ret += CSTypeName(fd)
+
+	if fd.Repeatd {
+		ret += "[]"
+	}
+
+	return
+}
+
 func init() {
 	UsefulFunc["CSTypeName"] = func(raw interface{}) (ret string) {
 
 		fd := raw.(*model.FieldDescriptor)
 
-		ret += CSTypeName(fd)
-
-		if fd.Repeatd {
-			ret += "[]"
-		}
-
-		return
+		return CSTypeNameFull(fd)
 	}
 }
