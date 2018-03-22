@@ -9,6 +9,24 @@ import (
 
 var UsefulFunc = template.FuncMap{}
 
+func TagNumber(d *model.Descriptor, fd *model.FieldDescriptor) (tag int) {
+	tag = -1
+	for _, libfd := range d.Fields {
+
+		if libfd.Tag != 0 {
+			tag = libfd.Tag
+		} else {
+			tag++
+		}
+
+		if libfd == fd {
+			return tag
+		}
+	}
+
+	return 0
+}
+
 func init() {
 	UsefulFunc["ObjectLeadingComment"] = func(raw interface{}) (ret string) {
 
@@ -44,21 +62,7 @@ func init() {
 		d := rawD.(*model.Descriptor)
 		fd := rawFD.(*model.FieldDescriptor)
 
-		tag = -1
-		for _, libfd := range d.Fields {
-
-			if libfd.Tag != 0 {
-				tag = libfd.Tag
-			} else {
-				tag++
-			}
-
-			if libfd == fd {
-				return tag
-			}
-		}
-
-		return 0
+		return TagNumber(d, fd)
 	}
 
 	UsefulFunc["IsMessage"] = IsMessage

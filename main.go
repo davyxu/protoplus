@@ -3,17 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/davyxu/golog"
 	_ "github.com/davyxu/protoplus/codegen"
+	"github.com/davyxu/protoplus/gen/gogopb"
+	_ "github.com/davyxu/protoplus/gen/json"
 	"github.com/davyxu/protoplus/model"
 	"github.com/davyxu/protoplus/util"
 	"os"
 )
 
-var log = golog.New("main")
-
 // 显示版本号
-var flagVersion = flag.Bool("version", false, "Show version")
+var (
+	flagVersion = flag.Bool("version", false, "Show version")
+	flagPackage = flag.String("package", "", "package name in source files")
+	flagPbOut   = flag.String("pb_out", "", "pb schema output to file")
+)
 
 const Version = "0.1.0"
 
@@ -33,9 +36,14 @@ func main() {
 		return
 	}
 
-	if err := util.RunGenerator(&dset); err != nil {
-		fmt.Println("Generate error: ", err)
-		os.Exit(1)
+	if *flagPbOut != "" {
+		if err := gogopb.Run(&gogopb.Context{
+			DescriptorSet:  &dset,
+			OutputFileName: *flagPbOut,
+			PackageName:    *flagPackage,
+		}); err != nil {
+			fmt.Println(err)
+		}
 	}
 
 }

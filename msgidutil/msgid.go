@@ -149,6 +149,19 @@ func autogenMsgIDByCacheFile(cacheFileName string, d *model.Descriptor) (newMsgI
 	return
 }
 
+// 字符串转为16位整形值
+func StringHash(s string) (hash uint16) {
+
+	for _, c := range s {
+
+		ch := uint16(c)
+
+		hash = hash + ((hash) << 5) + ch + (ch << 7)
+	}
+
+	return
+}
+
 func StructMsgID(d *model.Descriptor) (msgid int) {
 	if !codegen.IsMessage(d) {
 		return 0
@@ -160,6 +173,8 @@ func StructMsgID(d *model.Descriptor) (msgid int) {
 
 	if *flagAutoMsgIDCacheFile != "" {
 		msgid = autogenMsgIDByCacheFile(*flagAutoMsgIDCacheFile, d)
+	} else {
+		msgid = int(StringHash(d.Name))
 	}
 
 	if *flagCheckDuplicateMsgID {
