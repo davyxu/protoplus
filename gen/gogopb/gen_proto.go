@@ -13,8 +13,8 @@ syntax = "proto3";
 package {{.PackageName}};
 
 {{range $a, $enumobj := .Enums}}
-enum {{.Name}}{	{{range .Fields}}
-	{{.Name}} = {{PbTagNumber $enumobj .}} {{end}}
+enum {{.Name}} {	{{range .Fields}}
+	{{.Name}} = {{PbTagNumber $enumobj .}}; {{end}}
 }{{end}}
 
 {{range $a, $obj := .Structs}}

@@ -33,6 +33,11 @@ func init() {
 		d := rawD.(*model.Descriptor)
 		fd := rawFD.(*model.FieldDescriptor)
 
-		return codegen.TagNumber(d, fd) + 1
+		if d.Kind == model.Kind_Enum {
+			return codegen.TagNumber(d, fd)
+		} else {
+			return codegen.TagNumber(d, fd) + 1
+		}
+
 	}
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # 设置GOPATH
 
 CURR_DIR=`pwd`
