@@ -22,6 +22,8 @@ func init() {
 			ret += "uint32"
 		case "int16":
 			ret += "int32"
+		case "float32":
+			ret += "float"
 		default:
 			ret += fd.Type
 		}
