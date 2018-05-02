@@ -83,6 +83,16 @@ func (self *CodeGen) FormatGoCode() *CodeGen {
 	return self
 }
 
+func (self *CodeGen) WriteBytes(data *[]byte) *CodeGen {
+	if self.err != nil {
+		return self
+	}
+
+	*data = self.buffer.Bytes()
+
+	return self
+}
+
 func (self *CodeGen) WriteOutputFile(outputFileName string) *CodeGen {
 
 	if self.err != nil {
