@@ -10,9 +10,11 @@ const (
 )
 
 var SchemeType2Type = map[string]string{
+	"int8":    "int8",
 	"int16":   "int16",
 	"int32":   "int32",
 	"int64":   "int64",
+	"uint8":   "uint8",
 	"uint16":  "uint16",
 	"uint32":  "uint32",
 	"uint64":  "uint64",
@@ -25,12 +27,16 @@ var SchemeType2Type = map[string]string{
 
 func TypeSize(t string) int32 {
 	switch t {
+	case "int8":
+		return 1
 	case "int16":
 		return 2
 	case "int32":
 		return 4
 	case "int64":
 		return 8
+	case "uint8":
+		return 1
 	case "uint16":
 		return 2
 	case "uint32":
