@@ -1,6 +1,7 @@
 package codegen
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"go/parser"
@@ -9,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -81,6 +83,26 @@ func (self *CodeGen) FormatGoCode() *CodeGen {
 	}
 
 	return self
+}
+
+func (self *CodeGen) Code() string {
+
+	reader := bufio.NewReader(strings.NewReader(string(self.Data())))
+
+	var sb strings.Builder
+	line := 0
+	for {
+		lineStr, err := reader.ReadString('\n')
+		if err != nil {
+			break
+		}
+
+		line++
+		sb.WriteString(fmt.Sprintf("%d:	%s", line, lineStr))
+	}
+
+	return sb.String()
+
 }
 
 func (self *CodeGen) WriteBytes(data *[]byte) *CodeGen {
