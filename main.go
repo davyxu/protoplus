@@ -4,7 +4,9 @@ import (
 	"flag"
 	"fmt"
 	_ "github.com/davyxu/protoplus/codegen"
+	"github.com/davyxu/protoplus/gen"
 	"github.com/davyxu/protoplus/gen/gogopb"
+	"github.com/davyxu/protoplus/gen/json"
 	_ "github.com/davyxu/protoplus/gen/json"
 	"github.com/davyxu/protoplus/model"
 	"github.com/davyxu/protoplus/util"
@@ -16,6 +18,8 @@ var (
 	flagVersion = flag.Bool("version", false, "Show version")
 	flagPackage = flag.String("package", "", "package name in source files")
 	flagPbOut   = flag.String("pb_out", "", "pb schema output to file")
+	flagJsonOut = flag.String("json_out", "", "json schema output to file")
+	flagJson    = flag.Bool("json", false, "json schema output to std out")
 )
 
 const Version = "0.1.0"
@@ -24,26 +28,53 @@ func main() {
 
 	flag.Parse()
 
-	var dset model.DescriptorSet
-	if err := util.ParseFileList(&dset); err != nil {
-		fmt.Println("ParseFileList error: ", err)
-		os.Exit(1)
-	}
-
 	// 版本
 	if *flagVersion {
 		fmt.Println(Version)
 		return
 	}
 
+	var err error
+	var ctx gen.Context
+	ctx.DescriptorSet = new(model.DescriptorSet)
+	ctx.PackageName = *flagPackage
+
+	err = util.ParseFileList(ctx.DescriptorSet)
+
+	if err != nil {
+		goto OnError
+	}
+
 	if *flagPbOut != "" {
-		if err := gogopb.Run(&gogopb.Context{
-			DescriptorSet:  &dset,
-			OutputFileName: *flagPbOut,
-			PackageName:    *flagPackage,
-		}); err != nil {
-			fmt.Println(err)
+		ctx.OutputFileName = *flagPbOut
+
+		err = gogopb.GenProto(&ctx)
+
+		if err != nil {
+			goto OnError
 		}
 	}
 
+	if *flagJsonOut != "" {
+		ctx.OutputFileName = *flagJsonOut
+
+		err = json.GenJson(&ctx)
+
+		if err != nil {
+			goto OnError
+		}
+	}
+
+	if *flagJson {
+
+		err = json.OutputJson(&ctx)
+
+		if err != nil {
+			goto OnError
+		}
+	}
+
+OnError:
+	fmt.Println(err)
+	os.Exit(1)
 }

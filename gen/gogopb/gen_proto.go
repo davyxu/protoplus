@@ -3,6 +3,7 @@ package gogopb
 import (
 	"fmt"
 	"github.com/davyxu/protoplus/codegen"
+	"github.com/davyxu/protoplus/gen"
 )
 
 // 报错行号+7
@@ -25,7 +26,7 @@ message {{.Name}} {	{{range .Fields}}
 {{end}}
 `
 
-func Run(ctx *Context) error {
+func GenProto(ctx *gen.Context) error {
 
 	gen := codegen.NewCodeGen("proto").
 		RegisterTemplateFunc(codegen.UsefulFunc).
