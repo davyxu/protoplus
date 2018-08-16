@@ -31,6 +31,8 @@ func init() {
 		return
 	}
 
+	UsefulFunc["ExportSymbolName"] = ExportSymbolName
+
 	UsefulFunc["GoFieldName"] = func(raw interface{}) string {
 
 		fd := raw.(*model.FieldDescriptor)
