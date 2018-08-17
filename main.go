@@ -74,6 +74,8 @@ func main() {
 		}
 	}
 
+	return
+
 OnError:
 	fmt.Println(err)
 	os.Exit(1)
