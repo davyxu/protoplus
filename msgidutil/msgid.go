@@ -174,7 +174,7 @@ func StructMsgID(d *model.Descriptor) (msgid int) {
 	if *flagAutoMsgIDCacheFile != "" {
 		msgid = autogenMsgIDByCacheFile(*flagAutoMsgIDCacheFile, d)
 	} else if msgid == 0 {
-		msgid = int(StringHash(d.Name + *flagMsgIDSalt))
+		msgid = int(StringHash(d.DescriptorSet.PackageName + "." + d.Name + *flagMsgIDSalt))
 	}
 
 	if *flagCheckDuplicateMsgID {
