@@ -84,7 +84,7 @@ func MarshalFloat32(b *Buffer, fieldIndex uint64, value float32) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireZigzag32))
+	b.EncodeVarint(makeWireTag(fieldIndex, WireFixed32))
 	b.EncodeFixed32(uint64(math.Float32bits(value)))
 
 	return nil
@@ -96,7 +96,7 @@ func MarshalFloat64(b *Buffer, fieldIndex uint64, value float64) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireZigzag64))
+	b.EncodeVarint(makeWireTag(fieldIndex, WireFixed64))
 	b.EncodeFixed64(uint64(math.Float64bits(value)))
 
 	return nil

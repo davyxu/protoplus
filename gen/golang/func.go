@@ -1,0 +1,67 @@
+package golang
+
+import (
+	"github.com/davyxu/protoplus/codegen"
+	"github.com/davyxu/protoplus/model"
+	"text/template"
+)
+
+var UsefulFunc = template.FuncMap{}
+
+func init() {
+	UsefulFunc["ProtoTypeName"] = func(raw interface{}) (ret string) {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		if fd.Repeatd {
+			ret += "[]"
+		}
+
+		// 默认指针
+		if fd.Kind == model.Kind_Struct {
+			ret += "*"
+		}
+
+		ret += codegen.GoTypeName(fd)
+		return
+	}
+
+	UsefulFunc["CodecName"] = func(raw interface{}) (ret string) {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		switch fd.Type {
+		case "bool":
+			ret += "Bool"
+		case "int32":
+			ret += "Int32"
+		case "uint32":
+			ret += "UInt32"
+		case "int64":
+			ret += "Int64"
+		case "uint64":
+			ret += "UInt64"
+		case "float32":
+			ret += "Float32"
+		case "float64":
+			ret += "Float64"
+		case "string":
+			ret += "String"
+		case "struct":
+
+		default:
+			if fd.Kind == model.Kind_Struct {
+				ret += "Struct"
+			} else {
+				panic("unknown Type " + fd.Type)
+			}
+
+		}
+
+		if fd.Repeatd {
+			ret += "Slice"
+		}
+
+		return
+	}
+}

@@ -1,5 +1,11 @@
 package proto
 
+import (
+	"errors"
+	"fmt"
+	"io"
+)
+
 // A Buffer is a buffer manager for marshaling and unmarshaling
 // protocol buffers.  It may be reused between invocations to
 // reduce memory usage.  It is not necessary to use a Buffer;
@@ -17,47 +23,52 @@ func NewBuffer(e []byte) *Buffer {
 }
 
 // Reset resets the Buffer, ready for marshaling a new protocol buffer.
-func (p *Buffer) Reset() {
-	p.buf = p.buf[0:0] // for reading/writing
-	p.index = 0        // for reading
+func (self *Buffer) Reset() {
+	self.buf = self.buf[0:0] // for reading/writing
+	self.index = 0           // for reading
 }
 
 // SetBuf replaces the internal buffer with the slice,
 // ready for unmarshaling the contents of the slice.
-func (p *Buffer) SetBuf(s []byte) {
-	p.buf = s
-	p.index = 0
+func (self *Buffer) SetBuf(s []byte) {
+	self.buf = s
+	self.index = 0
 }
 
 // Bytes returns the contents of the Buffer.
-func (p *Buffer) Bytes() []byte { return p.buf }
+func (self *Buffer) Bytes() []byte { return self.buf }
 
-func (p *Buffer) ConsumeBytes(size int) (ret []byte) {
-	ret = p.buf[p.index : p.index+size]
+func (self *Buffer) ConsumeBytes(size int) (ret []byte) {
+	ret = self.buf[self.index : self.index+size]
 
-	p.index += size
+	self.index += size
 
 	return
+}
+
+func (self *Buffer) BytesRemains() int {
+
+	return len(self.buf) - self.index
 }
 
 // EncodeVarint writes a varint-encoded integer to the Buffer.
 // This is the format for the
 // int32, int64, uint32, uint64, bool, and enum
 // protocol buffer types.
-func (p *Buffer) EncodeVarint(x uint64) error {
+func (self *Buffer) EncodeVarint(x uint64) error {
 	for x >= 1<<7 {
-		p.buf = append(p.buf, uint8(x&0x7f|0x80))
+		self.buf = append(self.buf, uint8(x&0x7f|0x80))
 		x >>= 7
 	}
-	p.buf = append(p.buf, uint8(x))
+	self.buf = append(self.buf, uint8(x))
 	return nil
 }
 
 // EncodeFixed64 writes a 64-bit integer to the Buffer.
 // This is the format for the
 // fixed64, sfixed64, and double protocol buffer types.
-func (p *Buffer) EncodeFixed64(x uint64) error {
-	p.buf = append(p.buf,
+func (self *Buffer) EncodeFixed64(x uint64) error {
+	self.buf = append(self.buf,
 		uint8(x),
 		uint8(x>>8),
 		uint8(x>>16),
@@ -72,8 +83,8 @@ func (p *Buffer) EncodeFixed64(x uint64) error {
 // EncodeFixed32 writes a 32-bit integer to the Buffer.
 // This is the format for the
 // fixed32, sfixed32, and float protocol buffer types.
-func (p *Buffer) EncodeFixed32(x uint64) error {
-	p.buf = append(p.buf,
+func (self *Buffer) EncodeFixed32(x uint64) error {
+	self.buf = append(self.buf,
 		uint8(x),
 		uint8(x>>8),
 		uint8(x>>16),
@@ -84,53 +95,53 @@ func (p *Buffer) EncodeFixed32(x uint64) error {
 // EncodeZigzag64 writes a zigzag-encoded 64-bit integer
 // to the Buffer.
 // This is the format used for the sint64 protocol buffer type.
-func (p *Buffer) EncodeZigzag64(x uint64) error {
+func (self *Buffer) EncodeZigzag64(x uint64) error {
 	// use signed number to get arithmetic right shift.
-	return p.EncodeVarint(uint64((x << 1) ^ uint64(int64(x)>>63)))
+	return self.EncodeVarint(uint64((x << 1) ^ uint64(int64(x)>>63)))
 }
 
 // EncodeZigzag32 writes a zigzag-encoded 32-bit integer
 // to the Buffer.
 // This is the format used for the sint32 protocol buffer type.
-func (p *Buffer) EncodeZigzag32(x uint64) error {
+func (self *Buffer) EncodeZigzag32(x uint64) error {
 	// use signed number to get arithmetic right shift.
-	return p.EncodeVarint(uint64((uint32(x) << 1) ^ uint32(int32(x)>>31)))
+	return self.EncodeVarint(uint64((uint32(x) << 1) ^ uint32(int32(x)>>31)))
 }
 
 // EncodeRawBytes writes a count-delimited byte buffer to the Buffer.
 // This is the format used for the bytes protocol buffer
 // type and for embedded messages.
-func (p *Buffer) EncodeRawBytes(b []byte) error {
-	p.EncodeVarint(uint64(len(b)))
-	p.buf = append(p.buf, b...)
+func (self *Buffer) EncodeRawBytes(b []byte) error {
+	self.EncodeVarint(uint64(len(b)))
+	self.buf = append(self.buf, b...)
 	return nil
 }
 
 // EncodeStringBytes writes an encoded string to the Buffer.
 // This is the format used for the proto2 string type.
-func (p *Buffer) EncodeStringBytes(s string) error {
-	p.EncodeVarint(uint64(len(s)))
-	p.buf = append(p.buf, s...)
+func (self *Buffer) EncodeStringBytes(s string) error {
+	self.EncodeVarint(uint64(len(s)))
+	self.buf = append(self.buf, s...)
 	return nil
 }
 
 // errOverflow is returned when an integer is too large to be represented.
 var errOverflow = errors.New("proto: integer overflow")
 
-func (p *Buffer) decodeVarintSlow() (x uint64, err error) {
-	i := p.index
-	l := len(p.buf)
+func (self *Buffer) decodeVarintSlow() (x uint64, err error) {
+	i := self.index
+	l := len(self.buf)
 
 	for shift := uint(0); shift < 64; shift += 7 {
 		if i >= l {
 			err = io.ErrUnexpectedEOF
 			return
 		}
-		b := p.buf[i]
+		b := self.buf[i]
 		i++
 		x |= (uint64(b) & 0x7F) << shift
 		if b < 0x80 {
-			p.index = i
+			self.index = i
 			return
 		}
 	}
@@ -144,17 +155,17 @@ func (p *Buffer) decodeVarintSlow() (x uint64, err error) {
 // This is the format for the
 // int32, int64, uint32, uint64, bool, and enum
 // protocol buffer types.
-func (p *Buffer) DecodeVarint() (x uint64, err error) {
-	i := p.index
-	buf := p.buf
+func (self *Buffer) DecodeVarint() (x uint64, err error) {
+	i := self.index
+	buf := self.buf
 
 	if i >= len(buf) {
 		return 0, io.ErrUnexpectedEOF
 	} else if buf[i] < 0x80 {
-		p.index++
+		self.index++
 		return uint64(buf[i]), nil
 	} else if len(buf)-i < 10 {
-		return p.decodeVarintSlow()
+		return self.decodeVarintSlow()
 	}
 
 	var b uint64
@@ -236,57 +247,57 @@ func (p *Buffer) DecodeVarint() (x uint64, err error) {
 	return 0, errOverflow
 
 done:
-	p.index = i
+	self.index = i
 	return x, nil
 }
 
 // DecodeFixed64 reads a 64-bit integer from the Buffer.
 // This is the format for the
 // fixed64, sfixed64, and double protocol buffer types.
-func (p *Buffer) DecodeFixed64() (x uint64, err error) {
+func (self *Buffer) DecodeFixed64() (x uint64, err error) {
 	// x, err already 0
-	i := p.index + 8
-	if i < 0 || i > len(p.buf) {
+	i := self.index + 8
+	if i < 0 || i > len(self.buf) {
 		err = io.ErrUnexpectedEOF
 		return
 	}
-	p.index = i
+	self.index = i
 
-	x = uint64(p.buf[i-8])
-	x |= uint64(p.buf[i-7]) << 8
-	x |= uint64(p.buf[i-6]) << 16
-	x |= uint64(p.buf[i-5]) << 24
-	x |= uint64(p.buf[i-4]) << 32
-	x |= uint64(p.buf[i-3]) << 40
-	x |= uint64(p.buf[i-2]) << 48
-	x |= uint64(p.buf[i-1]) << 56
+	x = uint64(self.buf[i-8])
+	x |= uint64(self.buf[i-7]) << 8
+	x |= uint64(self.buf[i-6]) << 16
+	x |= uint64(self.buf[i-5]) << 24
+	x |= uint64(self.buf[i-4]) << 32
+	x |= uint64(self.buf[i-3]) << 40
+	x |= uint64(self.buf[i-2]) << 48
+	x |= uint64(self.buf[i-1]) << 56
 	return
 }
 
 // DecodeFixed32 reads a 32-bit integer from the Buffer.
 // This is the format for the
 // fixed32, sfixed32, and float protocol buffer types.
-func (p *Buffer) DecodeFixed32() (x uint64, err error) {
+func (self *Buffer) DecodeFixed32() (x uint64, err error) {
 	// x, err already 0
-	i := p.index + 4
-	if i < 0 || i > len(p.buf) {
+	i := self.index + 4
+	if i < 0 || i > len(self.buf) {
 		err = io.ErrUnexpectedEOF
 		return
 	}
-	p.index = i
+	self.index = i
 
-	x = uint64(p.buf[i-4])
-	x |= uint64(p.buf[i-3]) << 8
-	x |= uint64(p.buf[i-2]) << 16
-	x |= uint64(p.buf[i-1]) << 24
+	x = uint64(self.buf[i-4])
+	x |= uint64(self.buf[i-3]) << 8
+	x |= uint64(self.buf[i-2]) << 16
+	x |= uint64(self.buf[i-1]) << 24
 	return
 }
 
 // DecodeZigzag64 reads a zigzag-encoded 64-bit integer
 // from the Buffer.
 // This is the format used for the sint64 protocol buffer type.
-func (p *Buffer) DecodeZigzag64() (x uint64, err error) {
-	x, err = p.DecodeVarint()
+func (self *Buffer) DecodeZigzag64() (x uint64, err error) {
+	x, err = self.DecodeVarint()
 	if err != nil {
 		return
 	}
@@ -297,8 +308,8 @@ func (p *Buffer) DecodeZigzag64() (x uint64, err error) {
 // DecodeZigzag32 reads a zigzag-encoded 32-bit integer
 // from  the Buffer.
 // This is the format used for the sint32 protocol buffer type.
-func (p *Buffer) DecodeZigzag32() (x uint64, err error) {
-	x, err = p.DecodeVarint()
+func (self *Buffer) DecodeZigzag32() (x uint64, err error) {
+	x, err = self.DecodeVarint()
 	if err != nil {
 		return
 	}
@@ -309,8 +320,8 @@ func (p *Buffer) DecodeZigzag32() (x uint64, err error) {
 // DecodeRawBytes reads a count-delimited byte buffer from the Buffer.
 // This is the format used for the bytes protocol buffer
 // type and for embedded messages.
-func (p *Buffer) DecodeRawBytes(alloc bool) (buf []byte, err error) {
-	n, err := p.DecodeVarint()
+func (self *Buffer) DecodeRawBytes(alloc bool) (buf []byte, err error) {
+	n, err := self.DecodeVarint()
 	if err != nil {
 		return nil, err
 	}
@@ -319,28 +330,28 @@ func (p *Buffer) DecodeRawBytes(alloc bool) (buf []byte, err error) {
 	if nb < 0 {
 		return nil, fmt.Errorf("proto: bad byte length %d", nb)
 	}
-	end := p.index + nb
-	if end < p.index || end > len(p.buf) {
+	end := self.index + nb
+	if end < self.index || end > len(self.buf) {
 		return nil, io.ErrUnexpectedEOF
 	}
 
 	if !alloc {
 		// todo: check if can get more uses of alloc=false
-		buf = p.buf[p.index:end]
-		p.index += nb
+		buf = self.buf[self.index:end]
+		self.index += nb
 		return
 	}
 
 	buf = make([]byte, nb)
-	copy(buf, p.buf[p.index:])
-	p.index += nb
+	copy(buf, self.buf[self.index:])
+	self.index += nb
 	return
 }
 
 // DecodeStringBytes reads an encoded string from the Buffer.
 // This is the format used for the proto2 string type.
-func (p *Buffer) DecodeStringBytes() (s string, err error) {
-	buf, err := p.DecodeRawBytes(false)
+func (self *Buffer) DecodeStringBytes() (s string, err error) {
+	buf, err := self.DecodeRawBytes(false)
 	if err != nil {
 		return
 	}

@@ -80,13 +80,13 @@ func SizeFloat64(fieldIndex uint64, value float64) int {
 
 func SizeString(fieldIndex uint64, value string) int {
 
-	l := len(value)
+	size := len(value)
 
-	if l == 0 {
+	if size == 0 {
 		return 0
 	}
 
-	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(l)) + l
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(size)) + size
 }
 
 func SizeStruct(fieldIndex uint64, msg Struct) int {
@@ -98,11 +98,11 @@ func SizeStruct(fieldIndex uint64, msg Struct) int {
 		return 0
 	}
 
-	l := msg.Size()
+	size := msg.Size()
 
-	if l == 0 {
+	if size == 0 {
 		return 0
 	}
 
-	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(l)) + l
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(size)) + size
 }
