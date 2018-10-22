@@ -13,21 +13,26 @@ var (
 )
 
 type MyTypeMini struct {
+	Str  string
 	Bool bool
 }
 
-func (self *MyTypeMini) String() string { return fmt.Sprintf("%+v", *self) }
+func (self *MyTypeMini) String() string { return proto.CompactTextString(self) }
 
 func (self *MyTypeMini) Size() (ret int) {
 
-	ret += proto.SizeBool(0, self.Bool)
+	ret += proto.SizeString(0, self.Str)
+
+	ret += proto.SizeBool(1, self.Bool)
 
 	return
 }
 
 func (self *MyTypeMini) Marshal(buffer *proto.Buffer) error {
 
-	proto.MarshalBool(buffer, 0, self.Bool)
+	proto.MarshalString(buffer, 0, self.Str)
+
+	proto.MarshalBool(buffer, 1, self.Bool)
 
 	return nil
 }
@@ -35,6 +40,8 @@ func (self *MyTypeMini) Marshal(buffer *proto.Buffer) error {
 func (self *MyTypeMini) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
 	switch fieldIndex {
 	case 0:
+		return proto.UnmarshalString(buffer, wt, &self.Str)
+	case 1:
 		return proto.UnmarshalBool(buffer, wt, &self.Bool)
 
 	}
@@ -64,7 +71,7 @@ type MyType struct {
 	StructSlice  []*MyType
 }
 
-func (self *MyType) String() string { return fmt.Sprintf("%+v", *self) }
+func (self *MyType) String() string { return proto.CompactTextString(self) }
 
 func (self *MyType) Size() (ret int) {
 

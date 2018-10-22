@@ -12,7 +12,7 @@ func GenGo(ctx *gen.Context) error {
 	gen := codegen.NewCodeGen("go").
 		RegisterTemplateFunc(codegen.UsefulFunc).
 		RegisterTemplateFunc(UsefulFunc).
-		ParseTemplate(goCodeTemplate, ctx).
+		ParseTemplate(TemplateText, ctx).
 		FormatGoCode()
 
 	if gen.Error() != nil {

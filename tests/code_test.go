@@ -82,5 +82,5 @@ func TestFull(t *testing.T) {
 		t.FailNow()
 	}
 
-	t.Logf("%+v", output)
+	t.Logf("%v", output.String())
 }
