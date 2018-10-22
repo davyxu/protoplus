@@ -25,30 +25,6 @@ func UnmarshalBool(b *Buffer, wt WireType, ret *bool) error {
 	return nil
 }
 
-func UnmarshalInt64(b *Buffer, wt WireType, ret *int64) error {
-
-	switch wt {
-	case WireVarint:
-		v, err := b.DecodeVarint()
-		if err != nil {
-			return err
-		}
-		*ret = int64(v)
-
-	case WireZigzag64:
-		v, err := b.DecodeZigzag64()
-		if err != nil {
-			break
-		}
-
-		*ret = int64(v)
-	default:
-		return ErrBadWireType
-	}
-
-	return nil
-}
-
 func UnmarshalInt32(b *Buffer, wt WireType, ret *int32) error {
 
 	switch wt {
@@ -90,6 +66,30 @@ func UnmarshalUInt32(b *Buffer, wt WireType, ret *uint32) error {
 		}
 
 		*ret = uint32(v)
+	default:
+		return ErrBadWireType
+	}
+
+	return nil
+}
+
+func UnmarshalInt64(b *Buffer, wt WireType, ret *int64) error {
+
+	switch wt {
+	case WireVarint:
+		v, err := b.DecodeVarint()
+		if err != nil {
+			return err
+		}
+		*ret = int64(v)
+
+	case WireZigzag64:
+		v, err := b.DecodeZigzag64()
+		if err != nil {
+			break
+		}
+
+		*ret = int64(v)
 	default:
 		return ErrBadWireType
 	}

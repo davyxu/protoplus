@@ -19,4 +19,12 @@ struct MyType
 	Struct  MyType
 
 	BoolSlice []bool
+
+	Int32Slice []int32
+
+	StrSlice []string
+
+	Float32Slice []float32
+
+	StructSlice []MyType
 }

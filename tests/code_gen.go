@@ -45,16 +45,20 @@ func (self *MyTypeMini) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt pr
 }
 
 type MyType struct {
-	Bool      bool
-	Int32     int32
-	UInt32    uint32
-	Int64     int64
-	UInt64    uint64
-	Float32   float32
-	Float64   float64
-	Str       string
-	Struct    *MyType
-	BoolSlice []bool
+	Bool         bool
+	Int32        int32
+	UInt32       uint32
+	Int64        int64
+	UInt64       uint64
+	Float32      float32
+	Float64      float64
+	Str          string
+	Struct       *MyType
+	BoolSlice    []bool
+	Int32Slice   []int32
+	StrSlice     []string
+	Float32Slice []float32
+	StructSlice  []*MyType
 }
 
 func (self *MyType) String() string { return fmt.Sprintf("%+v", *self) }
@@ -80,6 +84,14 @@ func (self *MyType) Size() (ret int) {
 	ret += proto.SizeStruct(8, self.Struct)
 
 	ret += proto.SizeBoolSlice(9, self.BoolSlice)
+
+	ret += proto.SizeInt32Slice(10, self.Int32Slice)
+
+	ret += proto.SizeStringSlice(11, self.StrSlice)
+
+	ret += proto.SizeFloat32Slice(12, self.Float32Slice)
+
+	ret += proto.SizeStructSlice(13, self.StructSlice)
 
 	return
 }
@@ -126,6 +138,22 @@ func (self *MyType) Marshal(buffer *proto.Buffer) error {
 		return err
 	}
 
+	if err := proto.MarshalInt32Slice(buffer, 10, self.Int32Slice); err != nil {
+		return err
+	}
+
+	if err := proto.MarshalStringSlice(buffer, 11, self.StrSlice); err != nil {
+		return err
+	}
+
+	if err := proto.MarshalFloat32Slice(buffer, 12, self.Float32Slice); err != nil {
+		return err
+	}
+
+	if err := proto.MarshalStructSlice(buffer, 13, self.StructSlice); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -151,6 +179,14 @@ func (self *MyType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.
 		return proto.UnmarshalStruct(buffer, wt, &self.Struct)
 	case 9:
 		return proto.UnmarshalBoolSlice(buffer, wt, &self.BoolSlice)
+	case 10:
+		return proto.UnmarshalInt32Slice(buffer, wt, &self.Int32Slice)
+	case 11:
+		return proto.UnmarshalStringSlice(buffer, wt, &self.StrSlice)
+	case 12:
+		return proto.UnmarshalFloat32Slice(buffer, wt, &self.Float32Slice)
+	case 13:
+		return proto.UnmarshalStructSlice(buffer, wt, &self.StructSlice)
 
 	}
 
