@@ -2,7 +2,6 @@ package proto
 
 import (
 	"math"
-	"reflect"
 )
 
 func UnmarshalBool(b *Buffer, wt WireType, ret *bool) error {
@@ -58,14 +57,6 @@ func UnmarshalUInt32(b *Buffer, wt WireType, ret *uint32) error {
 			return err
 		}
 		*ret = uint32(v)
-
-	case WireZigzag32:
-		v, err := b.DecodeZigzag32()
-		if err != nil {
-			break
-		}
-
-		*ret = uint32(v)
 	default:
 		return ErrBadWireType
 	}
@@ -105,14 +96,6 @@ func UnmarshalUInt64(b *Buffer, wt WireType, ret *uint64) error {
 		if err != nil {
 			return err
 		}
-		*ret = v
-
-	case WireZigzag64:
-		v, err := b.DecodeZigzag64()
-		if err != nil {
-			break
-		}
-
 		*ret = v
 	default:
 		return ErrBadWireType
@@ -225,8 +208,36 @@ func rawUnmarshalStruct(b *Buffer, msg Struct) error {
 	return nil
 }
 
-func UnmarshalStruct(b *Buffer, wt WireType, msgPtr interface{}) error {
+//func UnmarshalStruct(b *Buffer, wt WireType, msgPtr interface{}) error {
+//
+//	switch wt {
+//	case WireBytes:
+//		size, err := b.DecodeVarint()
+//		if err != nil {
+//			return err
+//		}
+//
+//		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
+//
+//		// MyType
+//		msgType := reflect.TypeOf(msgPtr).Elem().Elem()
+//
+//		// msgIns:  *MyType
+//		msgIns := reflect.New(msgType)
+//
+//		// *MyType
+//		msgValuePtr := reflect.ValueOf(msgPtr).Elem()
+//
+//		msgValuePtr.Set(msgIns)
+//
+//		return rawUnmarshalStruct(limitBuffer, msgIns.Interface().(Struct))
+//
+//	default:
+//		return ErrBadWireType
+//	}
+//}
 
+func UnmarshalStruct(b *Buffer, wt WireType, msgPtr Struct) error {
 	switch wt {
 	case WireBytes:
 		size, err := b.DecodeVarint()
@@ -236,18 +247,7 @@ func UnmarshalStruct(b *Buffer, wt WireType, msgPtr interface{}) error {
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
-		// MyType
-		msgType := reflect.TypeOf(msgPtr).Elem().Elem()
-
-		// msgIns:  *MyType
-		msgIns := reflect.New(msgType)
-
-		// *MyType
-		msgValuePtr := reflect.ValueOf(msgPtr).Elem()
-
-		msgValuePtr.Set(msgIns)
-
-		return rawUnmarshalStruct(limitBuffer, msgIns.Interface().(Struct))
+		return rawUnmarshalStruct(limitBuffer, msgPtr)
 
 	default:
 		return ErrBadWireType

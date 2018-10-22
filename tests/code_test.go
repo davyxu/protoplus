@@ -35,10 +35,16 @@ func makeMyType() (input MyType) {
 	input.Str = "hello"
 	input.Float32 = 3.14
 	input.Float64 = math.MaxFloat64
+
 	input.BoolSlice = []bool{true, false, true}
 	input.Int32Slice = []int32{1, 2, 3, 4}
+	input.UInt32Slice = []uint32{100, 200, 300, 400}
+	input.Int64Slice = []int64{1, 2, 3, 4}
+	input.UInt64Slice = []uint64{100, 200, 300, 400}
 	input.StrSlice = []string{"genji", "dva", "bastion"}
 	input.Float32Slice = []float32{1.1, 2.1, 3.2, 4.5}
+	input.Float64Slice = []float64{1.1, 2.1, 3.2, 4.5}
+	input.BytesSlice = []byte("bytes")
 
 	input.Struct = &MyType{
 		Str: "world",

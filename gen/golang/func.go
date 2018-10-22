@@ -26,6 +26,20 @@ func init() {
 		return
 	}
 
+	UsefulFunc["IsStructSlice"] = func(raw interface{}) bool {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		return fd.Repeatd && fd.Kind == model.Kind_Struct
+	}
+
+	UsefulFunc["IsStruct"] = func(raw interface{}) bool {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		return !fd.Repeatd && fd.Kind == model.Kind_Struct
+	}
+
 	UsefulFunc["CodecName"] = func(raw interface{}) (ret string) {
 
 		fd := raw.(*model.FieldDescriptor)
@@ -48,6 +62,8 @@ func init() {
 		case "string":
 			ret += "String"
 		case "struct":
+		case "bytes":
+			ret += "Bytes"
 
 		default:
 			if fd.Kind == model.Kind_Struct {

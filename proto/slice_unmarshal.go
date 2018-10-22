@@ -1,6 +1,22 @@
 package proto
 
-import "reflect"
+func UnmarshalBytes(b *Buffer, wt WireType, ret *[]byte) error {
+
+	switch wt {
+	case WireBytes:
+		size, err := b.DecodeVarint()
+		if err != nil {
+			return err
+		}
+
+		*ret = append(*ret, b.ConsumeBytes(int(size))...)
+
+	default:
+		return ErrBadWireType
+	}
+
+	return nil
+}
 
 func UnmarshalBoolSlice(b *Buffer, wt WireType, ret *[]bool) error {
 	switch wt {
@@ -44,6 +60,90 @@ func UnmarshalInt32Slice(b *Buffer, wt WireType, ret *[]int32) error {
 		for limitBuffer.BytesRemains() > 0 {
 			var element int32
 			err = UnmarshalInt32(limitBuffer, WireVarint, &element)
+			if err != nil {
+				return err
+			}
+
+			*ret = append(*ret, element)
+		}
+
+	default:
+		return ErrBadWireType
+	}
+
+	return nil
+}
+
+func UnmarshalUInt32Slice(b *Buffer, wt WireType, ret *[]uint32) error {
+
+	switch wt {
+	case WireBytes:
+		size, err := b.DecodeVarint()
+		if err != nil {
+			return err
+		}
+
+		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
+
+		for limitBuffer.BytesRemains() > 0 {
+			var element uint32
+			err = UnmarshalUInt32(limitBuffer, WireVarint, &element)
+			if err != nil {
+				return err
+			}
+
+			*ret = append(*ret, element)
+		}
+
+	default:
+		return ErrBadWireType
+	}
+
+	return nil
+}
+
+func UnmarshalInt64Slice(b *Buffer, wt WireType, ret *[]int64) error {
+
+	switch wt {
+	case WireBytes:
+		size, err := b.DecodeVarint()
+		if err != nil {
+			return err
+		}
+
+		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
+
+		for limitBuffer.BytesRemains() > 0 {
+			var element int64
+			err = UnmarshalInt64(limitBuffer, WireVarint, &element)
+			if err != nil {
+				return err
+			}
+
+			*ret = append(*ret, element)
+		}
+
+	default:
+		return ErrBadWireType
+	}
+
+	return nil
+}
+
+func UnmarshalUInt64Slice(b *Buffer, wt WireType, ret *[]uint64) error {
+
+	switch wt {
+	case WireBytes:
+		size, err := b.DecodeVarint()
+		if err != nil {
+			return err
+		}
+
+		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
+
+		for limitBuffer.BytesRemains() > 0 {
+			var element uint64
+			err = UnmarshalUInt64(limitBuffer, WireVarint, &element)
 			if err != nil {
 				return err
 			}
@@ -102,7 +202,7 @@ func UnmarshalFloat32Slice(b *Buffer, wt WireType, ret *[]float32) error {
 	return nil
 }
 
-func UnmarshalStructSlice(b *Buffer, wt WireType, ret interface{}) error {
+func UnmarshalFloat64Slice(b *Buffer, wt WireType, ret *[]float64) error {
 
 	switch wt {
 	case WireBytes:
@@ -113,21 +213,15 @@ func UnmarshalStructSlice(b *Buffer, wt WireType, ret interface{}) error {
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
-		sliceType := reflect.TypeOf(ret).Elem()
+		for limitBuffer.BytesRemains() > 0 {
+			var element float64
+			err = UnmarshalFloat64(limitBuffer, WireFixed64, &element)
+			if err != nil {
+				return err
+			}
 
-		elementType := sliceType.Elem().Elem()
-
-		sliceValue := reflect.ValueOf(ret).Elem()
-
-		// msgIns:  *MyType
-		msgIns := reflect.New(elementType)
-
-		err = rawUnmarshalStruct(limitBuffer, msgIns.Interface().(Struct))
-		if err != nil {
-			return err
+			*ret = append(*ret, element)
 		}
-
-		sliceValue.Set(reflect.Append(sliceValue, msgIns))
 
 	default:
 		return ErrBadWireType

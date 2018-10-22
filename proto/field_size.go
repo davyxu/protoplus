@@ -1,165 +1,79 @@
 package proto
 
 import (
-	"math"
 	"reflect"
 )
 
-func SizeBool(fieldIndex uint64, value bool) (ret int) {
+func SizeBool(fieldIndex uint64, value bool) int {
 
 	if value == false {
 		return 0
 	}
 
-	if fieldIndex != math.MaxUint64 {
-		ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-	}
-
-	ret += 1
-
-	return
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + 1
 }
 
-func SizeInt32(fieldIndex uint64, value int32) (ret int) {
+func SizeInt32(fieldIndex uint64, value int32) int {
 
 	switch {
 	case value > 0:
-
-		if fieldIndex != math.MaxUint64 {
-			ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-		}
-
-		ret += SizeVarint(uint64(value))
-
+		return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(value))
 	case value < 0:
-
-		if fieldIndex != math.MaxUint64 {
-			ret = SizeVarint(makeWireTag(fieldIndex, WireZigzag32))
-		}
-
-		ret += SizeVarint(Zigzag32(uint64(value)))
+		return SizeVarint(makeWireTag(fieldIndex, WireZigzag32)) + SizeVarint(Zigzag32(uint64(value)))
 	default:
-		if fieldIndex == math.MaxUint64 {
-			ret += 1
-		}
+		return 0
 	}
-
-	return
 }
 
-func SizeUInt32(fieldIndex uint64, value uint32) (ret int) {
-
-	switch {
-	case value > 0:
-
-		if fieldIndex != math.MaxUint64 {
-			ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-		}
-
-		ret += SizeVarint(uint64(value))
-
-	case value < 0:
-
-		if fieldIndex != math.MaxUint64 {
-			ret = SizeVarint(makeWireTag(fieldIndex, WireZigzag32))
-		}
-
-		ret += SizeVarint(Zigzag32(uint64(value)))
-	default:
-		if fieldIndex == math.MaxUint64 {
-			ret += 1
-		}
-	}
-
-	return
-}
-
-func SizeInt64(fieldIndex uint64, value int64) (ret int) {
-
-	switch {
-	case value > 0:
-
-		if fieldIndex != math.MaxUint64 {
-			ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-		}
-
-		ret += SizeVarint(uint64(value))
-
-	case value < 0:
-
-		if fieldIndex != math.MaxUint64 {
-			ret = SizeVarint(makeWireTag(fieldIndex, WireZigzag64))
-		}
-
-		ret += SizeVarint(Zigzag64(uint64(value)))
-	default:
-		if fieldIndex == math.MaxUint64 {
-			ret += 1
-		}
-	}
-
-	return
-}
-
-func SizeUInt64(fieldIndex uint64, value uint64) (ret int) {
-
-	switch {
-	case value > 0:
-
-		if fieldIndex != math.MaxUint64 {
-			ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-		}
-
-		ret += SizeVarint(uint64(value))
-
-	case value < 0:
-
-		if fieldIndex != math.MaxUint64 {
-			ret = SizeVarint(makeWireTag(fieldIndex, WireZigzag64))
-		}
-
-		ret += SizeVarint(Zigzag64(uint64(value)))
-	default:
-		if fieldIndex == math.MaxUint64 {
-			ret += 1
-		}
-	}
-
-	return
-
-}
-
-func SizeFloat32(fieldIndex uint64, value float32) (ret int) {
+func SizeUInt32(fieldIndex uint64, value uint32) int {
 
 	if value == 0 {
 		return 0
 	}
 
-	if fieldIndex != math.MaxUint64 {
-		ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-	}
-
-	ret += 4
-
-	return
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(value))
 }
 
-func SizeFloat64(fieldIndex uint64, value float64) (ret int) {
+func SizeInt64(fieldIndex uint64, value int64) int {
+
+	switch {
+	case value > 0:
+		return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(value))
+	case value < 0:
+		return SizeVarint(makeWireTag(fieldIndex, WireZigzag64)) + SizeVarint(Zigzag32(uint64(value)))
+	default:
+		return 0
+	}
+}
+
+func SizeUInt64(fieldIndex uint64, value uint64) int {
 
 	if value == 0 {
 		return 0
 	}
 
-	if fieldIndex != math.MaxUint64 {
-		ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-	}
-
-	ret += 8
-
-	return
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(value))
 }
 
-func SizeString(fieldIndex uint64, value string) (ret int) {
+func SizeFloat32(fieldIndex uint64, value float32) int {
+
+	if value == 0 {
+		return 0
+	}
+
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + 4
+}
+
+func SizeFloat64(fieldIndex uint64, value float64) int {
+
+	if value == 0 {
+		return 0
+	}
+
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + 8
+}
+
+func SizeString(fieldIndex uint64, value string) int {
 
 	size := len(value)
 
@@ -167,16 +81,10 @@ func SizeString(fieldIndex uint64, value string) (ret int) {
 		return 0
 	}
 
-	if fieldIndex != math.MaxUint64 {
-		ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-	}
-
-	ret += SizeVarint(uint64(size)) + size
-
-	return
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(size)) + size
 }
 
-func SizeStruct(fieldIndex uint64, msg Struct) (ret int) {
+func SizeStruct(fieldIndex uint64, msg Struct) int {
 
 	structValue := reflect.ValueOf(msg)
 
@@ -191,11 +99,5 @@ func SizeStruct(fieldIndex uint64, msg Struct) (ret int) {
 		return 0
 	}
 
-	if fieldIndex != math.MaxUint64 {
-		ret = SizeVarint(makeWireTag(fieldIndex, WireVarint))
-	}
-
-	ret += SizeVarint(uint64(size)) + size
-
-	return
+	return SizeVarint(makeWireTag(fieldIndex, WireVarint)) + SizeVarint(uint64(size)) + size
 }

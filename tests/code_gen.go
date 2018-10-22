@@ -27,9 +27,7 @@ func (self *MyTypeMini) Size() (ret int) {
 
 func (self *MyTypeMini) Marshal(buffer *proto.Buffer) error {
 
-	if err := proto.MarshalBool(buffer, 0, self.Bool); err != nil {
-		return err
-	}
+	proto.MarshalBool(buffer, 0, self.Bool)
 
 	return nil
 }
@@ -54,10 +52,15 @@ type MyType struct {
 	Float64      float64
 	Str          string
 	Struct       *MyType
+	BytesSlice   []byte
 	BoolSlice    []bool
 	Int32Slice   []int32
-	StrSlice     []string
+	UInt32Slice  []uint32
+	Int64Slice   []int64
+	UInt64Slice  []uint64
 	Float32Slice []float32
+	Float64Slice []float64
+	StrSlice     []string
 	StructSlice  []*MyType
 }
 
@@ -83,75 +86,73 @@ func (self *MyType) Size() (ret int) {
 
 	ret += proto.SizeStruct(8, self.Struct)
 
-	ret += proto.SizeBoolSlice(9, self.BoolSlice)
+	ret += proto.SizeBytes(9, self.BytesSlice)
 
-	ret += proto.SizeInt32Slice(10, self.Int32Slice)
+	ret += proto.SizeBoolSlice(10, self.BoolSlice)
 
-	ret += proto.SizeStringSlice(11, self.StrSlice)
+	ret += proto.SizeInt32Slice(11, self.Int32Slice)
 
-	ret += proto.SizeFloat32Slice(12, self.Float32Slice)
+	ret += proto.SizeUInt32Slice(12, self.UInt32Slice)
 
-	ret += proto.SizeStructSlice(13, self.StructSlice)
+	ret += proto.SizeInt64Slice(13, self.Int64Slice)
+
+	ret += proto.SizeUInt64Slice(14, self.UInt64Slice)
+
+	ret += proto.SizeFloat32Slice(15, self.Float32Slice)
+
+	ret += proto.SizeFloat64Slice(16, self.Float64Slice)
+
+	ret += proto.SizeStringSlice(17, self.StrSlice)
+
+	if len(self.StructSlice) > 0 {
+		for _, elm := range self.StructSlice {
+			ret += proto.SizeStruct(18, elm)
+		}
+	}
 
 	return
 }
 
 func (self *MyType) Marshal(buffer *proto.Buffer) error {
 
-	if err := proto.MarshalBool(buffer, 0, self.Bool); err != nil {
-		return err
-	}
+	proto.MarshalBool(buffer, 0, self.Bool)
 
-	if err := proto.MarshalInt32(buffer, 1, self.Int32); err != nil {
-		return err
-	}
+	proto.MarshalInt32(buffer, 1, self.Int32)
 
-	if err := proto.MarshalUInt32(buffer, 2, self.UInt32); err != nil {
-		return err
-	}
+	proto.MarshalUInt32(buffer, 2, self.UInt32)
 
-	if err := proto.MarshalInt64(buffer, 3, self.Int64); err != nil {
-		return err
-	}
+	proto.MarshalInt64(buffer, 3, self.Int64)
 
-	if err := proto.MarshalUInt64(buffer, 4, self.UInt64); err != nil {
-		return err
-	}
+	proto.MarshalUInt64(buffer, 4, self.UInt64)
 
-	if err := proto.MarshalFloat32(buffer, 5, self.Float32); err != nil {
-		return err
-	}
+	proto.MarshalFloat32(buffer, 5, self.Float32)
 
-	if err := proto.MarshalFloat64(buffer, 6, self.Float64); err != nil {
-		return err
-	}
+	proto.MarshalFloat64(buffer, 6, self.Float64)
 
-	if err := proto.MarshalString(buffer, 7, self.Str); err != nil {
-		return err
-	}
+	proto.MarshalString(buffer, 7, self.Str)
 
-	if err := proto.MarshalStruct(buffer, 8, self.Struct); err != nil {
-		return err
-	}
+	proto.MarshalStruct(buffer, 8, self.Struct)
 
-	if err := proto.MarshalBoolSlice(buffer, 9, self.BoolSlice); err != nil {
-		return err
-	}
+	proto.MarshalBytes(buffer, 9, self.BytesSlice)
 
-	if err := proto.MarshalInt32Slice(buffer, 10, self.Int32Slice); err != nil {
-		return err
-	}
+	proto.MarshalBoolSlice(buffer, 10, self.BoolSlice)
 
-	if err := proto.MarshalStringSlice(buffer, 11, self.StrSlice); err != nil {
-		return err
-	}
+	proto.MarshalInt32Slice(buffer, 11, self.Int32Slice)
 
-	if err := proto.MarshalFloat32Slice(buffer, 12, self.Float32Slice); err != nil {
-		return err
-	}
+	proto.MarshalUInt32Slice(buffer, 12, self.UInt32Slice)
 
-	if err := proto.MarshalStructSlice(buffer, 13, self.StructSlice); err != nil {
-		return err
+	proto.MarshalInt64Slice(buffer, 13, self.Int64Slice)
+
+	proto.MarshalUInt64Slice(buffer, 14, self.UInt64Slice)
+
+	proto.MarshalFloat32Slice(buffer, 15, self.Float32Slice)
+
+	proto.MarshalFloat64Slice(buffer, 16, self.Float64Slice)
+
+	proto.MarshalStringSlice(buffer, 17, self.StrSlice)
+
+	for _, elm := range self.StructSlice {
+		proto.MarshalStruct(buffer, 18, elm)
 	}
 
 	return nil
@@ -176,17 +177,34 @@ func (self *MyType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.
 	case 7:
 		return proto.UnmarshalString(buffer, wt, &self.Str)
 	case 8:
-		return proto.UnmarshalStruct(buffer, wt, &self.Struct)
+		self.Struct = new(MyType)
+		return proto.UnmarshalStruct(buffer, wt, self.Struct)
 	case 9:
-		return proto.UnmarshalBoolSlice(buffer, wt, &self.BoolSlice)
+		return proto.UnmarshalBytes(buffer, wt, &self.BytesSlice)
 	case 10:
-		return proto.UnmarshalInt32Slice(buffer, wt, &self.Int32Slice)
+		return proto.UnmarshalBoolSlice(buffer, wt, &self.BoolSlice)
 	case 11:
-		return proto.UnmarshalStringSlice(buffer, wt, &self.StrSlice)
+		return proto.UnmarshalInt32Slice(buffer, wt, &self.Int32Slice)
 	case 12:
-		return proto.UnmarshalFloat32Slice(buffer, wt, &self.Float32Slice)
+		return proto.UnmarshalUInt32Slice(buffer, wt, &self.UInt32Slice)
 	case 13:
-		return proto.UnmarshalStructSlice(buffer, wt, &self.StructSlice)
+		return proto.UnmarshalInt64Slice(buffer, wt, &self.Int64Slice)
+	case 14:
+		return proto.UnmarshalUInt64Slice(buffer, wt, &self.UInt64Slice)
+	case 15:
+		return proto.UnmarshalFloat32Slice(buffer, wt, &self.Float32Slice)
+	case 16:
+		return proto.UnmarshalFloat64Slice(buffer, wt, &self.Float64Slice)
+	case 17:
+		return proto.UnmarshalStringSlice(buffer, wt, &self.StrSlice)
+	case 18:
+		elm := new(MyType)
+		if err := proto.UnmarshalStruct(buffer, wt, elm); err != nil {
+			return err
+		} else {
+			self.StructSlice = append(self.StructSlice, elm)
+			return nil
+		}
 
 	}
 

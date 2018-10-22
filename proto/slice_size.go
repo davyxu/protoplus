@@ -1,8 +1,30 @@
 package proto
 
-import "reflect"
+func SizeBytes(fieldIndex uint64, value []byte) int {
 
-func SizeBoolSlice(fieldIndex uint64, value []bool) (ret int) {
+	count := len(value)
+	if count == 0 {
+		return 0
+	}
+
+	size := count * 1
+
+	return SizeVarint(makeWireTag(fieldIndex, WireBytes)) + SizeVarint(uint64(size)) + size
+}
+
+func SizeBoolSlice(fieldIndex uint64, value []bool) int {
+
+	count := len(value)
+	if count == 0 {
+		return 0
+	}
+
+	size := count * 1
+
+	return SizeVarint(makeWireTag(fieldIndex, WireBytes)) + SizeVarint(uint64(size)) + size
+}
+
+func SizeInt32Slice(fieldIndex uint64, value []int32) (ret int) {
 
 	count := len(value)
 	if count == 0 {
@@ -11,7 +33,11 @@ func SizeBoolSlice(fieldIndex uint64, value []bool) (ret int) {
 
 	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
 
-	size := count * 1
+	// 后部分的长度
+	size := 0
+	for _, v := range value {
+		size += SizeVarint(uint64(v))
+	}
 
 	ret += SizeVarint(uint64(size))
 
@@ -20,7 +46,51 @@ func SizeBoolSlice(fieldIndex uint64, value []bool) (ret int) {
 	return
 }
 
-func SizeInt32Slice(fieldIndex uint64, value []int32) (ret int) {
+func SizeUInt32Slice(fieldIndex uint64, value []uint32) (ret int) {
+
+	count := len(value)
+	if count == 0 {
+		return 0
+	}
+
+	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+
+	// 后部分的长度
+	size := 0
+	for _, v := range value {
+		size += SizeVarint(uint64(v))
+	}
+
+	ret += SizeVarint(uint64(size))
+
+	ret += size
+
+	return
+}
+
+func SizeInt64Slice(fieldIndex uint64, value []int64) (ret int) {
+
+	count := len(value)
+	if count == 0 {
+		return 0
+	}
+
+	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+
+	// 后部分的长度
+	size := 0
+	for _, v := range value {
+		size += SizeVarint(uint64(v))
+	}
+
+	ret += SizeVarint(uint64(size))
+
+	ret += size
+
+	return
+}
+
+func SizeUInt64Slice(fieldIndex uint64, value []uint64) (ret int) {
 
 	count := len(value)
 	if count == 0 {
@@ -73,19 +143,20 @@ func SizeFloat32Slice(fieldIndex uint64, value []float32) (ret int) {
 	return
 }
 
-func SizeStructSlice(fieldIndex uint64, value interface{}) (ret int) {
+func SizeFloat64Slice(fieldIndex uint64, value []float64) (ret int) {
 
-	slice := reflect.ValueOf(value)
-	count := slice.Len()
-
+	count := len(value)
 	if count == 0 {
 		return 0
 	}
 
-	for i := 0; i < count; i++ {
-		v := slice.Index(i)
-		ret += SizeStruct(fieldIndex, v.Interface().(Struct))
-	}
+	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+
+	size := count * 8
+
+	ret += SizeVarint(uint64(size))
+
+	ret += size
 
 	return
 }

@@ -18,13 +18,23 @@ struct MyType
 	Str  string
 	Struct  MyType
 
+	BytesSlice bytes
+
 	BoolSlice []bool
 
 	Int32Slice []int32
 
+	UInt32Slice []uint32
+
+	Int64Slice []int64
+
+	UInt64Slice []uint64
+
+    Float32Slice []float32
+
+    Float64Slice []float64
+
 	StrSlice []string
 
-	Float32Slice []float32
-
-	StructSlice []MyType
+    StructSlice []MyType
 }
