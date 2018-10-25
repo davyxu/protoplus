@@ -18,9 +18,9 @@ func init() {
 		}
 
 		// 默认指针
-		if fd.Kind == model.Kind_Struct {
-			ret += "*"
-		}
+		//if fd.Kind == model.Kind_Struct {
+		//	ret += "*"
+		//}
 
 		ret += codegen.GoTypeName(fd)
 		return

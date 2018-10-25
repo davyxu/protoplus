@@ -48,11 +48,11 @@ func makeMyType() (input MyType) {
 	input.Enum = MyEnum_Two
 	input.EnumSlice = []MyEnum{MyEnum_Two, MyEnum_One, MyEnum_Zero}
 
-	input.Struct = &MyType{
+	input.Struct = MySubType{
 		Str: "world",
 	}
 
-	input.StructSlice = []*MyType{
+	input.StructSlice = []MySubType{
 		{Int32: 100},
 		{Str: "200"},
 	}

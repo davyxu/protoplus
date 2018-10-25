@@ -55,9 +55,11 @@ func (self *{{.Name}}) Size() (ret int) {
 	{{if IsStructSlice .}}
 	if len(self.{{GoFieldName .}}) > 0 {
 		for _, elm := range self.{{GoFieldName .}} {
-			ret += proto.SizeStruct({{TagNumber $obj .}}, elm)
+			ret += proto.SizeStruct({{TagNumber $obj .}}, &elm)
 		}
 	}
+	{{else if IsStruct .}}
+	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, &self.{{GoFieldName .}})
 	{{else if IsEnum .}}
 	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, int32(self.{{GoFieldName .}}))
 	{{else if IsEnumSlice .}}
@@ -73,8 +75,10 @@ func (self *{{.Name}}) Marshal(buffer *proto.Buffer) error {
 {{range .Fields}}
 	{{if IsStructSlice .}}
 		for _, elm := range self.{{GoFieldName .}} {
-			proto.MarshalStruct(buffer, {{TagNumber $obj .}}, elm)
+			proto.MarshalStruct(buffer, {{TagNumber $obj .}}, &elm)
 		}
+	{{else if IsStruct .}}
+		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, &self.{{GoFieldName .}})
 	{{else if IsEnum .}}
 		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, int32(self.{{GoFieldName .}}))
 	{{else if IsEnumSlice .}}
@@ -88,11 +92,9 @@ func (self *{{.Name}}) Marshal(buffer *proto.Buffer) error {
 
 func (self *{{.Name}}) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
 	switch fieldIndex {
-	{{range .Fields}} case {{TagNumber $obj .}}: {{if IsStruct .}}
-		self.{{GoFieldName .}} = new({{.Type}})
-		return proto.UnmarshalStruct(buffer, wt, self.{{GoFieldName .}}) {{else if IsStructSlice .}}
-		elm := new({{.Type}})
-		if err := proto.UnmarshalStruct(buffer, wt, elm); err != nil {
+	{{range .Fields}} case {{TagNumber $obj .}}: {{if IsStructSlice .}}
+		var elm {{.Type}}
+		if err := proto.UnmarshalStruct(buffer, wt, &elm); err != nil {
 			return err
 		} else {
 			self.{{GoFieldName .}} = append(self.{{GoFieldName .}}, elm)

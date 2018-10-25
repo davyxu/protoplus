@@ -12,7 +12,7 @@ enum MyEnum
 }
 
 [AutoMsgID]
-struct MyType
+struct MySubType
 {
 	Bool   bool
 	Int32  int32
@@ -24,7 +24,6 @@ struct MyType
 	Float32 float32
 	Float64 float64
 	Str  string
-	Struct  MyType
 
 	BytesSlice bytes
 
@@ -44,7 +43,44 @@ struct MyType
 
 	StrSlice []string
 
-    StructSlice []MyType
+    Enum MyEnum
+    EnumSlice []MyEnum
+}
+
+[AutoMsgID]
+struct MyType
+{
+	Bool   bool
+	Int32  int32
+	UInt32 uint32
+
+	Int64  int64
+	UInt64 uint64
+
+	Float32 float32
+	Float64 float64
+	Str  string
+	Struct  MySubType
+
+	BytesSlice bytes
+
+	BoolSlice []bool
+
+	Int32Slice []int32
+
+	UInt32Slice []uint32
+
+	Int64Slice []int64
+
+	UInt64Slice []uint64
+
+    Float32Slice []float32
+
+    Float64Slice []float64
+
+	StrSlice []string
+
+    StructSlice []MySubType
     Enum MyEnum
     EnumSlice []MyEnum
 }
