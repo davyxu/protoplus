@@ -7,17 +7,24 @@ package {{.PackageName}}
 
 import (
 	"github.com/davyxu/protoplus/proto"
-	"fmt"
+	"github.com/davyxu/cellnet"
+	"github.com/davyxu/cellnet/codec"
+	_ "github.com/davyxu/cellnet/codec/protoplus"
+	"reflect"
+	"unsafe"
 )
 var (
-	_ *proto.Buffer
-	_ fmt.Stringer
+	_ *proto.Buffer	
+	_ codec.CodecRecycler
+	_ cellnet.Session
+	_ reflect.Type
+	_ unsafe.Pointer
 )
 
 {{range $a, $enumobj := .Enums}}
 type {{.Name}} int32
 const (	{{range .Fields}}
-	{{$enumobj.Name}}_{{.Name}} {{.Type}} = {{TagNumber $enumobj .}} {{end}}
+	{{$enumobj.Name}}_{{.Name}} {{$enumobj.Name}} = {{TagNumber $enumobj .}} {{end}}
 )
 
 var (
@@ -51,6 +58,10 @@ func (self *{{.Name}}) Size() (ret int) {
 			ret += proto.SizeStruct({{TagNumber $obj .}}, elm)
 		}
 	}
+	{{else if IsEnum .}}
+	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, int32(self.{{GoFieldName .}}))
+	{{else if IsEnumSlice .}}
+	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, *(*[]int32)(unsafe.Pointer(&self.{{GoFieldName .}})))
 	{{else}}
 	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, self.{{GoFieldName .}})
 	{{end}}
@@ -64,6 +75,10 @@ func (self *{{.Name}}) Marshal(buffer *proto.Buffer) error {
 		for _, elm := range self.{{GoFieldName .}} {
 			proto.MarshalStruct(buffer, {{TagNumber $obj .}}, elm)
 		}
+	{{else if IsEnum .}}
+		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, int32(self.{{GoFieldName .}}))
+	{{else if IsEnumSlice .}}
+		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, *(*[]int32)(unsafe.Pointer(&self.{{GoFieldName .}})))
 	{{else}}	
 		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, self.{{GoFieldName .}})
 	{{end}}
@@ -82,13 +97,24 @@ func (self *{{.Name}}) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt pro
 		} else {
 			self.{{GoFieldName .}} = append(self.{{GoFieldName .}}, elm)
 			return nil
-		}{{else}}
+		}{{else if IsEnum .}}
+		return proto.Unmarshal{{CodecName .}}(buffer, wt, (*int32)(&self.{{GoFieldName .}})) {{else if IsEnumSlice .}}
+		return proto.Unmarshal{{CodecName .}}(buffer, wt, (*[]int32)(unsafe.Pointer(&self.{{GoFieldName .}}))) {{else}}
 		return proto.Unmarshal{{CodecName .}}(buffer, wt, &self.{{GoFieldName .}}) {{end}}
-	{{end}}
+		{{end}}
 	}
 
 	return proto.ErrUnknownField
 }
 {{end}}
+
+func init() {
+	{{range .Structs}} {{ if IsMessage . }}
+	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+		Codec: codec.MustGetCodec("protoplus"),	
+		Type:  reflect.TypeOf((*{{.Name}})(nil)).Elem(),
+		ID:    {{StructMsgID .}},
+	}) {{end}} {{end}}
+}
 
 `

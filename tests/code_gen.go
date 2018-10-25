@@ -3,14 +3,47 @@
 package tests
 
 import (
+	"github.com/davyxu/cellnet"
+	"github.com/davyxu/cellnet/codec"
+	_ "github.com/davyxu/cellnet/codec/protoplus"
 	"github.com/davyxu/protoplus/proto"
-	"fmt"
+	"reflect"
+	"unsafe"
 )
 
 var (
 	_ *proto.Buffer
-	_ fmt.Stringer
+	_ codec.CodecRecycler
+	_ cellnet.Session
+	_ reflect.Type
+	_ unsafe.Pointer
 )
+
+type MyEnum int32
+
+const (
+	MyEnum_Zero MyEnum = 0
+	MyEnum_One  MyEnum = 1
+	MyEnum_Two  MyEnum = 2
+)
+
+var (
+	MyEnumMapperValueByName = map[string]int32{
+		"Zero": 0,
+		"One":  1,
+		"Two":  2,
+	}
+
+	MyEnumMapperNameByValue = map[int32]string{
+		0: "Zero",
+		1: "One",
+		2: "Two",
+	}
+)
+
+func (self MyEnum) String() string {
+	return MyEnumMapperNameByValue[int32(self)]
+}
 
 type MyTypeMini struct {
 	Str  string
@@ -69,6 +102,8 @@ type MyType struct {
 	Float64Slice []float64
 	StrSlice     []string
 	StructSlice  []*MyType
+	Enum         MyEnum
+	EnumSlice    []MyEnum
 }
 
 func (self *MyType) String() string { return proto.CompactTextString(self) }
@@ -117,6 +152,10 @@ func (self *MyType) Size() (ret int) {
 		}
 	}
 
+	ret += proto.SizeInt32(19, int32(self.Enum))
+
+	ret += proto.SizeInt32Slice(20, *(*[]int32)(unsafe.Pointer(&self.EnumSlice)))
+
 	return
 }
 
@@ -161,6 +200,10 @@ func (self *MyType) Marshal(buffer *proto.Buffer) error {
 	for _, elm := range self.StructSlice {
 		proto.MarshalStruct(buffer, 18, elm)
 	}
+
+	proto.MarshalInt32(buffer, 19, int32(self.Enum))
+
+	proto.MarshalInt32Slice(buffer, 20, *(*[]int32)(unsafe.Pointer(&self.EnumSlice)))
 
 	return nil
 }
@@ -212,8 +255,21 @@ func (self *MyType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.
 			self.StructSlice = append(self.StructSlice, elm)
 			return nil
 		}
+	case 19:
+		return proto.UnmarshalInt32(buffer, wt, (*int32)(&self.Enum))
+	case 20:
+		return proto.UnmarshalInt32Slice(buffer, wt, (*[]int32)(unsafe.Pointer(&self.EnumSlice)))
 
 	}
 
 	return proto.ErrUnknownField
+}
+
+func init() {
+
+	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+		Codec: codec.MustGetCodec("protoplus"),
+		Type:  reflect.TypeOf((*MyType)(nil)).Elem(),
+		ID:    987,
+	})
 }

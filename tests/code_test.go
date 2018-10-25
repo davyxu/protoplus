@@ -45,6 +45,8 @@ func makeMyType() (input MyType) {
 	input.Float32Slice = []float32{1.1, 2.1, 3.2, 4.5}
 	input.Float64Slice = []float64{1.1, 2.1, 3.2, 4.5}
 	input.BytesSlice = []byte("bytes")
+	input.Enum = MyEnum_Two
+	input.EnumSlice = []MyEnum{MyEnum_Two, MyEnum_One, MyEnum_Zero}
 
 	input.Struct = &MyType{
 		Str: "world",

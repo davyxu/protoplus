@@ -4,7 +4,14 @@ struct MyTypeMini
     Bool bool
 }
 
+enum MyEnum
+{
+    Zero = 0
+    One
+    Two
+}
 
+[AutoMsgID]
 struct MyType
 {
 	Bool   bool
@@ -38,4 +45,6 @@ struct MyType
 	StrSlice []string
 
     StructSlice []MyType
+    Enum MyEnum
+    EnumSlice []MyEnum
 }

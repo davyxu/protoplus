@@ -40,6 +40,20 @@ func init() {
 		return !fd.Repeatd && fd.Kind == model.Kind_Struct
 	}
 
+	UsefulFunc["IsEnum"] = func(raw interface{}) bool {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		return !fd.Repeatd && fd.Kind == model.Kind_Enum
+	}
+
+	UsefulFunc["IsEnumSlice"] = func(raw interface{}) bool {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		return fd.Repeatd && fd.Kind == model.Kind_Enum
+	}
+
 	UsefulFunc["CodecName"] = func(raw interface{}) (ret string) {
 
 		fd := raw.(*model.FieldDescriptor)
@@ -68,6 +82,8 @@ func init() {
 		default:
 			if fd.Kind == model.Kind_Struct {
 				ret += "Struct"
+			} else if fd.Kind == model.Kind_Enum {
+				ret += "Int32"
 			} else {
 				panic("unknown Type " + fd.Type)
 			}
