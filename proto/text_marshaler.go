@@ -196,7 +196,7 @@ func (self *TextMarshaler) writeStruct(w *textWriter, sv reflect.Value) error {
 			}
 
 			// []byte
-			if fv.Len() > 0 && fv.Index(0).Kind() == reflect.Uint8 {
+			if fv.Len() > 0 {
 
 				if err := writeName(w, name); err != nil {
 					return err
@@ -211,15 +211,21 @@ func (self *TextMarshaler) writeStruct(w *textWriter, sv reflect.Value) error {
 			for j := 0; j < fv.Len(); j++ {
 
 				v := fv.Index(j)
+				//
+				//if v.Kind() != reflect.Uint8 {
+				//	if err := writeName(w, name); err != nil {
+				//		return err
+				//	}
+				//}
 
-				if v.Kind() != reflect.Uint8 {
-					if err := writeName(w, name); err != nil {
+				if !w.compact {
+					if err := w.WriteByte(' '); err != nil {
 						return err
 					}
 				}
 
-				if !w.compact {
-					if err := w.WriteByte(' '); err != nil {
+				if j > 0 {
+					if err := w.WriteByte('\n'); err != nil {
 						return err
 					}
 				}
@@ -235,12 +241,10 @@ func (self *TextMarshaler) writeStruct(w *textWriter, sv reflect.Value) error {
 				if err := self.writeAny(w, v); err != nil {
 					return err
 				}
-				if err := w.WriteByte('\n'); err != nil {
-					return err
-				}
+
 			}
 
-			if fv.Len() > 0 && fv.Index(0).Kind() == reflect.Uint8 {
+			if fv.Len() > 0 {
 				if _, err := w.WriteString("] "); err != nil {
 					return err
 				}

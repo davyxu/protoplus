@@ -1,5 +1,13 @@
 package proto
 
+type Struct interface {
+	Marshal(buffer *Buffer) error
+
+	Unmarshal(buffer *Buffer, fieldIndex uint64, wt WireType) error
+
+	Size() int
+}
+
 func Marshal(raw interface{}) ([]byte, error) {
 
 	msg := raw.(Struct)

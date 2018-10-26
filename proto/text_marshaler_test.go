@@ -27,6 +27,8 @@ type MyData struct {
 	Int64 int64
 
 	Uint64 uint64
+
+	StrList []string
 }
 
 type PhoneNumber struct {
@@ -66,7 +68,7 @@ func TestNumber(t *testing.T) {
 }
 
 func TestString(t *testing.T) {
-	t.Log(CompactTextString(&MyData{Name: "源氏"}))
+	t.Log(CompactTextString(&MyData{StrList: []string{"a", "b", "c"}}))
 }
 
 func TestPhone(t *testing.T) {

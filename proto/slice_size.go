@@ -1,7 +1,5 @@
 package proto
 
-import "unsafe"
-
 func SizeBytes(fieldIndex uint64, value []byte) int {
 
 	count := len(value)
@@ -24,11 +22,6 @@ func SizeBoolSlice(fieldIndex uint64, value []bool) int {
 	size := count * 1
 
 	return SizeVarint(makeWireTag(fieldIndex, WireBytes)) + SizeVarint(uint64(size)) + size
-}
-
-func SizeEnumSlice(fieldIndex uint64, raw interface{}) (ret int) {
-
-	return SizeInt32Slice(fieldIndex, *(*[]int32)(unsafe.Pointer(&raw)))
 }
 
 func SizeInt32Slice(fieldIndex uint64, value []int32) (ret int) {
