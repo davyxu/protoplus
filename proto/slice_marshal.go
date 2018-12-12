@@ -61,7 +61,7 @@ func MarshalInt32Slice(b *Buffer, fieldIndex uint64, value []int32) error {
 	// 写入长度
 	b.EncodeVarint(uint64(size))
 	for _, v := range value {
-		b.EncodeVarint(uint64(v))
+		b.EncodeVarint(uint64(v)) // TODO 负数会导致编码很大
 	}
 
 	return nil

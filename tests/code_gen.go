@@ -4,18 +4,11 @@ package tests
 
 import (
 	"github.com/davyxu/protoplus/proto"
-	"github.com/davyxu/cellnet"
-	"github.com/davyxu/cellnet/codec"
-	_ "github.com/davyxu/cellnet/codec/protoplus"
-	"reflect"
 	"unsafe"
 )
 
 var (
 	_ *proto.Buffer
-	_ codec.CodecRecycler
-	_ cellnet.Session
-	_ reflect.Type
 	_ unsafe.Pointer
 )
 
@@ -418,18 +411,4 @@ func (self *MyType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.
 	}
 
 	return proto.ErrUnknownField
-}
-
-func init() {
-
-	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
-		Codec: codec.MustGetCodec("protoplus"),
-		Type:  reflect.TypeOf((*MySubType)(nil)).Elem(),
-		ID:    10181,
-	})
-	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
-		Codec: codec.MustGetCodec("protoplus"),
-		Type:  reflect.TypeOf((*MyType)(nil)).Elem(),
-		ID:    987,
-	})
 }

@@ -44,6 +44,7 @@ struct MySubType
 	StrSlice []string
 
     Enum MyEnum
+
     EnumSlice []MyEnum
 }
 
@@ -82,5 +83,6 @@ struct MyType
 
     StructSlice []MySubType
     Enum MyEnum
+
     EnumSlice []MyEnum
 }

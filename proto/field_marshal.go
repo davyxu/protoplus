@@ -29,8 +29,8 @@ func MarshalInt32(b *Buffer, fieldIndex uint64, value int32) error {
 		b.EncodeVarint(makeWireTag(fieldIndex, WireVarint))
 		b.EncodeVarint(uint64(value))
 	case value < 0:
-		b.EncodeVarint(makeWireTag(fieldIndex, WireZigzag32))
-		b.EncodeVarint(Zigzag32(uint64(value)))
+		b.EncodeVarint(makeWireTag(fieldIndex, WireFixed32))
+		b.EncodeFixed32(uint64(value))
 	}
 
 	return nil
@@ -55,8 +55,8 @@ func MarshalInt64(b *Buffer, fieldIndex uint64, value int64) error {
 		b.EncodeVarint(makeWireTag(fieldIndex, WireVarint))
 		b.EncodeVarint(uint64(value))
 	case value < 0:
-		b.EncodeVarint(makeWireTag(fieldIndex, WireZigzag64))
-		b.EncodeVarint(Zigzag64(uint64(value)))
+		b.EncodeVarint(makeWireTag(fieldIndex, WireFixed64))
+		b.EncodeFixed64(uint64(value))
 	}
 
 	return nil

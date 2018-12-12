@@ -34,8 +34,8 @@ func UnmarshalInt32(b *Buffer, wt WireType, ret *int32) error {
 		}
 		*ret = int32(v)
 
-	case WireZigzag32:
-		v, err := b.DecodeZigzag32()
+	case WireFixed32:
+		v, err := b.DecodeFixed32()
 		if err != nil {
 			break
 		}
@@ -74,8 +74,8 @@ func UnmarshalInt64(b *Buffer, wt WireType, ret *int64) error {
 		}
 		*ret = int64(v)
 
-	case WireZigzag64:
-		v, err := b.DecodeZigzag64()
+	case WireFixed64:
+		v, err := b.DecodeFixed64()
 		if err != nil {
 			break
 		}
@@ -207,35 +207,6 @@ func rawUnmarshalStruct(b *Buffer, msg Struct) error {
 
 	return nil
 }
-
-//func UnmarshalStruct(b *Buffer, wt WireType, msgPtr interface{}) error {
-//
-//	switch wt {
-//	case WireBytes:
-//		size, err := b.DecodeVarint()
-//		if err != nil {
-//			return err
-//		}
-//
-//		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
-//
-//		// MyType
-//		msgType := reflect.TypeOf(msgPtr).Elem().Elem()
-//
-//		// msgIns:  *MyType
-//		msgIns := reflect.New(msgType)
-//
-//		// *MyType
-//		msgValuePtr := reflect.ValueOf(msgPtr).Elem()
-//
-//		msgValuePtr.Set(msgIns)
-//
-//		return rawUnmarshalStruct(limitBuffer, msgIns.Interface().(Struct))
-//
-//	default:
-//		return ErrBadWireType
-//	}
-//}
 
 func UnmarshalStruct(b *Buffer, wt WireType, msgPtr Struct) error {
 	switch wt {

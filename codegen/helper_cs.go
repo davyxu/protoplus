@@ -7,21 +7,21 @@ import (
 func CSTypeName(fd *model.FieldDescriptor) string {
 	switch fd.Type {
 	case "int8":
-		return "SByte"
+		return "char"
 	case "int16":
-		return "Int16"
+		return "short"
 	case "int32":
-		return "Int32"
+		return "int"
 	case "int64":
-		return "Int64"
+		return "long"
 	case "uint8":
-		return "Byte"
+		return "byte"
 	case "uint16":
-		return "UInt16"
+		return "ushort"
 	case "uint32":
-		return "UInt32"
+		return "uint"
 	case "uint64":
-		return "UInt64"
+		return "ulong"
 	case "float32":
 		return "float"
 	case "float64":
