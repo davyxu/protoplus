@@ -14,7 +14,6 @@ namespace Proto
 		One = 1, 
 		Two = 2, 
 	} 
-
 	
 	
 	public partial class MyTypeMini : IProtoStruct 
@@ -22,46 +21,44 @@ namespace Proto
 		public string Str;
 		public bool Bool;
 		
+		#region Serialize Code
+		public void Init( )
+		{   
+ 			  
+		}
 
 		public void Marshal(OutputStream stream)
 		{  
-			stream.WriteString(0, Str ); 
-		   
+			stream.WriteString(0, Str );  
 			stream.WriteBool(1, Bool ); 
-		  
 		}
 
 		public int GetSize()
 		{
 			int size = 0;  
-			size += OutputStream.SizeString(0, Str); 
-			 
+			size += OutputStream.SizeString(0, Str);  
 			size += OutputStream.SizeBool(1, Bool); 
-			
 			return size;
 		}
-
 
  		public bool Unmarshal(InputStream stream, int fieldNumber, WireFormat.WireType wt)
 		{
 		 	switch (fieldNumber)
             { 
 			case 0:	
-				stream.ReadString(wt, ref Str); 	
-                break;
-			
+				stream.ReadString(wt, ref Str);
+                break; 
 			case 1:	
-				stream.ReadBool(wt, ref Bool); 	
-                break;
-			
+				stream.ReadBool(wt, ref Bool);
+                break; 
 			default:
 				return true;
             }
 
             return false;
 		}
+		#endregion
 	}
-
 
 	
 	public partial class MySubType : IProtoStruct 
@@ -86,182 +83,138 @@ namespace Proto
 		public MyEnum Enum;
 		public List<MyEnum> EnumSlice;
 		
+		#region Serialize Code
+		public void Init( )
+		{   
+			BoolSlice = new List<bool>();	
+			Int32Slice = new List<int>();	
+			UInt32Slice = new List<uint>();	
+			Int64Slice = new List<long>();	
+			UInt64Slice = new List<ulong>();	
+			Float32Slice = new List<float>();	
+			Float64Slice = new List<double>();	
+			StrSlice = new List<string>();	
+			EnumSlice = new List<MyEnum>();	
+ 			                   
+		}
 
 		public void Marshal(OutputStream stream)
 		{  
-			stream.WriteBool(0, Bool ); 
-		   
-			stream.WriteInt32(1, Int32 ); 
-		   
-			stream.WriteUInt32(2, UInt32 ); 
-		   
-			stream.WriteInt64(3, Int64 ); 
-		   
-			stream.WriteUInt64(4, UInt64 ); 
-		   
-			stream.WriteFloat(5, Float32 ); 
-		   
-			stream.WriteDouble(6, Float64 ); 
-		   
-			stream.WriteString(7, Str ); 
-		   
-			stream.WriteBytes(8, BytesSlice ); 
-		   
-			stream.WriteBool(9, BoolSlice ); 
-		   
-			stream.WriteInt32(10, Int32Slice ); 
-		   
-			stream.WriteUInt32(11, UInt32Slice ); 
-		   
-			stream.WriteInt64(12, Int64Slice ); 
-		   
-			stream.WriteUInt64(13, UInt64Slice ); 
-		   
-			stream.WriteFloat(14, Float32Slice ); 
-		   
-			stream.WriteDouble(15, Float64Slice ); 
-		   
-			stream.WriteString(16, StrSlice ); 
-		   
-			stream.WriteEnum(17, Enum ); 
-		   
+			stream.WriteBool(0, Bool );  
+			stream.WriteInt32(1, Int32 );  
+			stream.WriteUInt32(2, UInt32 );  
+			stream.WriteInt64(3, Int64 );  
+			stream.WriteUInt64(4, UInt64 );  
+			stream.WriteFloat(5, Float32 );  
+			stream.WriteDouble(6, Float64 );  
+			stream.WriteString(7, Str );  
+			stream.WriteBytes(8, BytesSlice );  
+			stream.WriteBool(9, BoolSlice );  
+			stream.WriteInt32(10, Int32Slice );  
+			stream.WriteUInt32(11, UInt32Slice );  
+			stream.WriteInt64(12, Int64Slice );  
+			stream.WriteUInt64(13, UInt64Slice );  
+			stream.WriteFloat(14, Float32Slice );  
+			stream.WriteDouble(15, Float64Slice );  
+			stream.WriteString(16, StrSlice );  
+			stream.WriteEnum(17, Enum );  
 			stream.WriteEnum(18, EnumSlice ); 
-		  
 		}
 
 		public int GetSize()
 		{
 			int size = 0;  
-			size += OutputStream.SizeBool(0, Bool); 
-			 
-			size += OutputStream.SizeInt32(1, Int32); 
-			 
-			size += OutputStream.SizeUInt32(2, UInt32); 
-			 
-			size += OutputStream.SizeInt64(3, Int64); 
-			 
-			size += OutputStream.SizeUInt64(4, UInt64); 
-			 
-			size += OutputStream.SizeFloat(5, Float32); 
-			 
-			size += OutputStream.SizeDouble(6, Float64); 
-			 
-			size += OutputStream.SizeString(7, Str); 
-			 
-			size += OutputStream.SizeBytes(8, BytesSlice); 
-			 
-			size += OutputStream.SizeBool(9, BoolSlice); 
-			 
-			size += OutputStream.SizeInt32(10, Int32Slice); 
-			 
-			size += OutputStream.SizeUInt32(11, UInt32Slice); 
-			 
-			size += OutputStream.SizeInt64(12, Int64Slice); 
-			 
-			size += OutputStream.SizeUInt64(13, UInt64Slice); 
-			 
-			size += OutputStream.SizeFloat(14, Float32Slice); 
-			 
-			size += OutputStream.SizeDouble(15, Float64Slice); 
-			 
-			size += OutputStream.SizeString(16, StrSlice); 
-			 
-			size += OutputStream.SizeEnum(17, Enum); 
-			 
+			size += OutputStream.SizeBool(0, Bool);  
+			size += OutputStream.SizeInt32(1, Int32);  
+			size += OutputStream.SizeUInt32(2, UInt32);  
+			size += OutputStream.SizeInt64(3, Int64);  
+			size += OutputStream.SizeUInt64(4, UInt64);  
+			size += OutputStream.SizeFloat(5, Float32);  
+			size += OutputStream.SizeDouble(6, Float64);  
+			size += OutputStream.SizeString(7, Str);  
+			size += OutputStream.SizeBytes(8, BytesSlice);  
+			size += OutputStream.SizeBool(9, BoolSlice);  
+			size += OutputStream.SizeInt32(10, Int32Slice);  
+			size += OutputStream.SizeUInt32(11, UInt32Slice);  
+			size += OutputStream.SizeInt64(12, Int64Slice);  
+			size += OutputStream.SizeUInt64(13, UInt64Slice);  
+			size += OutputStream.SizeFloat(14, Float32Slice);  
+			size += OutputStream.SizeDouble(15, Float64Slice);  
+			size += OutputStream.SizeString(16, StrSlice);  
+			size += OutputStream.SizeEnum(17, Enum);  
 			size += OutputStream.SizeEnum(18, EnumSlice); 
-			
 			return size;
 		}
-
 
  		public bool Unmarshal(InputStream stream, int fieldNumber, WireFormat.WireType wt)
 		{
 		 	switch (fieldNumber)
             { 
 			case 0:	
-				stream.ReadBool(wt, ref Bool); 	
-                break;
-			
+				stream.ReadBool(wt, ref Bool);
+                break; 
 			case 1:	
-				stream.ReadInt32(wt, ref Int32); 	
-                break;
-			
+				stream.ReadInt32(wt, ref Int32);
+                break; 
 			case 2:	
-				stream.ReadUInt32(wt, ref UInt32); 	
-                break;
-			
+				stream.ReadUInt32(wt, ref UInt32);
+                break; 
 			case 3:	
-				stream.ReadInt64(wt, ref Int64); 	
-                break;
-			
+				stream.ReadInt64(wt, ref Int64);
+                break; 
 			case 4:	
-				stream.ReadUInt64(wt, ref UInt64); 	
-                break;
-			
+				stream.ReadUInt64(wt, ref UInt64);
+                break; 
 			case 5:	
-				stream.ReadFloat(wt, ref Float32); 	
-                break;
-			
+				stream.ReadFloat(wt, ref Float32);
+                break; 
 			case 6:	
-				stream.ReadDouble(wt, ref Float64); 	
-                break;
-			
+				stream.ReadDouble(wt, ref Float64);
+                break; 
 			case 7:	
-				stream.ReadString(wt, ref Str); 	
-                break;
-			
+				stream.ReadString(wt, ref Str);
+                break; 
 			case 8:	
-				stream.ReadBytes(wt, ref BytesSlice); 	
-                break;
-			
+				stream.ReadBytes(wt, ref BytesSlice);
+                break; 
 			case 9:	
-				stream.ReadBool(wt, ref BoolSlice); 	
-                break;
-			
+				stream.ReadBool(wt, ref BoolSlice);
+                break; 
 			case 10:	
-				stream.ReadInt32(wt, ref Int32Slice); 	
-                break;
-			
+				stream.ReadInt32(wt, ref Int32Slice);
+                break; 
 			case 11:	
-				stream.ReadUInt32(wt, ref UInt32Slice); 	
-                break;
-			
+				stream.ReadUInt32(wt, ref UInt32Slice);
+                break; 
 			case 12:	
-				stream.ReadInt64(wt, ref Int64Slice); 	
-                break;
-			
+				stream.ReadInt64(wt, ref Int64Slice);
+                break; 
 			case 13:	
-				stream.ReadUInt64(wt, ref UInt64Slice); 	
-                break;
-			
+				stream.ReadUInt64(wt, ref UInt64Slice);
+                break; 
 			case 14:	
-				stream.ReadFloat(wt, ref Float32Slice); 	
-                break;
-			
+				stream.ReadFloat(wt, ref Float32Slice);
+                break; 
 			case 15:	
-				stream.ReadDouble(wt, ref Float64Slice); 	
-                break;
-			
+				stream.ReadDouble(wt, ref Float64Slice);
+                break; 
 			case 16:	
-				stream.ReadString(wt, ref StrSlice); 	
-                break;
-			
+				stream.ReadString(wt, ref StrSlice);
+                break; 
 			case 17:	
-				stream.ReadEnum(wt, ref Enum); 
-                break;
-			
+				stream.ReadEnum(wt, ref Enum);
+                break; 
 			case 18:	
-				stream.ReadEnum(wt, ref EnumSlice); 
-                break;
-			
+				stream.ReadEnum(wt, ref EnumSlice);
+                break; 
 			default:
 				return true;
             }
 
             return false;
 		}
+		#endregion
 	}
-
 
 	
 	public partial class MyType : IProtoStruct 
@@ -288,197 +241,148 @@ namespace Proto
 		public MyEnum Enum;
 		public List<MyEnum> EnumSlice;
 		
+		#region Serialize Code
+		public void Init( )
+		{   
+			BoolSlice = new List<bool>();	
+			Int32Slice = new List<int>();	
+			UInt32Slice = new List<uint>();	
+			Int64Slice = new List<long>();	
+			UInt64Slice = new List<ulong>();	
+			Float32Slice = new List<float>();	
+			Float64Slice = new List<double>();	
+			StrSlice = new List<string>();	
+			EnumSlice = new List<MyEnum>();	
+ 			        
+			Struct = (MySubType) InputStream.CreateStruct(typeof(MySubType));              
+		}
 
 		public void Marshal(OutputStream stream)
 		{  
-			stream.WriteBool(0, Bool ); 
-		   
-			stream.WriteInt32(1, Int32 ); 
-		   
-			stream.WriteUInt32(2, UInt32 ); 
-		   
-			stream.WriteInt64(3, Int64 ); 
-		   
-			stream.WriteUInt64(4, UInt64 ); 
-		   
-			stream.WriteFloat(5, Float32 ); 
-		   
-			stream.WriteDouble(6, Float64 ); 
-		   
-			stream.WriteString(7, Str ); 
-		   
-			stream.WriteStruct(8, Struct ); 
-		   
-			stream.WriteBytes(9, BytesSlice ); 
-		   
-			stream.WriteBool(10, BoolSlice ); 
-		   
-			stream.WriteInt32(11, Int32Slice ); 
-		   
-			stream.WriteUInt32(12, UInt32Slice ); 
-		   
-			stream.WriteInt64(13, Int64Slice ); 
-		   
-			stream.WriteUInt64(14, UInt64Slice ); 
-		   
-			stream.WriteFloat(15, Float32Slice ); 
-		   
-			stream.WriteDouble(16, Float64Slice ); 
-		   
-			stream.WriteString(17, StrSlice ); 
-		   
-			stream.WriteStruct(18, StructSlice ); 
-		   
-			stream.WriteEnum(19, Enum ); 
-		   
+			stream.WriteBool(0, Bool );  
+			stream.WriteInt32(1, Int32 );  
+			stream.WriteUInt32(2, UInt32 );  
+			stream.WriteInt64(3, Int64 );  
+			stream.WriteUInt64(4, UInt64 );  
+			stream.WriteFloat(5, Float32 );  
+			stream.WriteDouble(6, Float64 );  
+			stream.WriteString(7, Str );  
+			stream.WriteStruct(8, Struct );  
+			stream.WriteBytes(9, BytesSlice );  
+			stream.WriteBool(10, BoolSlice );  
+			stream.WriteInt32(11, Int32Slice );  
+			stream.WriteUInt32(12, UInt32Slice );  
+			stream.WriteInt64(13, Int64Slice );  
+			stream.WriteUInt64(14, UInt64Slice );  
+			stream.WriteFloat(15, Float32Slice );  
+			stream.WriteDouble(16, Float64Slice );  
+			stream.WriteString(17, StrSlice );  
+			stream.WriteStruct(18, StructSlice );  
+			stream.WriteEnum(19, Enum );  
 			stream.WriteEnum(20, EnumSlice ); 
-		  
 		}
 
 		public int GetSize()
 		{
 			int size = 0;  
-			size += OutputStream.SizeBool(0, Bool); 
-			 
-			size += OutputStream.SizeInt32(1, Int32); 
-			 
-			size += OutputStream.SizeUInt32(2, UInt32); 
-			 
-			size += OutputStream.SizeInt64(3, Int64); 
-			 
-			size += OutputStream.SizeUInt64(4, UInt64); 
-			 
-			size += OutputStream.SizeFloat(5, Float32); 
-			 
-			size += OutputStream.SizeDouble(6, Float64); 
-			 
-			size += OutputStream.SizeString(7, Str); 
-			 
-			size += OutputStream.SizeStruct(8, Struct); 
-			 
-			size += OutputStream.SizeBytes(9, BytesSlice); 
-			 
-			size += OutputStream.SizeBool(10, BoolSlice); 
-			 
-			size += OutputStream.SizeInt32(11, Int32Slice); 
-			 
-			size += OutputStream.SizeUInt32(12, UInt32Slice); 
-			 
-			size += OutputStream.SizeInt64(13, Int64Slice); 
-			 
-			size += OutputStream.SizeUInt64(14, UInt64Slice); 
-			 
-			size += OutputStream.SizeFloat(15, Float32Slice); 
-			 
-			size += OutputStream.SizeDouble(16, Float64Slice); 
-			 
-			size += OutputStream.SizeString(17, StrSlice); 
-			 
-			size += OutputStream.SizeStruct(18, StructSlice); 
-			 
-			size += OutputStream.SizeEnum(19, Enum); 
-			 
+			size += OutputStream.SizeBool(0, Bool);  
+			size += OutputStream.SizeInt32(1, Int32);  
+			size += OutputStream.SizeUInt32(2, UInt32);  
+			size += OutputStream.SizeInt64(3, Int64);  
+			size += OutputStream.SizeUInt64(4, UInt64);  
+			size += OutputStream.SizeFloat(5, Float32);  
+			size += OutputStream.SizeDouble(6, Float64);  
+			size += OutputStream.SizeString(7, Str);  
+			size += OutputStream.SizeStruct(8, Struct);  
+			size += OutputStream.SizeBytes(9, BytesSlice);  
+			size += OutputStream.SizeBool(10, BoolSlice);  
+			size += OutputStream.SizeInt32(11, Int32Slice);  
+			size += OutputStream.SizeUInt32(12, UInt32Slice);  
+			size += OutputStream.SizeInt64(13, Int64Slice);  
+			size += OutputStream.SizeUInt64(14, UInt64Slice);  
+			size += OutputStream.SizeFloat(15, Float32Slice);  
+			size += OutputStream.SizeDouble(16, Float64Slice);  
+			size += OutputStream.SizeString(17, StrSlice);  
+			size += OutputStream.SizeStruct(18, StructSlice);  
+			size += OutputStream.SizeEnum(19, Enum);  
 			size += OutputStream.SizeEnum(20, EnumSlice); 
-			
 			return size;
 		}
-
 
  		public bool Unmarshal(InputStream stream, int fieldNumber, WireFormat.WireType wt)
 		{
 		 	switch (fieldNumber)
             { 
 			case 0:	
-				stream.ReadBool(wt, ref Bool); 	
-                break;
-			
+				stream.ReadBool(wt, ref Bool);
+                break; 
 			case 1:	
-				stream.ReadInt32(wt, ref Int32); 	
-                break;
-			
+				stream.ReadInt32(wt, ref Int32);
+                break; 
 			case 2:	
-				stream.ReadUInt32(wt, ref UInt32); 	
-                break;
-			
+				stream.ReadUInt32(wt, ref UInt32);
+                break; 
 			case 3:	
-				stream.ReadInt64(wt, ref Int64); 	
-                break;
-			
+				stream.ReadInt64(wt, ref Int64);
+                break; 
 			case 4:	
-				stream.ReadUInt64(wt, ref UInt64); 	
-                break;
-			
+				stream.ReadUInt64(wt, ref UInt64);
+                break; 
 			case 5:	
-				stream.ReadFloat(wt, ref Float32); 	
-                break;
-			
+				stream.ReadFloat(wt, ref Float32);
+                break; 
 			case 6:	
-				stream.ReadDouble(wt, ref Float64); 	
-                break;
-			
+				stream.ReadDouble(wt, ref Float64);
+                break; 
 			case 7:	
-				stream.ReadString(wt, ref Str); 	
-                break;
-			
+				stream.ReadString(wt, ref Str);
+                break; 
 			case 8:	
-				stream.ReadStruct(wt, ref Struct); 	
-                break;
-			
+				stream.ReadStruct(wt, ref Struct);
+                break; 
 			case 9:	
-				stream.ReadBytes(wt, ref BytesSlice); 	
-                break;
-			
+				stream.ReadBytes(wt, ref BytesSlice);
+                break; 
 			case 10:	
-				stream.ReadBool(wt, ref BoolSlice); 	
-                break;
-			
+				stream.ReadBool(wt, ref BoolSlice);
+                break; 
 			case 11:	
-				stream.ReadInt32(wt, ref Int32Slice); 	
-                break;
-			
+				stream.ReadInt32(wt, ref Int32Slice);
+                break; 
 			case 12:	
-				stream.ReadUInt32(wt, ref UInt32Slice); 	
-                break;
-			
+				stream.ReadUInt32(wt, ref UInt32Slice);
+                break; 
 			case 13:	
-				stream.ReadInt64(wt, ref Int64Slice); 	
-                break;
-			
+				stream.ReadInt64(wt, ref Int64Slice);
+                break; 
 			case 14:	
-				stream.ReadUInt64(wt, ref UInt64Slice); 	
-                break;
-			
+				stream.ReadUInt64(wt, ref UInt64Slice);
+                break; 
 			case 15:	
-				stream.ReadFloat(wt, ref Float32Slice); 	
-                break;
-			
+				stream.ReadFloat(wt, ref Float32Slice);
+                break; 
 			case 16:	
-				stream.ReadDouble(wt, ref Float64Slice); 	
-                break;
-			
+				stream.ReadDouble(wt, ref Float64Slice);
+                break; 
 			case 17:	
-				stream.ReadString(wt, ref StrSlice); 	
-                break;
-			
+				stream.ReadString(wt, ref StrSlice);
+                break; 
 			case 18:	
-				stream.ReadStruct(wt, ref StructSlice); 	
-                break;
-			
+				stream.ReadStruct(wt, ref StructSlice);
+                break; 
 			case 19:	
-				stream.ReadEnum(wt, ref Enum); 
-                break;
-			
+				stream.ReadEnum(wt, ref Enum);
+                break; 
 			case 20:	
-				stream.ReadEnum(wt, ref EnumSlice); 
-                break;
-			
+				stream.ReadEnum(wt, ref EnumSlice);
+                break; 
 			default:
 				return true;
             }
 
             return false;
 		}
+		#endregion
 	}
-
 
 }

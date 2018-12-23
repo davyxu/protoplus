@@ -122,7 +122,7 @@ namespace Example
             var s2 = new InputStream();
             s2.Init(data, 0, s.Position);
 
-            var myType2 = new MyType();
+            var myType2 = InputStream.CreateStruct<MyType>();
 
             s2.Unmarshal(myType2);
 

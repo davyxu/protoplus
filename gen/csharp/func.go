@@ -27,21 +27,23 @@ func init() {
 		return CSTypeNameFull(fd)
 	}
 
-	UsefulFunc["ProtoTypeName"] = func(raw interface{}) (ret string) {
+	//UsefulFunc["ObjectInitList"] = func(raw interface{}) bool {
+	//
+	//	d := raw.(*model.Descriptor)
+	//	for _, fd := range d.Fields {
+	//		if fd.Repeatd && fd.Kind != model.Kind_Struct || fd.Kind == model.Kind_Struct{
+	//
+	//		}
+	//	}
+	//
+	//	return fd.Repeatd && fd.Kind == model.Kind_Struct
+	//}
+
+	UsefulFunc["IsPrimitiveSlice"] = func(raw interface{}) bool {
 
 		fd := raw.(*model.FieldDescriptor)
 
-		if fd.Repeatd {
-			ret += "[]"
-		}
-
-		// 默认指针
-		//if fd.Kind == model.Kind_Struct {
-		//	ret += "*"
-		//}
-
-		ret += codegen.GoTypeName(fd)
-		return
+		return fd.Repeatd && fd.Kind != model.Kind_Struct
 	}
 
 	UsefulFunc["IsStructSlice"] = func(raw interface{}) bool {
@@ -101,7 +103,7 @@ func init() {
 			if fd.Kind == model.Kind_Struct {
 				ret += "Struct"
 			} else if fd.Kind == model.Kind_Enum {
-				ret += "Int32"
+				ret += "Enum"
 			} else {
 				panic("unknown Type " + fd.Type)
 			}

@@ -14,6 +14,28 @@ namespace ProtoPlus
 
         public int SpaceLeft => _len - _pos;
 
+        public static bool AutoInitStruct = true;
+        public static Func<Type, IProtoStruct> CreateStructFunc = new Func<Type, IProtoStruct>(CreateStruct);
+
+        public static T CreateStruct<T>() where T: IProtoStruct
+        {
+            return (T)CreateStruct(typeof(T));
+        }
+
+        public static IProtoStruct CreateStruct(Type t)
+        {
+            var s = Activator.CreateInstance(t) as IProtoStruct;
+
+            if (AutoInitStruct)
+            {
+                s.Init();
+            }
+
+            return s;
+        }        
+
+        
+
         public InputStream()
         {
 
@@ -21,14 +43,21 @@ namespace ProtoPlus
 
         public InputStream(byte[] _buffer)
         {
-            Init(_buffer, 0, _buffer.Length);
+            Init(_buffer, 0, _buffer.Length );
         }
 
-        public void Init(byte[] buffer, int offset, int length)
+        public void Init(byte[] buffer, int offset, int length )
         {
             _pos = offset;
             _buffer = buffer;
             _len = length;
+        }
+
+        InputStream NewLimitStream(int size)
+        {
+            var stream = new InputStream();
+            stream.Init(this._buffer, Position, Position + size);            
+            return stream;
         }
 
         void CheckBuffer(int requireSize)
@@ -108,8 +137,7 @@ namespace ProtoPlus
             {
                 int size = (int)ReadVarint32();
 
-                var stream = new InputStream();
-                stream.Init(this._buffer, Position, Position + size);
+                var stream = NewLimitStream(size);                
 
                 if (value == null)
                 {
@@ -153,8 +181,7 @@ namespace ProtoPlus
             {
                 int size = (int)ReadVarint32();
 
-                var stream = new InputStream();
-                stream.Init(this._buffer, Position, Position + size);
+                var stream = NewLimitStream(size);
 
                 if (value == null)
                 {
@@ -194,8 +221,7 @@ namespace ProtoPlus
             {
                 int size = (int)ReadVarint32();
 
-                var stream = new InputStream();
-                stream.Init(this._buffer, Position, Position + size);
+                var stream = NewLimitStream(size);
 
                 if (value == null)
                 {
@@ -239,8 +265,7 @@ namespace ProtoPlus
             {
                 int size = (int)ReadVarint32();
 
-                var stream = new InputStream();
-                stream.Init(this._buffer, Position, Position + size);
+                var stream = NewLimitStream(size);
 
                 if (value == null)
                 {
@@ -280,8 +305,7 @@ namespace ProtoPlus
             {
                 int size = (int)ReadVarint32();
 
-                var stream = new InputStream();
-                stream.Init(this._buffer, Position, Position + size);
+                var stream = NewLimitStream(size);
 
                 if (value == null)
                 {
@@ -322,8 +346,7 @@ namespace ProtoPlus
             {
                 int size = (int)ReadVarint32();
 
-                var stream = new InputStream();
-                stream.Init(this._buffer, Position, Position + size);
+                var stream = NewLimitStream(size);
 
                 if (value == null)
                 {
@@ -364,8 +387,7 @@ namespace ProtoPlus
             {
                 int size = (int)ReadVarint32();
 
-                var stream = new InputStream();
-                stream.Init(this._buffer, Position, Position + size);
+                var stream = NewLimitStream(size);
 
                 if (value == null)
                 {
@@ -442,23 +464,22 @@ namespace ProtoPlus
             }
         }
 
-        public void ReadStruct<T>(WireFormat.WireType wt, ref T value) where T:IProtoStruct,new()
+        public void ReadStruct<T>(WireFormat.WireType wt, ref T value) where T:IProtoStruct
         {
             switch (wt)
             {
                 case WireFormat.WireType.Bytes:
-                    int len = (int)ReadVarint32();
-                    if (len > 0)
+                    int size = (int)ReadVarint32();
+                    if (size > 0)
                     {
-                        var stream = new InputStream();
-                        stream.Init(this._buffer, Position, Position + len);
+                        var stream = NewLimitStream(size);
 
                         if (value == null)
                         {
-                            value = new T();
+                            value = (T)CreateStruct(typeof(T));
                         }
                         stream.Unmarshal(value);
-                        _pos += len;
+                        _pos += size;
                     }
                     break;
                 default:

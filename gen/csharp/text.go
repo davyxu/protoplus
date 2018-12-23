@@ -15,51 +15,47 @@ namespace Proto
 		{{range .Fields}}
 		{{.Name}} = {{TagNumber $enumobj .}}, {{end}}
 	} {{end}}
-
 	{{range $a, $obj := .Structs}}
 	{{ObjectLeadingComment .}}
-	public partial class {{$obj.Name}} : IProtoStruct 
+	public partial class {{$obj.Name}} : {{$.StructBase}} 
 	{
 		{{range .Fields}}public {{CSTypeNameFull .}} {{.Name}};
 		{{end}}
+		#region Serialize Code
+		public void Init( )
+		{   {{range .Fields}}{{if IsPrimitiveSlice .}}
+			{{.Name}} = new {{CSTypeNameFull .}}();	{{end}}{{end}}
+ 			{{range .Fields}}{{if IsStruct .}}
+			{{.Name}} = ({{CSTypeNameFull .}}) InputStream.CreateStruct(typeof({{CSTypeNameFull .}})); {{end}} {{end}}
+		}
 
 		public void Marshal(OutputStream stream)
-		{ {{range .Fields}} {{if IsEnum .}}
-			stream.WriteEnum({{TagNumber $obj .}}, {{.Name}} ); {{else if IsEnumSlice .}}
-			stream.WriteEnum({{TagNumber $obj .}}, {{.Name}} ); {{else}}
+		{ {{range .Fields}} 
 			stream.Write{{CodecName .}}({{TagNumber $obj .}}, {{.Name}} ); {{end}}
-		  {{end}}
 		}
 
 		public int GetSize()
 		{
-			int size = 0; {{range .Fields}} {{if IsEnum .}}
-			size += OutputStream.SizeEnum({{TagNumber $obj .}}, {{.Name}}); {{else if IsEnumSlice .}}
-			size += OutputStream.SizeEnum({{TagNumber $obj .}}, {{.Name}}); {{else}}
+			int size = 0; {{range .Fields}} 
 			size += OutputStream.Size{{CodecName .}}({{TagNumber $obj .}}, {{.Name}}); {{end}}
-			{{end}}
 			return size;
 		}
-
 
  		public bool Unmarshal(InputStream stream, int fieldNumber, WireFormat.WireType wt)
 		{
 		 	switch (fieldNumber)
             { {{range .Fields}}
-			case {{TagNumber $obj .}}:	{{if IsEnum .}}
-				stream.ReadEnum(wt, ref {{.Name}}); {{else if IsEnumSlice .}}
-				stream.ReadEnum(wt, ref {{.Name}}); {{else }}
-				stream.Read{{CodecName .}}(wt, ref {{.Name}}); 	{{end}}
-                break;
-			{{end}}
+			case {{TagNumber $obj .}}:	
+				stream.Read{{CodecName .}}(wt, ref {{.Name}});
+                break; {{end}}
 			default:
 				return true;
             }
 
             return false;
 		}
+		#endregion
 	}
-
 {{end}}
 }
 `
