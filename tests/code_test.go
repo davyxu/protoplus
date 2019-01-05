@@ -60,29 +60,43 @@ func makeMyType() (input MyType) {
 	return
 }
 
-func TestFull(t *testing.T) {
+func verify(t *testing.T, raw interface{}) {
+	t.Logf("size: %d", proto.Size(raw))
 
-	input := makeMyType()
-
-	t.Logf("size: %d", proto.Size(&input))
-
-	data, err := proto.Marshal(&input)
+	data, err := proto.Marshal(raw)
 	if err != nil {
 		t.Error(err)
 		t.FailNow()
 	}
 	t.Log("proto+:", len(data), data)
 
-	var output MyType
-	err = proto.Unmarshal(data, &output)
+	newType := reflect.New(reflect.TypeOf(raw).Elem()).Interface()
+
+	err = proto.Unmarshal(data, newType)
 	if err != nil {
 		t.Error(err)
 		t.FailNow()
 	}
 
-	if !reflect.DeepEqual(input, output) {
+	if !reflect.DeepEqual(raw, newType) {
 		t.FailNow()
 	}
+}
 
-	t.Logf("%v", output.String())
+func TestFull(t *testing.T) {
+
+	input := makeMyType()
+
+	verify(t, &input)
+
+	t.Logf("%v", input.String())
+}
+
+func TestIntSlice(t *testing.T) {
+
+	var input MyType
+	input.Int32Slice = []int32{-1, 1, 2}
+
+	verify(t, &input)
+
 }

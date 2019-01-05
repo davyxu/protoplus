@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <StartupObject>Example.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="FastBitConverter.cs" />
+    <Compile Remove="InputStream.cs" />
+    <Compile Remove="OutputStream.cs" />
+    <Compile Remove="ProtoStruct.cs" />
+    <Compile Remove="SizeCaculator.cs" />
+    <Compile Remove="WireType.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProtoPlus\ProtoPlus.csproj" />
+  </ItemGroup>
+
+</Project>

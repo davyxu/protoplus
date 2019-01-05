@@ -1,2 +1,7 @@
 *.exe
 proto/pb
+csharp/.vs
+csharp/Example/bin
+csharp/Example/obj
+csharp/ProtoPlus/obj
+csharp/ProtoPlus/bin

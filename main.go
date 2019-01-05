@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/gen"
+	"github.com/davyxu/protoplus/gen/csharp"
 	"github.com/davyxu/protoplus/gen/gogopb"
 	"github.com/davyxu/protoplus/gen/golang"
 	"github.com/davyxu/protoplus/gen/json"
@@ -16,12 +17,14 @@ import (
 
 // 显示版本号
 var (
-	flagVersion = flag.Bool("version", false, "Show version")
-	flagPackage = flag.String("package", "", "package name in source files")
-	flagPbOut   = flag.String("pb_out", "", "output google protobuf schema file")
-	flagGoOut   = flag.String("go_out", "", "output golang source file")
-	flagJsonOut = flag.String("json_out", "", "output json file")
-	flagJson    = flag.Bool("json", false, "output json to std out")
+	flagVersion    = flag.Bool("version", false, "Show version")
+	flagPackage    = flag.String("package", "", "package name in source files")
+	flagPbOut      = flag.String("pb_out", "", "output google protobuf schema file")
+	flagGoOut      = flag.String("go_out", "", "output golang source file")
+	flagCSOut      = flag.String("cs_out", "", "output csharp source file")
+	flagJsonOut    = flag.String("json_out", "", "output json file")
+	flagJson       = flag.Bool("json", false, "output json to std out")
+	flasStructBase = flag.String("structbase", "IProtoStruct", "struct inherite class type name in c#")
 )
 
 const Version = "0.1.0"
@@ -40,6 +43,7 @@ func main() {
 	var ctx gen.Context
 	ctx.DescriptorSet = new(model.DescriptorSet)
 	ctx.PackageName = *flagPackage
+	ctx.StructBase = *flasStructBase
 
 	err = util.ParseFileList(ctx.DescriptorSet)
 
@@ -51,6 +55,16 @@ func main() {
 		ctx.OutputFileName = *flagGoOut
 
 		err = golang.GenGo(&ctx)
+
+		if err != nil {
+			goto OnError
+		}
+	}
+
+	if *flagCSOut != "" {
+		ctx.OutputFileName = *flagCSOut
+
+		err = csharp.GenCSharp(&ctx)
 
 		if err != nil {
 			goto OnError

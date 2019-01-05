@@ -8,3 +8,4 @@ go build -v -o=${GOPATH}/bin/protoplus github.com/davyxu/protoplus
 
 
 ${GOPATH}/bin/protoplus -go_out=code_gen.go -package=tests code.proto
+${GOPATH}/bin/protoplus -cs_out=../csharp/Example/ProtoGen.cs -package=proto code.proto
