@@ -62,7 +62,23 @@ namespace ProtoPlus
             if (meta == null)
                 return null;
 
-            return (IProtoStruct)Activator.CreateInstance(meta.Type );
+            return NewStruct(meta.Type, true);            
+        }
+
+        public static IProtoStruct NewStruct(Type t, bool initfield)
+        {
+            var s = Activator.CreateInstance(t) as IProtoStruct;
+            if (s == null)
+            {
+                return null;
+            }
+
+            if (initfield)
+            {
+                s.Init();
+            }
+
+            return s;
         }
 
         public ushort GetMsgIDByType(Type t)

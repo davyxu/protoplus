@@ -24,14 +24,7 @@ namespace ProtoPlus
 
         public static IProtoStruct CreateStruct(Type t)
         {
-            var s = Activator.CreateInstance(t) as IProtoStruct;
-
-            if (AutoInitStruct)
-            {
-                s.Init();
-            }
-
-            return s;
+            return MessageMeta.NewStruct(t, AutoInitStruct);            
         }        
 
         
