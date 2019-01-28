@@ -57,5 +57,19 @@ namespace Proto
 		#endregion
 	}
 {{end}}
+
+{{if .RegEntry}}
+	public static class MessageMetaRegister
+    {
+		public static void RegisterGeneratedMeta(MessageMeta meta)
+		{	{{range .Structs}}{{ if IsMessage .}}
+            meta.RegisterMeta(new MetaInfo
+            {
+				Type = typeof({{.Name}}),	
+				ID = {{StructMsgID .}}, 	
+            });{{end}} {{end}}
+		}
+    }
+{{end}}
 }
 `

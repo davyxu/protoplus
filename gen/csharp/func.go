@@ -27,18 +27,6 @@ func init() {
 		return CSTypeNameFull(fd)
 	}
 
-	//UsefulFunc["ObjectInitList"] = func(raw interface{}) bool {
-	//
-	//	d := raw.(*model.Descriptor)
-	//	for _, fd := range d.Fields {
-	//		if fd.Repeatd && fd.Kind != model.Kind_Struct || fd.Kind == model.Kind_Struct{
-	//
-	//		}
-	//	}
-	//
-	//	return fd.Repeatd && fd.Kind == model.Kind_Struct
-	//}
-
 	UsefulFunc["IsPrimitiveSlice"] = func(raw interface{}) bool {
 
 		fd := raw.(*model.FieldDescriptor)

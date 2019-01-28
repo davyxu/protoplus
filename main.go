@@ -24,7 +24,8 @@ var (
 	flagCSOut      = flag.String("cs_out", "", "output csharp source file")
 	flagJsonOut    = flag.String("json_out", "", "output json file")
 	flagJson       = flag.Bool("json", false, "output json to std out")
-	flasStructBase = flag.String("structbase", "IProtoStruct", "struct inherite class type name in c#")
+	flagGenReg     = flag.Bool("genreg", false, "gen message register entry")
+	flagStructBase = flag.String("structbase", "IProtoStruct", "struct inherite class type name in c#")
 )
 
 const Version = "0.1.0"
@@ -43,7 +44,8 @@ func main() {
 	var ctx gen.Context
 	ctx.DescriptorSet = new(model.DescriptorSet)
 	ctx.PackageName = *flagPackage
-	ctx.StructBase = *flasStructBase
+	ctx.StructBase = *flagStructBase
+	ctx.RegEntry = *flagGenReg
 
 	err = util.ParseFileList(ctx.DescriptorSet)
 

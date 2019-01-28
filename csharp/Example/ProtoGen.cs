@@ -385,4 +385,23 @@ namespace Proto
 		#endregion
 	}
 
+
+
+	public static class MessageMetaRegister
+    {
+		public static void RegisterGeneratedMeta(MessageMeta meta)
+		{	 
+            meta.RegisterMeta(new MetaInfo
+            {
+				Type = typeof(MySubType),	
+				ID = 33606, 	
+            }); 
+            meta.RegisterMeta(new MetaInfo
+            {
+				Type = typeof(MyType),	
+				ID = 9980, 	
+            }); 
+		}
+    }
+
 }

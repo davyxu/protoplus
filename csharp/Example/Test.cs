@@ -129,10 +129,19 @@ namespace Example
             Debug.Assert(myType.Equals(myType2));
         }
 
+        static void TestMessage()
+        {
+            var mm = new MessageMeta();
+            MessageMetaRegister.RegisterGeneratedMeta(mm);
+            var msg = mm.CreateMessageByID(33606);
+
+            Debug.Assert((mm.GetMetaByType(msg.GetType()).ID == 33606));
+        }
+
         static void Main(string[] args)
         {
             TestFull();
-
+            TestMessage();
         }
     }
 
