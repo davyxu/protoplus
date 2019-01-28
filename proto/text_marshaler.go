@@ -13,9 +13,10 @@ import (
 
 // TextMarshaler is a configurable text format marshaler.
 type TextMarshaler struct {
-	Compact        bool // use compact text format (one line).
-	IgnoreDefault  bool // Do not output value when value equals its default value
-	OriginalString bool // Do not output string as byte
+	Compact          bool // use compact text format (one line).
+	IgnoreDefault    bool // Do not output value when value equals its default value
+	OriginalString   bool // Do not output string as byte
+	CompactBytesSize int  // 将二进制在指定大小后缩减显示
 }
 
 func (self *TextMarshaler) Marshal(w io.Writer, obj interface{}) error {
@@ -207,41 +208,46 @@ func (self *TextMarshaler) writeStruct(w *textWriter, sv reflect.Value) error {
 				}
 			}
 
-			// Repeated field.
-			for j := 0; j < fv.Len(); j++ {
+			if fv.Len() > self.CompactBytesSize {
+				w.Write([]byte(fmt.Sprintf("len: %d", fv.Len())))
 
-				v := fv.Index(j)
-				//
-				//if v.Kind() != reflect.Uint8 {
-				//	if err := writeName(w, name); err != nil {
-				//		return err
-				//	}
-				//}
+			} else {
+				// Repeated field.
+				for j := 0; j < fv.Len(); j++ {
 
-				if !w.compact {
-					if err := w.WriteByte(' '); err != nil {
+					v := fv.Index(j)
+					//
+					//if v.Kind() != reflect.Uint8 {
+					//	if err := writeName(w, name); err != nil {
+					//		return err
+					//	}
+					//}
+
+					if !w.compact {
+						if err := w.WriteByte(' '); err != nil {
+							return err
+						}
+					}
+
+					if j > 0 {
+						if err := w.WriteByte('\n'); err != nil {
+							return err
+						}
+					}
+
+					if v.Kind() == reflect.Ptr && v.IsNil() {
+						// A nil message in a repeated field is not valid,
+						// but we can handle that more gracefully than panicking.
+						if _, err := w.Write([]byte("<nil>\n")); err != nil {
+							return err
+						}
+						continue
+					}
+					if err := self.writeAny(w, v); err != nil {
 						return err
 					}
-				}
 
-				if j > 0 {
-					if err := w.WriteByte('\n'); err != nil {
-						return err
-					}
 				}
-
-				if v.Kind() == reflect.Ptr && v.IsNil() {
-					// A nil message in a repeated field is not valid,
-					// but we can handle that more gracefully than panicking.
-					if _, err := w.Write([]byte("<nil>\n")); err != nil {
-						return err
-					}
-					continue
-				}
-				if err := self.writeAny(w, v); err != nil {
-					return err
-				}
-
 			}
 
 			if fv.Len() > 0 {
@@ -356,7 +362,7 @@ func (self *TextMarshaler) Text(obj interface{}) string {
 
 var (
 	defaultTextMarshaler = TextMarshaler{}
-	compactTextMarshaler = TextMarshaler{Compact: true, IgnoreDefault: true}
+	compactTextMarshaler = TextMarshaler{Compact: true, IgnoreDefault: true, CompactBytesSize: 50}
 )
 
 func MarshalTextString(obj interface{}) string {

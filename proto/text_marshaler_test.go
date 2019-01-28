@@ -67,6 +67,15 @@ func TestNumber(t *testing.T) {
 	t.Log(CompactTextString(input))
 }
 
+func TestBytesCompatct(t *testing.T) {
+
+	input := &MyData{
+		Stream: []byte{1, 2, 3, 4},
+	}
+
+	t.Log(CompactTextString(input))
+}
+
 func TestString(t *testing.T) {
 	t.Log(CompactTextString(&MyData{StrList: []string{"a", "b", "c"}}))
 }
