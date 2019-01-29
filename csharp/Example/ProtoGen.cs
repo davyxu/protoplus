@@ -395,11 +395,15 @@ namespace Proto
             {
 				Type = typeof(MySubType),	
 				ID = 33606, 	
+				SourcePeer = "client",
+				TargetPeer = "game",
             }); 
             meta.RegisterMeta(new MetaInfo
             {
 				Type = typeof(MyType),	
 				ID = 9980, 	
+				SourcePeer = "",
+				TargetPeer = "",
             }); 
 		}
     }

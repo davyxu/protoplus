@@ -135,7 +135,11 @@ namespace Example
             MessageMetaRegister.RegisterGeneratedMeta(mm);
             var msg = mm.CreateMessageByID(33606);
 
-            Debug.Assert((mm.GetMetaByType(msg.GetType()).ID == 33606));
+            var meta = mm.GetMetaByType(msg.GetType());
+
+            Debug.Assert(meta.ID == 33606);
+
+            Debug.Assert(meta.SourcePeer == "client");
         }
 
         static void Main(string[] args)

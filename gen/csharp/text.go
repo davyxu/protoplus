@@ -67,6 +67,8 @@ namespace Proto
             {
 				Type = typeof({{.Name}}),	
 				ID = {{StructMsgID .}}, 	
+				SourcePeer = "{{GetSourcePeer .}}",
+				TargetPeer = "{{GetTargetPeer .}}",
             });{{end}} {{end}}
 		}
     }

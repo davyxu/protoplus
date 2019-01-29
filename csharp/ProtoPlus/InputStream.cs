@@ -13,8 +13,7 @@ namespace ProtoPlus
         public int Position => _pos;
 
         public int SpaceLeft => _len - _pos;
-
-        public static bool AutoInitStruct = true;
+        
         public static Func<Type, IProtoStruct> CreateStructFunc = new Func<Type, IProtoStruct>(CreateStruct);
 
         public static T CreateStruct<T>() where T: IProtoStruct
@@ -24,7 +23,7 @@ namespace ProtoPlus
 
         public static IProtoStruct CreateStruct(Type t)
         {
-            return MessageMeta.NewStruct(t, AutoInitStruct);            
+            return MessageMeta.NewStruct(t );            
         }        
 
         

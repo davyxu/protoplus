@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/model"
+	"strings"
 	"text/template"
 )
 
@@ -16,6 +17,20 @@ func CSTypeNameFull(fd *model.FieldDescriptor) (ret string) {
 	}
 
 	return codegen.CSTypeName(fd)
+}
+
+func getEndPointPair(d *model.Descriptor) (from, to string) {
+
+	msgdir := d.TagValueString("MsgDir")
+	endPoints := strings.Split(msgdir, "->")
+	if len(endPoints) >= 2 {
+
+		from = strings.TrimSpace(endPoints[0])
+
+		to = strings.TrimSpace(endPoints[1])
+	}
+
+	return
 }
 
 func init() {
@@ -60,6 +75,24 @@ func init() {
 		fd := raw.(*model.FieldDescriptor)
 
 		return fd.Repeatd && fd.Kind == model.Kind_Enum
+	}
+
+	UsefulFunc["GetSourcePeer"] = func(raw interface{}) string {
+
+		d := raw.(*model.Descriptor)
+
+		from, _ := getEndPointPair(d)
+
+		return from
+	}
+
+	UsefulFunc["GetTargetPeer"] = func(raw interface{}) string {
+
+		d := raw.(*model.Descriptor)
+
+		_, to := getEndPointPair(d)
+
+		return to
 	}
 
 	UsefulFunc["CodecName"] = func(raw interface{}) (ret string) {
