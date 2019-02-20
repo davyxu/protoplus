@@ -36,7 +36,7 @@ namespace ProtoPlus
             {
                 if (_extend)
                 {
-                    var newdata = new byte[2 * _buffer.Length];
+                    var newdata = new byte[2 * _buffer.Length + requireSize];
                     WireFormat.CopyBytes(_buffer, newdata, 0, 0,  _buffer.Length);
                     _len = newdata.Length;
                     _buffer = newdata;                 
