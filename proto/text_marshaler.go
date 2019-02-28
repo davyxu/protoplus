@@ -274,7 +274,7 @@ func (self *TextMarshaler) writeStruct(w *textWriter, sv reflect.Value) error {
 					}
 				}
 				// open struct
-				if err := w.WriteByte('<'); err != nil {
+				if err := w.WriteByte('{'); err != nil {
 					return err
 				}
 				if !w.compact {
@@ -318,7 +318,7 @@ func (self *TextMarshaler) writeStruct(w *textWriter, sv reflect.Value) error {
 				}
 				// close struct
 				w.unindent()
-				if err := w.WriteByte('>'); err != nil {
+				if err := w.WriteByte('}'); err != nil {
 					return err
 				}
 				if err := w.WriteByte('\n'); err != nil {
