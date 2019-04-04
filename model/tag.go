@@ -23,6 +23,16 @@ func (self *TagSet) TagValueByKey(key string) (string, bool) {
 	return "", false
 }
 
+func (self *TagSet) SetTagValue(key, value string) {
+
+	for index, tag := range self.Tags {
+		if tag.Key == key {
+			self.Tags[index].Value = value
+			break
+		}
+	}
+}
+
 func (self *TagSet) TagExists(key string) bool {
 	for _, tag := range self.Tags {
 		if tag.Key == key {
