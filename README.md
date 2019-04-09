@@ -11,7 +11,7 @@
 * 插件信息交换使用JSON格式(Protobuf使用pb二进制格式)
 
 
-# 描述文件格式(*.pp)
+# 描述文件格式
 
 ```
 
@@ -82,21 +82,58 @@ struct AddressBook {
 	go get -u -v github.com/davyxu/protoplus
 ```
 
-# 下载
-
 
 # 命令行参数
 
+- go_out
+
+    生成go源码协议文件
+
+- pb_out
+
+    生成protobuf 3.0协议文件
+
+- cs_out
+
+    生成C#源码文件
+
+- json_out
+
+    生成json格式协议内容
+
+- json
+
+    生成json内容到标准输出
+
+- package
+
+    指定生成源码的包，C#对应命名空间
+
+- structbase
+
+    C#代码生成时，消息类默认基类名称
 
 # 使用方法
 
+* 生成go源码
 
+```
+    protoplus -package=YourPackageName -go_out=YourMsg_gen.go a.proto b.proto
+```
+
+* 生成类型信息
+
+默认生成的go,C#源码文件不带消息ID绑定，可以使用以下命令行输出类型后，再结合自己的生成器生成绑定代码
+
+```
+    protoplus -json_out=YourMsg_gen.go a.proto b.proto
+```
 
 # 备注
 
 感觉不错请star, 谢谢!
 
-开源讨论群: 527430600
+开源讨论群: 527430600, 进群验证:protoplus
 
 知乎: [http://www.zhihu.com/people/sunicdavy](http://www.zhihu.com/people/sunicdavy)
 
