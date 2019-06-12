@@ -30,8 +30,7 @@ namespace ProtoPlus
         // 通过ID取信息
         public MetaInfo GetMetaByID(ushort msgid)
         {
-            MetaInfo value;
-            if (metaByID.TryGetValue(msgid, out value))
+            if (metaByID.TryGetValue(msgid, out var value))
             {
                 return value;
             }
@@ -42,8 +41,7 @@ namespace ProtoPlus
         // 通过类型取信息
         public MetaInfo GetMetaByType(Type t)
         {
-            MetaInfo value;
-            if (metaByType.TryGetValue(t, out value))
+            if (metaByType.TryGetValue(t, out var value))
             {
                 return value;
             }
