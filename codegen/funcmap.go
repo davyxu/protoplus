@@ -65,6 +65,21 @@ func init() {
 		return TagNumber(d, fd)
 	}
 
+	// 类pb的协议都使用这个Tag生成
+	UsefulFunc["PbTagNumber"] = func(rawD, rawFD interface{}) (tag int) {
+		d := rawD.(*model.Descriptor)
+		fd := rawFD.(*model.FieldDescriptor)
+
+		// 枚举从0自动生成
+		if d.Kind == model.Kind_Enum {
+			return TagNumber(d, fd)
+		} else {
+			// 自动从1开始, pb不允许字段tag为0
+			return TagNumber(d, fd) + 1
+		}
+
+	}
+
 	UsefulFunc["IsMessage"] = IsMessage
 
 	// 生成Json尾巴的逗号，rawIdx为当前遍历索引，rawSlice传切片

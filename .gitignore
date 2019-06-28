@@ -1,7 +1,5 @@
-*.exe
-proto/pb
-csharp/.vs
-csharp/Example/bin
-csharp/Example/obj
-csharp/ProtoPlus/obj
-csharp/ProtoPlus/bin
+example/csharp/.vs
+example/csharp/Example/bin
+example/csharp/Example/obj
+example/csharp/ProtoPlus/obj
+example/csharp/ProtoPlus/bin

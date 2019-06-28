@@ -17,16 +17,16 @@ var (
 {{range $a, $enumobj := .Enums}}
 type {{.Name}} int32
 const (	{{range .Fields}}
-	{{$enumobj.Name}}_{{.Name}} {{$enumobj.Name}} = {{TagNumber $enumobj .}} {{end}}
+	{{$enumobj.Name}}_{{.Name}} {{$enumobj.Name}} = {{PbTagNumber $enumobj .}} {{end}}
 )
 
 var (
 {{$enumobj.Name}}MapperValueByName = map[string]int32{ {{range .Fields}}
-	"{{.Name}}": {{TagNumber $enumobj .}}, {{end}}
+	"{{.Name}}": {{PbTagNumber $enumobj .}}, {{end}}
 }
 
 {{$enumobj.Name}}MapperNameByValue = map[int32]string{ {{range .Fields}}
-	{{TagNumber $enumobj .}}: "{{.Name}}" , {{end}}
+	{{PbTagNumber $enumobj .}}: "{{.Name}}" , {{end}}
 }
 )
 
@@ -48,17 +48,17 @@ func (self *{{.Name}}) Size() (ret int) {
 	{{if IsStructSlice .}}
 	if len(self.{{GoFieldName .}}) > 0 {
 		for _, elm := range self.{{GoFieldName .}} {
-			ret += proto.SizeStruct({{TagNumber $obj .}}, &elm)
+			ret += proto.SizeStruct({{PbTagNumber $obj .}}, &elm)
 		}
 	}
 	{{else if IsStruct .}}
-	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, &self.{{GoFieldName .}})
+	ret += proto.Size{{CodecName .}}({{PbTagNumber $obj .}}, &self.{{GoFieldName .}})
 	{{else if IsEnum .}}
-	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, int32(self.{{GoFieldName .}}))
+	ret += proto.Size{{CodecName .}}({{PbTagNumber $obj .}}, int32(self.{{GoFieldName .}}))
 	{{else if IsEnumSlice .}}
-	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, *(*[]int32)(unsafe.Pointer(&self.{{GoFieldName .}})))
+	ret += proto.Size{{CodecName .}}({{PbTagNumber $obj .}}, *(*[]int32)(unsafe.Pointer(&self.{{GoFieldName .}})))
 	{{else}}
-	ret += proto.Size{{CodecName .}}({{TagNumber $obj .}}, self.{{GoFieldName .}})
+	ret += proto.Size{{CodecName .}}({{PbTagNumber $obj .}}, self.{{GoFieldName .}})
 	{{end}}
 {{end}}
 	return
@@ -68,16 +68,16 @@ func (self *{{.Name}}) Marshal(buffer *proto.Buffer) error {
 {{range .Fields}}
 	{{if IsStructSlice .}}
 		for _, elm := range self.{{GoFieldName .}} {
-			proto.MarshalStruct(buffer, {{TagNumber $obj .}}, &elm)
+			proto.MarshalStruct(buffer, {{PbTagNumber $obj .}}, &elm)
 		}
 	{{else if IsStruct .}}
-		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, &self.{{GoFieldName .}})
+		proto.Marshal{{CodecName .}}(buffer, {{PbTagNumber $obj .}}, &self.{{GoFieldName .}})
 	{{else if IsEnum .}}
-		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, int32(self.{{GoFieldName .}}))
+		proto.Marshal{{CodecName .}}(buffer, {{PbTagNumber $obj .}}, int32(self.{{GoFieldName .}}))
 	{{else if IsEnumSlice .}}
-		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, *(*[]int32)(unsafe.Pointer(&self.{{GoFieldName .}})))
+		proto.Marshal{{CodecName .}}(buffer, {{PbTagNumber $obj .}}, *(*[]int32)(unsafe.Pointer(&self.{{GoFieldName .}})))
 	{{else}}	
-		proto.Marshal{{CodecName .}}(buffer, {{TagNumber $obj .}}, self.{{GoFieldName .}})
+		proto.Marshal{{CodecName .}}(buffer, {{PbTagNumber $obj .}}, self.{{GoFieldName .}})
 	{{end}}
 {{end}}
 	return nil
@@ -85,7 +85,7 @@ func (self *{{.Name}}) Marshal(buffer *proto.Buffer) error {
 
 func (self *{{.Name}}) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
 	switch fieldIndex {
-	{{range .Fields}} case {{TagNumber $obj .}}: {{if IsStructSlice .}}
+	{{range .Fields}} case {{PbTagNumber $obj .}}: {{if IsStructSlice .}}
 		var elm {{.Type}}
 		if err := proto.UnmarshalStruct(buffer, wt, &elm); err != nil {
 			return err

@@ -1,7 +1,6 @@
 package gogopb
 
 import (
-	"github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/model"
 	"text/template"
 )
@@ -33,15 +32,4 @@ func init() {
 		return
 	}
 
-	UsefulFunc["PbTagNumber"] = func(rawD, rawFD interface{}) (tag int) {
-		d := rawD.(*model.Descriptor)
-		fd := rawFD.(*model.FieldDescriptor)
-
-		if d.Kind == model.Kind_Enum {
-			return codegen.TagNumber(d, fd)
-		} else {
-			return codegen.TagNumber(d, fd) + 1
-		}
-
-	}
 }

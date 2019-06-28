@@ -87,7 +87,7 @@ struct AddressBook {
 
 - go_out
 
-    生成go源码协议文件
+    生成protoplus协议的go源码文件
 
 - pb_out
 
@@ -95,15 +95,15 @@ struct AddressBook {
 
 - cs_out
 
-    生成C#源码文件
+    生成protoplus协议的C#源码文件
 
 - json_out
 
-    生成json格式协议内容
+    生成protoplus协议的json格式描述内容到文件
 
 - json
 
-    生成json内容到标准输出
+    生成protoplus协议的json格式描述内容到标准输出
 
 - package
 
@@ -128,6 +128,17 @@ struct AddressBook {
 ```
     protoplus -json_out=YourMsg_gen.go a.proto b.proto
 ```
+
+
+# 注意协议区别
+
+1. 文档中标注的"protoplus协议"和"Protobuf协议"为两种不同的协议
+
+2. protoplus协议在很大程度上接近Protobuf协议,但并不是100%兼容, 也没有考虑兼容pb协议
+
+3. go_out,cs_out等语言直接输出支持的是protoplus协议, 
+如需要pb协议的C#或go语言, 请使用pb_out参数输出proto文件后, 用pb的工具链生成对应语言的源码
+
 
 # 备注
 

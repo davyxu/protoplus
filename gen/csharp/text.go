@@ -13,7 +13,7 @@ namespace Proto
 	public enum {{.Name}} 
 	{
 		{{range .Fields}}
-		{{.Name}} = {{TagNumber $enumobj .}}, {{end}}
+		{{.Name}} = {{PbTagNumber $enumobj .}}, {{end}}
 	} {{end}}
 	{{range $a, $obj := .Structs}}
 	{{ObjectLeadingComment .}}
@@ -31,13 +31,13 @@ namespace Proto
 
 		public void Marshal(OutputStream stream)
 		{ {{range .Fields}} 
-			stream.Write{{CodecName .}}({{TagNumber $obj .}}, {{.Name}} ); {{end}}
+			stream.Write{{CodecName .}}({{PbTagNumber $obj .}}, {{.Name}} ); {{end}}
 		}
 
 		public int GetSize()
 		{
 			int size = 0; {{range .Fields}} 
-			size += OutputStream.Size{{CodecName .}}({{TagNumber $obj .}}, {{.Name}}); {{end}}
+			size += OutputStream.Size{{CodecName .}}({{PbTagNumber $obj .}}, {{.Name}}); {{end}}
 			return size;
 		}
 
@@ -45,7 +45,7 @@ namespace Proto
 		{
 		 	switch (fieldNumber)
             { {{range .Fields}}
-			case {{TagNumber $obj .}}:	
+			case {{PbTagNumber $obj .}}:	
 				stream.Read{{CodecName .}}(wt, ref {{.Name}});
                 break; {{end}}
 			default:
