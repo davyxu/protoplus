@@ -1,0 +1,4 @@
+github.com/davyxu/golexer v0.0.0-20180314091252-f048a86ae200 h1:qLWlQBFg5c7HUOK+UdoGouLzRaYBQr2WwoAqixU+eik=
+github.com/davyxu/golexer v0.0.0-20180314091252-f048a86ae200/go.mod h1:K/1PVWqaQEwMs+N+VvaoS66o1BAAwso+jEgXKBIa8QY=
+github.com/golang/protobuf v1.3.1 h1:YF8+flBXS5eO826T4nzqPrxfhQThhXl0YzfuUPu4SBg=
+github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=

@@ -7,11 +7,17 @@ package {{.PackageName}}
 
 import (
 	"github.com/davyxu/protoplus/proto"		
-	"unsafe"
+	"unsafe" {{if .RegEntry}}
+	"reflect"
+	"github.com/davyxu/cellnet"
+	"github.com/davyxu/cellnet/codec" {{end}}
 )
 var (
 	_ *proto.Buffer			
-	_ unsafe.Pointer
+	_ unsafe.Pointer {{if .RegEntry}}
+	_ cellnet.MessageMeta
+	_ codec.CodecRecycler
+	_ reflect.Kind {{end}}
 )
 
 {{range $a, $enumobj := .Enums}}
@@ -103,5 +109,16 @@ func (self *{{.Name}}) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt pro
 }
 {{end}}
 
+
+func init() {
+{{if .RegEntry}}
+	{{range .Structs}} {{ if IsMessage . }}
+	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+		Codec: codec.MustGetCodec("{{StructCodec .}}"),	
+		Type:  reflect.TypeOf((*{{.Name}})(nil)).Elem(),
+		ID:    {{StructMsgID .}},
+	}) {{end}} {{end}}
+{{end}}
+}
 
 `

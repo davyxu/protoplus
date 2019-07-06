@@ -9,6 +9,14 @@ import (
 var UsefulFunc = template.FuncMap{}
 
 func init() {
+	UsefulFunc["StructCodec"] = func(d *model.Descriptor) string {
+		codecName := d.TagValueString("Codec")
+		if codecName == "" {
+			return "protoplus"
+		}
+
+		return codecName
+	}
 	UsefulFunc["ProtoTypeName"] = func(raw interface{}) (ret string) {
 
 		fd := raw.(*model.FieldDescriptor)

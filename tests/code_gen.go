@@ -412,3 +412,7 @@ func (self *MyType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.
 
 	return proto.ErrUnknownField
 }
+
+func init() {
+
+}
