@@ -86,3 +86,19 @@ struct MyType
 
     EnumSlice []MyEnum
 }
+
+struct LoginREQ {
+
+}
+
+
+struct LoginACK {
+
+}
+
+service login
+{
+	LoginStd(LoginREQ) LoginACK
+	rpc Login
+
+}

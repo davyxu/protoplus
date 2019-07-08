@@ -46,6 +46,9 @@ func rawParse(ctx *Context, reader io.Reader) (retErr error) {
 		case Token_Enum:
 			d.Kind = model.Kind_Enum
 			parseObject(ctx)
+		case Token_Service:
+			d.Kind = model.Kind_Service
+			parseObject(ctx)
 		default:
 			panic(errors.New("Unknown token: " + ctx.TokenValue()))
 		}
@@ -73,6 +76,18 @@ func checkAndFix(ctx *Context) error {
 				}
 
 				fd.Kind = findD.Kind
+			}
+		}
+
+		for _, sc := range d.SvcCall {
+			findREQ := ctx.ObjectByName(sc.RequestName)
+			if findREQ == nil {
+				return errors.New(fmt.Sprintf("type not found: %s at %s", sc.RequestName, ctx.QuerySymbolPosString(sc)))
+			}
+
+			findACK := ctx.ObjectByName(sc.RespondName)
+			if findACK == nil {
+				return errors.New(fmt.Sprintf("type not found: %s at %s", sc.RespondName, ctx.QuerySymbolPosString(sc)))
 			}
 		}
 

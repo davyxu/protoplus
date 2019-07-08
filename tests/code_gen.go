@@ -413,6 +413,52 @@ func (self *MyType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.
 	return proto.ErrUnknownField
 }
 
+type LoginREQ struct {
+}
+
+func (self *LoginREQ) String() string { return proto.CompactTextString(self) }
+
+func (self *LoginREQ) Size() (ret int) {
+
+	return
+}
+
+func (self *LoginREQ) Marshal(buffer *proto.Buffer) error {
+
+	return nil
+}
+
+func (self *LoginREQ) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
+	switch fieldIndex {
+
+	}
+
+	return proto.ErrUnknownField
+}
+
+type LoginACK struct {
+}
+
+func (self *LoginACK) String() string { return proto.CompactTextString(self) }
+
+func (self *LoginACK) Size() (ret int) {
+
+	return
+}
+
+func (self *LoginACK) Marshal(buffer *proto.Buffer) error {
+
+	return nil
+}
+
+func (self *LoginACK) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
+	switch fieldIndex {
+
+	}
+
+	return proto.ErrUnknownField
+}
+
 func init() {
 
 }

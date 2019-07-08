@@ -5,6 +5,17 @@ type DescriptorSet struct {
 	PackageName string
 }
 
+func (self *DescriptorSet) Services() (ret []*Descriptor) {
+
+	for _, o := range self.Objects {
+		if o.Kind == Kind_Service {
+			ret = append(ret, o)
+		}
+	}
+
+	return
+}
+
 func (self *DescriptorSet) Structs() (ret []*Descriptor) {
 
 	for _, o := range self.Objects {

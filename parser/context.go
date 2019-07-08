@@ -16,6 +16,8 @@ type Context struct {
 
 	*model.FieldDescriptor
 
+	*model.ServiceCall
+
 	symbolPos map[interface{}]golexer.TokenPos
 }
 

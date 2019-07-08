@@ -7,6 +7,7 @@ const (
 	Kind_Primitive      = "primitive"
 	Kind_Struct         = "struct"
 	Kind_Enum           = "enum"
+	Kind_Service        = "service"
 )
 
 var SchemeType2Type = map[string]string{

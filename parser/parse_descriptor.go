@@ -22,10 +22,20 @@ func parseObject(ctx *Context) {
 
 	for ctx.TokenID() != Token_CurlyBraceR {
 
-		var fd model.FieldDescriptor
-		ctx.FieldDescriptor = &fd
-		if ctx.TokenID() == Token_BracketL {
-			fd.TagSet = parseTagSet(ctx)
+		switch ctx.Descriptor.Kind {
+		case model.Kind_Struct, model.Kind_Enum:
+			var fd model.FieldDescriptor
+			ctx.FieldDescriptor = &fd
+			if ctx.TokenID() == Token_BracketL {
+				fd.TagSet = parseTagSet(ctx)
+			}
+
+		case model.Kind_Service:
+			var sc model.ServiceCall
+			ctx.ServiceCall = &sc
+			if ctx.TokenID() == Token_BracketL {
+				sc.TagSet = parseTagSet(ctx)
+			}
 		}
 
 		switch ctx.Descriptor.Kind {
@@ -33,6 +43,8 @@ func parseObject(ctx *Context) {
 			parseStructField(ctx)
 		case model.Kind_Enum:
 			parseEnumField(ctx)
+		case model.Kind_Service:
+			parseSvcCallField(ctx)
 		}
 
 	}
