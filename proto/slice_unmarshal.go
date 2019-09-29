@@ -1,5 +1,7 @@
 package proto
 
+import "io"
+
 func UnmarshalBytes(b *Buffer, wt WireType, ret *[]byte) error {
 
 	switch wt {
@@ -7,6 +9,10 @@ func UnmarshalBytes(b *Buffer, wt WireType, ret *[]byte) error {
 		size, err := b.DecodeVarint()
 		if err != nil {
 			return err
+		}
+
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
 		}
 
 		*ret = append(*ret, b.ConsumeBytes(int(size))...)
@@ -24,6 +30,10 @@ func UnmarshalBoolSlice(b *Buffer, wt WireType, ret *[]bool) error {
 		count, err := b.DecodeVarint()
 		if err != nil {
 			return err
+		}
+
+		if b.BytesRemains() < int(int(count)) {
+			return io.ErrUnexpectedEOF
 		}
 
 		for _, element := range b.ConsumeBytes(int(count)) {
@@ -55,6 +65,10 @@ func UnmarshalInt32Slice(b *Buffer, wt WireType, ret *[]int32) error {
 			return err
 		}
 
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
+		}
+
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
 		for limitBuffer.BytesRemains() > 0 {
@@ -81,6 +95,10 @@ func UnmarshalUInt32Slice(b *Buffer, wt WireType, ret *[]uint32) error {
 		size, err := b.DecodeVarint()
 		if err != nil {
 			return err
+		}
+
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
@@ -111,6 +129,10 @@ func UnmarshalInt64Slice(b *Buffer, wt WireType, ret *[]int64) error {
 			return err
 		}
 
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
+		}
+
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
 		for limitBuffer.BytesRemains() > 0 {
@@ -137,6 +159,10 @@ func UnmarshalUInt64Slice(b *Buffer, wt WireType, ret *[]uint64) error {
 		size, err := b.DecodeVarint()
 		if err != nil {
 			return err
+		}
+
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
@@ -183,6 +209,10 @@ func UnmarshalFloat32Slice(b *Buffer, wt WireType, ret *[]float32) error {
 			return err
 		}
 
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
+		}
+
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
 		for limitBuffer.BytesRemains() > 0 {
@@ -209,6 +239,10 @@ func UnmarshalFloat64Slice(b *Buffer, wt WireType, ret *[]float64) error {
 		size, err := b.DecodeVarint()
 		if err != nil {
 			return err
+		}
+
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))

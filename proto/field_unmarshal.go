@@ -1,6 +1,7 @@
 package proto
 
 import (
+	"io"
 	"math"
 )
 
@@ -162,6 +163,11 @@ func skipField(b *Buffer, wt WireType) error {
 		return err
 	case WireBytes:
 		size, err := b.DecodeVarint()
+
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
+		}
+
 		b.ConsumeBytes(int(size))
 		return err
 	case WireZigzag32:
@@ -214,6 +220,10 @@ func UnmarshalStruct(b *Buffer, wt WireType, msgPtr Struct) error {
 		size, err := b.DecodeVarint()
 		if err != nil {
 			return err
+		}
+
+		if b.BytesRemains() < int(size) {
+			return io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
