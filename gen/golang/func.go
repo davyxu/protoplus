@@ -9,6 +9,12 @@ import (
 var UsefulFunc = template.FuncMap{}
 
 func init() {
+
+	// 所有结构生成Entry
+	UsefulFunc["GenEntry"] = func(d *model.Descriptor) bool {
+		return true
+	}
+
 	UsefulFunc["StructCodec"] = func(d *model.Descriptor) string {
 		codecName := d.TagValueString("Codec")
 		if codecName == "" {

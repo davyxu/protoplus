@@ -112,7 +112,7 @@ func (self *{{.Name}}) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt pro
 
 func init() {
 {{if .RegEntry}}
-	{{range .Structs}} {{ if IsMessage . }}
+	{{range .Structs}} {{ if GenEntry . }}
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
 		Codec: codec.MustGetCodec("{{StructCodec .}}"),	
 		Type:  reflect.TypeOf((*{{.Name}})(nil)).Elem(),
