@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using ProtoPlus;
 
-namespace Proto
+namespace {{.PackageName}}
 {
 	{{range $a, $enumobj := .Enums}}
 	public enum {{.Name}} 
