@@ -459,6 +459,73 @@ func (self *LoginACK) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt prot
 	return proto.ErrUnknownField
 }
 
+type S1 struct {
+	V int32
+}
+
+func (self *S1) String() string { return proto.CompactTextString(self) }
+
+func (self *S1) Size() (ret int) {
+
+	ret += proto.SizeInt32(1, self.V)
+
+	return
+}
+
+func (self *S1) Marshal(buffer *proto.Buffer) error {
+
+	proto.MarshalInt32(buffer, 1, self.V)
+
+	return nil
+}
+
+func (self *S1) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
+	switch fieldIndex {
+	case 1:
+		return proto.UnmarshalInt32(buffer, wt, &self.V)
+
+	}
+
+	return proto.ErrUnknownField
+}
+
+type S2 struct {
+	V int32
+	S string
+}
+
+func (self *S2) String() string { return proto.CompactTextString(self) }
+
+func (self *S2) Size() (ret int) {
+
+	ret += proto.SizeInt32(1, self.V)
+
+	ret += proto.SizeString(2, self.S)
+
+	return
+}
+
+func (self *S2) Marshal(buffer *proto.Buffer) error {
+
+	proto.MarshalInt32(buffer, 1, self.V)
+
+	proto.MarshalString(buffer, 2, self.S)
+
+	return nil
+}
+
+func (self *S2) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
+	switch fieldIndex {
+	case 1:
+		return proto.UnmarshalInt32(buffer, wt, &self.V)
+	case 2:
+		return proto.UnmarshalString(buffer, wt, &self.S)
+
+	}
+
+	return proto.ErrUnknownField
+}
+
 func init() {
 
 }

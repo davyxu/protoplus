@@ -66,3 +66,22 @@ message MyType {
 	repeated MyEnum EnumSlice = 21; 
 }
 
+
+message LoginREQ {	
+}
+
+
+message LoginACK {	
+}
+
+
+message S1 {	
+	int32 V = 1; 
+}
+
+
+message S2 {	
+	int32 V = 1; 
+	string S = 2; 
+}
+

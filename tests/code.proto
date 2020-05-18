@@ -100,5 +100,13 @@ service login
 {
 	LoginStd(LoginREQ) LoginACK
 	rpc Login
+}
 
+struct S1 {
+    V int32
+}
+
+struct S2 {
+    V int32
+    S string
 }

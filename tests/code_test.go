@@ -100,3 +100,23 @@ func TestIntSlice(t *testing.T) {
 	verify(t, &input)
 
 }
+
+func TestCompatible(t *testing.T) {
+
+	var s S2
+	s.V = 1
+	s.S = "a"
+
+	data, err := proto.Marshal(&s)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+
+	var output S1
+	err = proto.Unmarshal(data, &output)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+}
