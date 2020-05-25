@@ -31,10 +31,13 @@ func init() {
 			ret += "[]"
 		}
 
-		// 默认指针
-		//if fd.Kind == model.Kind_Struct {
-		//	ret += "*"
-		//}
+		ret += codegen.GoTypeName(fd)
+		return
+	}
+
+	UsefulFunc["ProtoElementTypeName"] = func(raw interface{}) (ret string) {
+
+		fd := raw.(*model.FieldDescriptor)
 
 		ret += codegen.GoTypeName(fd)
 		return
@@ -52,6 +55,13 @@ func init() {
 		fd := raw.(*model.FieldDescriptor)
 
 		return !fd.Repeatd && fd.Kind == model.Kind_Struct
+	}
+
+	UsefulFunc["IsSlice"] = func(raw interface{}) bool {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		return fd.Repeatd
 	}
 
 	UsefulFunc["IsEnum"] = func(raw interface{}) bool {

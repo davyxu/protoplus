@@ -5,154 +5,136 @@ import (
 	"math"
 )
 
-func UnmarshalBool(b *Buffer, wt WireType, ret *bool) error {
+func UnmarshalBool(b *Buffer, wt WireType) (bool, error) {
 	switch wt {
 	case WireVarint:
 		v, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return false, err
 		}
-
-		if v != 0 {
-			*ret = true
-		} else {
-			*ret = false
-		}
+		return v != 0, nil
 	default:
-		return ErrBadWireType
+		return false, ErrBadWireType
 	}
-
-	return nil
 }
 
-func UnmarshalInt32(b *Buffer, wt WireType, ret *int32) error {
+func UnmarshalInt32(b *Buffer, wt WireType) (int32, error) {
 
 	switch wt {
 	case WireVarint:
 		v, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return 0, err
 		}
-		*ret = int32(v)
+		return int32(v), nil
 
 	case WireFixed32:
 		v, err := b.DecodeFixed32()
 		if err != nil {
-			break
+			return 0, err
 		}
 
-		*ret = int32(v)
-	default:
-		return ErrBadWireType
-	}
+		return int32(v), nil
 
-	return nil
+	default:
+		return 0, ErrBadWireType
+	}
 }
 
-func UnmarshalUInt32(b *Buffer, wt WireType, ret *uint32) error {
+func UnmarshalUInt32(b *Buffer, wt WireType) (uint32, error) {
 
 	switch wt {
 	case WireVarint:
 		v, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return 0, err
 		}
-		*ret = uint32(v)
-	default:
-		return ErrBadWireType
-	}
 
-	return nil
+		return uint32(v), nil
+	default:
+		return 0, ErrBadWireType
+	}
 }
 
-func UnmarshalInt64(b *Buffer, wt WireType, ret *int64) error {
+func UnmarshalInt64(b *Buffer, wt WireType) (int64, error) {
 
 	switch wt {
 	case WireVarint:
 		v, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return 0, err
 		}
-		*ret = int64(v)
+		return int64(v), nil
 
 	case WireFixed64:
 		v, err := b.DecodeFixed64()
 		if err != nil {
-			break
+			return 0, err
 		}
 
-		*ret = int64(v)
+		return int64(v), nil
 	default:
-		return ErrBadWireType
+		return 0, ErrBadWireType
 	}
-
-	return nil
 }
 
-func UnmarshalUInt64(b *Buffer, wt WireType, ret *uint64) error {
+func UnmarshalUInt64(b *Buffer, wt WireType) (uint64, error) {
 
 	switch wt {
 	case WireVarint:
 		v, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return 0, err
 		}
-		*ret = v
+		return v, nil
 	default:
-		return ErrBadWireType
+		return 0, ErrBadWireType
 	}
-
-	return nil
 }
 
-func UnmarshalFloat32(b *Buffer, wt WireType, ret *float32) error {
+func UnmarshalFloat32(b *Buffer, wt WireType) (float32, error) {
 
 	switch wt {
 	case WireFixed32:
 		v, err := b.DecodeFixed32()
 		if err != nil {
-			return err
+			return 0, err
 		}
 
-		*ret = math.Float32frombits(uint32(v))
+		return math.Float32frombits(uint32(v)), nil
 	default:
-		return ErrBadWireType
+		return 0, ErrBadWireType
 	}
 
-	return nil
 }
 
-func UnmarshalFloat64(b *Buffer, wt WireType, ret *float64) error {
+func UnmarshalFloat64(b *Buffer, wt WireType) (float64, error) {
 
 	switch wt {
 	case WireFixed64:
 		v, err := b.DecodeFixed64()
 		if err != nil {
-			return err
+			return 0, err
 		}
 
-		*ret = math.Float64frombits(uint64(v))
+		return math.Float64frombits(uint64(v)), nil
 	default:
-		return ErrBadWireType
+		return 0, ErrBadWireType
 	}
-
-	return nil
 }
 
-func UnmarshalString(b *Buffer, wt WireType, ret *string) error {
+func UnmarshalString(b *Buffer, wt WireType) (string, error) {
 	switch wt {
 	case WireBytes:
 		v, err := b.DecodeStringBytes()
 		if err != nil {
-			return err
+			return "", err
 		}
 
-		*ret = v
+		return v, nil
 	default:
-		return ErrBadWireType
+		return "", ErrBadWireType
 	}
-
-	return nil
 }
 
 func skipField(b *Buffer, wt WireType) error {
@@ -185,8 +167,6 @@ func skipField(b *Buffer, wt WireType) error {
 	default:
 		return ErrBadWireType
 	}
-
-	return nil
 }
 
 func rawUnmarshalStruct(b *Buffer, msg Struct) error {

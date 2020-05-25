@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using ProtoPlus;
 
-namespace Proto
+namespace proto
 {
 	
 	public enum MyEnum 
@@ -18,26 +18,44 @@ namespace Proto
 	
 	public partial class MyTypeMini : IProtoStruct 
 	{
-		public string Str;
 		public bool Bool;
+		public int Int32;
+		public uint UInt32;
+		public long Int64;
+		public ulong UInt64;
+		public float Float32;
+		public double Float64;
+		public string Str;
 		
 		#region Serialize Code
 		public void Init( )
 		{   
- 			  
+ 			        
 		}
 
 		public void Marshal(OutputStream stream)
 		{  
-			stream.WriteString(1, Str );  
-			stream.WriteBool(2, Bool ); 
+			stream.WriteBool(1, Bool );  
+			stream.WriteInt32(2, Int32 );  
+			stream.WriteUInt32(3, UInt32 );  
+			stream.WriteInt64(4, Int64 );  
+			stream.WriteUInt64(5, UInt64 );  
+			stream.WriteFloat(6, Float32 );  
+			stream.WriteDouble(7, Float64 );  
+			stream.WriteString(8, Str ); 
 		}
 
 		public int GetSize()
 		{
 			int size = 0;  
-			size += OutputStream.SizeString(1, Str);  
-			size += OutputStream.SizeBool(2, Bool); 
+			size += OutputStream.SizeBool(1, Bool);  
+			size += OutputStream.SizeInt32(2, Int32);  
+			size += OutputStream.SizeUInt32(3, UInt32);  
+			size += OutputStream.SizeInt64(4, Int64);  
+			size += OutputStream.SizeUInt64(5, UInt64);  
+			size += OutputStream.SizeFloat(6, Float32);  
+			size += OutputStream.SizeDouble(7, Float64);  
+			size += OutputStream.SizeString(8, Str); 
 			return size;
 		}
 
@@ -46,10 +64,28 @@ namespace Proto
 		 	switch (fieldNumber)
             { 
 			case 1:	
-				stream.ReadString(wt, ref Str);
+				stream.ReadBool(wt, ref Bool);
                 break; 
 			case 2:	
-				stream.ReadBool(wt, ref Bool);
+				stream.ReadInt32(wt, ref Int32);
+                break; 
+			case 3:	
+				stream.ReadUInt32(wt, ref UInt32);
+                break; 
+			case 4:	
+				stream.ReadInt64(wt, ref Int64);
+                break; 
+			case 5:	
+				stream.ReadUInt64(wt, ref UInt64);
+                break; 
+			case 6:	
+				stream.ReadFloat(wt, ref Float32);
+                break; 
+			case 7:	
+				stream.ReadDouble(wt, ref Float64);
+                break; 
+			case 8:	
+				stream.ReadString(wt, ref Str);
                 break; 
 			default:
 				return true;
@@ -385,6 +421,72 @@ namespace Proto
 		#endregion
 	}
 
+	
+	public partial class LoginREQ : IProtoStruct 
+	{
+		
+		#region Serialize Code
+		public void Init( )
+		{   
+ 			
+		}
+
+		public void Marshal(OutputStream stream)
+		{ 
+		}
+
+		public int GetSize()
+		{
+			int size = 0; 
+			return size;
+		}
+
+ 		public bool Unmarshal(InputStream stream, int fieldNumber, WireFormat.WireType wt)
+		{
+		 	switch (fieldNumber)
+            { 
+			default:
+				return true;
+            }
+
+            return false;
+		}
+		#endregion
+	}
+
+	
+	public partial class LoginACK : IProtoStruct 
+	{
+		
+		#region Serialize Code
+		public void Init( )
+		{   
+ 			
+		}
+
+		public void Marshal(OutputStream stream)
+		{ 
+		}
+
+		public int GetSize()
+		{
+			int size = 0; 
+			return size;
+		}
+
+ 		public bool Unmarshal(InputStream stream, int fieldNumber, WireFormat.WireType wt)
+		{
+		 	switch (fieldNumber)
+            { 
+			default:
+				return true;
+            }
+
+            return false;
+		}
+		#endregion
+	}
+
 
 
 	public static class MessageMetaRegister
@@ -404,7 +506,7 @@ namespace Proto
 				ID = 9980, 	
 				SourcePeer = "",
 				TargetPeer = "",
-            }); 
+            });   
 		}
     }
 

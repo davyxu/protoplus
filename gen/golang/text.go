@@ -99,9 +99,21 @@ func (self *{{.Name}}) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt pro
 			self.{{GoFieldName .}} = append(self.{{GoFieldName .}}, elm)
 			return nil
 		}{{else if IsEnum .}}
-		return proto.Unmarshal{{CodecName .}}(buffer, wt, (*int32)(&self.{{GoFieldName .}})) {{else if IsEnumSlice .}}
-		return proto.Unmarshal{{CodecName .}}(buffer, wt, (*[]int32)(unsafe.Pointer(&self.{{GoFieldName .}}))) {{else}}
-		return proto.Unmarshal{{CodecName .}}(buffer, wt, &self.{{GoFieldName .}}) {{end}}
+		v, err := proto.Unmarshal{{CodecName .}}(buffer, wt)
+		self.{{GoFieldName .}} = {{ProtoTypeName .}}(v)
+		return err {{else if IsStruct .}}
+        return proto.Unmarshal{{CodecName .}}(buffer, wt, &self.{{GoFieldName .}}) {{else if IsEnumSlice .}}
+		v, err := proto.Unmarshal{{CodecName .}}(buffer, wt)
+		for _, vv := range v {	
+			self.{{GoFieldName .}} = append(self.{{GoFieldName .}}, {{ProtoElementTypeName .}}(vv))
+		}
+		return err {{else if IsSlice .}}
+		v, err := proto.Unmarshal{{CodecName .}}(buffer, wt)	
+		self.{{GoFieldName .}} = append(self.{{GoFieldName .}}, v...)
+		return err {{else}}
+		v, err := proto.Unmarshal{{CodecName .}}(buffer, wt)
+		self.{{GoFieldName .}} = v
+		return err{{end}}
 		{{end}}
 	}
 

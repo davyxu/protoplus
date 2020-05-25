@@ -39,26 +39,56 @@ func (self MyEnum) String() string {
 }
 
 type MyTypeMini struct {
-	Str  string
-	Bool bool
+	Bool    bool
+	Int32   int32
+	UInt32  uint32
+	Int64   int64
+	UInt64  uint64
+	Float32 float32
+	Float64 float64
+	Str     string
 }
 
 func (self *MyTypeMini) String() string { return proto.CompactTextString(self) }
 
 func (self *MyTypeMini) Size() (ret int) {
 
-	ret += proto.SizeString(1, self.Str)
+	ret += proto.SizeBool(1, self.Bool)
 
-	ret += proto.SizeBool(2, self.Bool)
+	ret += proto.SizeInt32(2, self.Int32)
+
+	ret += proto.SizeUInt32(3, self.UInt32)
+
+	ret += proto.SizeInt64(4, self.Int64)
+
+	ret += proto.SizeUInt64(5, self.UInt64)
+
+	ret += proto.SizeFloat32(6, self.Float32)
+
+	ret += proto.SizeFloat64(7, self.Float64)
+
+	ret += proto.SizeString(8, self.Str)
 
 	return
 }
 
 func (self *MyTypeMini) Marshal(buffer *proto.Buffer) error {
 
-	proto.MarshalString(buffer, 1, self.Str)
+	proto.MarshalBool(buffer, 1, self.Bool)
 
-	proto.MarshalBool(buffer, 2, self.Bool)
+	proto.MarshalInt32(buffer, 2, self.Int32)
+
+	proto.MarshalUInt32(buffer, 3, self.UInt32)
+
+	proto.MarshalInt64(buffer, 4, self.Int64)
+
+	proto.MarshalUInt64(buffer, 5, self.UInt64)
+
+	proto.MarshalFloat32(buffer, 6, self.Float32)
+
+	proto.MarshalFloat64(buffer, 7, self.Float64)
+
+	proto.MarshalString(buffer, 8, self.Str)
 
 	return nil
 }
@@ -66,9 +96,37 @@ func (self *MyTypeMini) Marshal(buffer *proto.Buffer) error {
 func (self *MyTypeMini) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
 	switch fieldIndex {
 	case 1:
-		return proto.UnmarshalString(buffer, wt, &self.Str)
+		v, err := proto.UnmarshalBool(buffer, wt)
+		self.Bool = v
+		return err
 	case 2:
-		return proto.UnmarshalBool(buffer, wt, &self.Bool)
+		v, err := proto.UnmarshalInt32(buffer, wt)
+		self.Int32 = v
+		return err
+	case 3:
+		v, err := proto.UnmarshalUInt32(buffer, wt)
+		self.UInt32 = v
+		return err
+	case 4:
+		v, err := proto.UnmarshalInt64(buffer, wt)
+		self.Int64 = v
+		return err
+	case 5:
+		v, err := proto.UnmarshalUInt64(buffer, wt)
+		self.UInt64 = v
+		return err
+	case 6:
+		v, err := proto.UnmarshalFloat32(buffer, wt)
+		self.Float32 = v
+		return err
+	case 7:
+		v, err := proto.UnmarshalFloat64(buffer, wt)
+		self.Float64 = v
+		return err
+	case 8:
+		v, err := proto.UnmarshalString(buffer, wt)
+		self.Str = v
+		return err
 
 	}
 
@@ -188,43 +246,83 @@ func (self *MySubType) Marshal(buffer *proto.Buffer) error {
 func (self *MySubType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
 	switch fieldIndex {
 	case 1:
-		return proto.UnmarshalBool(buffer, wt, &self.Bool)
+		v, err := proto.UnmarshalBool(buffer, wt)
+		self.Bool = v
+		return err
 	case 2:
-		return proto.UnmarshalInt32(buffer, wt, &self.Int32)
+		v, err := proto.UnmarshalInt32(buffer, wt)
+		self.Int32 = v
+		return err
 	case 3:
-		return proto.UnmarshalUInt32(buffer, wt, &self.UInt32)
+		v, err := proto.UnmarshalUInt32(buffer, wt)
+		self.UInt32 = v
+		return err
 	case 4:
-		return proto.UnmarshalInt64(buffer, wt, &self.Int64)
+		v, err := proto.UnmarshalInt64(buffer, wt)
+		self.Int64 = v
+		return err
 	case 5:
-		return proto.UnmarshalUInt64(buffer, wt, &self.UInt64)
+		v, err := proto.UnmarshalUInt64(buffer, wt)
+		self.UInt64 = v
+		return err
 	case 6:
-		return proto.UnmarshalFloat32(buffer, wt, &self.Float32)
+		v, err := proto.UnmarshalFloat32(buffer, wt)
+		self.Float32 = v
+		return err
 	case 7:
-		return proto.UnmarshalFloat64(buffer, wt, &self.Float64)
+		v, err := proto.UnmarshalFloat64(buffer, wt)
+		self.Float64 = v
+		return err
 	case 8:
-		return proto.UnmarshalString(buffer, wt, &self.Str)
+		v, err := proto.UnmarshalString(buffer, wt)
+		self.Str = v
+		return err
 	case 9:
-		return proto.UnmarshalBytes(buffer, wt, &self.BytesSlice)
+		v, err := proto.UnmarshalBytes(buffer, wt)
+		self.BytesSlice = v
+		return err
 	case 10:
-		return proto.UnmarshalBoolSlice(buffer, wt, &self.BoolSlice)
+		v, err := proto.UnmarshalBoolSlice(buffer, wt)
+		self.BoolSlice = append(self.BoolSlice, v...)
+		return err
 	case 11:
-		return proto.UnmarshalInt32Slice(buffer, wt, &self.Int32Slice)
+		v, err := proto.UnmarshalInt32Slice(buffer, wt)
+		self.Int32Slice = append(self.Int32Slice, v...)
+		return err
 	case 12:
-		return proto.UnmarshalUInt32Slice(buffer, wt, &self.UInt32Slice)
+		v, err := proto.UnmarshalUInt32Slice(buffer, wt)
+		self.UInt32Slice = append(self.UInt32Slice, v...)
+		return err
 	case 13:
-		return proto.UnmarshalInt64Slice(buffer, wt, &self.Int64Slice)
+		v, err := proto.UnmarshalInt64Slice(buffer, wt)
+		self.Int64Slice = append(self.Int64Slice, v...)
+		return err
 	case 14:
-		return proto.UnmarshalUInt64Slice(buffer, wt, &self.UInt64Slice)
+		v, err := proto.UnmarshalUInt64Slice(buffer, wt)
+		self.UInt64Slice = append(self.UInt64Slice, v...)
+		return err
 	case 15:
-		return proto.UnmarshalFloat32Slice(buffer, wt, &self.Float32Slice)
+		v, err := proto.UnmarshalFloat32Slice(buffer, wt)
+		self.Float32Slice = append(self.Float32Slice, v...)
+		return err
 	case 16:
-		return proto.UnmarshalFloat64Slice(buffer, wt, &self.Float64Slice)
+		v, err := proto.UnmarshalFloat64Slice(buffer, wt)
+		self.Float64Slice = append(self.Float64Slice, v...)
+		return err
 	case 17:
-		return proto.UnmarshalStringSlice(buffer, wt, &self.StrSlice)
+		v, err := proto.UnmarshalStringSlice(buffer, wt)
+		self.StrSlice = append(self.StrSlice, v...)
+		return err
 	case 18:
-		return proto.UnmarshalInt32(buffer, wt, (*int32)(&self.Enum))
+		v, err := proto.UnmarshalInt32(buffer, wt)
+		self.Enum = MyEnum(v)
+		return err
 	case 19:
-		return proto.UnmarshalInt32Slice(buffer, wt, (*[]int32)(unsafe.Pointer(&self.EnumSlice)))
+		v, err := proto.UnmarshalInt32Slice(buffer, wt)
+		for _, vv := range v {
+			self.EnumSlice = append(self.EnumSlice, MyEnum(vv))
+		}
+		return err
 
 	}
 
@@ -360,41 +458,75 @@ func (self *MyType) Marshal(buffer *proto.Buffer) error {
 func (self *MyType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.WireType) error {
 	switch fieldIndex {
 	case 1:
-		return proto.UnmarshalBool(buffer, wt, &self.Bool)
+		v, err := proto.UnmarshalBool(buffer, wt)
+		self.Bool = v
+		return err
 	case 2:
-		return proto.UnmarshalInt32(buffer, wt, &self.Int32)
+		v, err := proto.UnmarshalInt32(buffer, wt)
+		self.Int32 = v
+		return err
 	case 3:
-		return proto.UnmarshalUInt32(buffer, wt, &self.UInt32)
+		v, err := proto.UnmarshalUInt32(buffer, wt)
+		self.UInt32 = v
+		return err
 	case 4:
-		return proto.UnmarshalInt64(buffer, wt, &self.Int64)
+		v, err := proto.UnmarshalInt64(buffer, wt)
+		self.Int64 = v
+		return err
 	case 5:
-		return proto.UnmarshalUInt64(buffer, wt, &self.UInt64)
+		v, err := proto.UnmarshalUInt64(buffer, wt)
+		self.UInt64 = v
+		return err
 	case 6:
-		return proto.UnmarshalFloat32(buffer, wt, &self.Float32)
+		v, err := proto.UnmarshalFloat32(buffer, wt)
+		self.Float32 = v
+		return err
 	case 7:
-		return proto.UnmarshalFloat64(buffer, wt, &self.Float64)
+		v, err := proto.UnmarshalFloat64(buffer, wt)
+		self.Float64 = v
+		return err
 	case 8:
-		return proto.UnmarshalString(buffer, wt, &self.Str)
+		v, err := proto.UnmarshalString(buffer, wt)
+		self.Str = v
+		return err
 	case 9:
 		return proto.UnmarshalStruct(buffer, wt, &self.Struct)
 	case 10:
-		return proto.UnmarshalBytes(buffer, wt, &self.BytesSlice)
+		v, err := proto.UnmarshalBytes(buffer, wt)
+		self.BytesSlice = v
+		return err
 	case 11:
-		return proto.UnmarshalBoolSlice(buffer, wt, &self.BoolSlice)
+		v, err := proto.UnmarshalBoolSlice(buffer, wt)
+		self.BoolSlice = append(self.BoolSlice, v...)
+		return err
 	case 12:
-		return proto.UnmarshalInt32Slice(buffer, wt, &self.Int32Slice)
+		v, err := proto.UnmarshalInt32Slice(buffer, wt)
+		self.Int32Slice = append(self.Int32Slice, v...)
+		return err
 	case 13:
-		return proto.UnmarshalUInt32Slice(buffer, wt, &self.UInt32Slice)
+		v, err := proto.UnmarshalUInt32Slice(buffer, wt)
+		self.UInt32Slice = append(self.UInt32Slice, v...)
+		return err
 	case 14:
-		return proto.UnmarshalInt64Slice(buffer, wt, &self.Int64Slice)
+		v, err := proto.UnmarshalInt64Slice(buffer, wt)
+		self.Int64Slice = append(self.Int64Slice, v...)
+		return err
 	case 15:
-		return proto.UnmarshalUInt64Slice(buffer, wt, &self.UInt64Slice)
+		v, err := proto.UnmarshalUInt64Slice(buffer, wt)
+		self.UInt64Slice = append(self.UInt64Slice, v...)
+		return err
 	case 16:
-		return proto.UnmarshalFloat32Slice(buffer, wt, &self.Float32Slice)
+		v, err := proto.UnmarshalFloat32Slice(buffer, wt)
+		self.Float32Slice = append(self.Float32Slice, v...)
+		return err
 	case 17:
-		return proto.UnmarshalFloat64Slice(buffer, wt, &self.Float64Slice)
+		v, err := proto.UnmarshalFloat64Slice(buffer, wt)
+		self.Float64Slice = append(self.Float64Slice, v...)
+		return err
 	case 18:
-		return proto.UnmarshalStringSlice(buffer, wt, &self.StrSlice)
+		v, err := proto.UnmarshalStringSlice(buffer, wt)
+		self.StrSlice = append(self.StrSlice, v...)
+		return err
 	case 19:
 		var elm MySubType
 		if err := proto.UnmarshalStruct(buffer, wt, &elm); err != nil {
@@ -404,9 +536,15 @@ func (self *MyType) Unmarshal(buffer *proto.Buffer, fieldIndex uint64, wt proto.
 			return nil
 		}
 	case 20:
-		return proto.UnmarshalInt32(buffer, wt, (*int32)(&self.Enum))
+		v, err := proto.UnmarshalInt32(buffer, wt)
+		self.Enum = MyEnum(v)
+		return err
 	case 21:
-		return proto.UnmarshalInt32Slice(buffer, wt, (*[]int32)(unsafe.Pointer(&self.EnumSlice)))
+		v, err := proto.UnmarshalInt32Slice(buffer, wt)
+		for _, vv := range v {
+			self.EnumSlice = append(self.EnumSlice, MyEnum(vv))
+		}
+		return err
 
 	}
 

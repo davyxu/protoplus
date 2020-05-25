@@ -22,6 +22,11 @@ func NewBuffer(e []byte) *Buffer {
 	return &Buffer{buf: e}
 }
 
+func NewBufferBySize(size int) *Buffer {
+	data := make([]byte, 0, size)
+	return NewBuffer(data)
+}
+
 // Reset resets the Buffer, ready for marshaling a new protocol buffer.
 func (self *Buffer) Reset() {
 	self.buf = self.buf[0:0] // for reading/writing

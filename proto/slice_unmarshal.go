@@ -2,264 +2,265 @@ package proto
 
 import "io"
 
-func UnmarshalBytes(b *Buffer, wt WireType, ret *[]byte) error {
+func UnmarshalBytes(b *Buffer, wt WireType) ([]byte, error) {
 
 	switch wt {
 	case WireBytes:
 		size, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if b.BytesRemains() < int(size) {
-			return io.ErrUnexpectedEOF
+			return nil, io.ErrUnexpectedEOF
 		}
 
-		*ret = append(*ret, b.ConsumeBytes(int(size))...)
+		return b.ConsumeBytes(int(size)), nil
 
 	default:
-		return ErrBadWireType
+		return nil, ErrBadWireType
 	}
-
-	return nil
 }
 
-func UnmarshalBoolSlice(b *Buffer, wt WireType, ret *[]bool) error {
+func UnmarshalBoolSlice(b *Buffer, wt WireType) ([]bool, error) {
 	switch wt {
 	case WireBytes:
 		count, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if b.BytesRemains() < int(int(count)) {
-			return io.ErrUnexpectedEOF
+			return nil, io.ErrUnexpectedEOF
 		}
 
+		var ret []bool
 		for _, element := range b.ConsumeBytes(int(count)) {
 
 			switch element {
 			case 0:
-				*ret = append(*ret, false)
+				ret = append(ret, false)
 			case 1:
-				*ret = append(*ret, true)
+				ret = append(ret, true)
 			default:
-				return ErrBadBoolValue
+				return nil, ErrBadBoolValue
 			}
-
 		}
 
-	default:
-		return ErrBadWireType
-	}
+		return ret, nil
 
-	return nil
+	default:
+		return nil, ErrBadWireType
+	}
 }
 
-func UnmarshalInt32Slice(b *Buffer, wt WireType, ret *[]int32) error {
+func UnmarshalInt32Slice(b *Buffer, wt WireType) ([]int32, error) {
 
 	switch wt {
 	case WireBytes:
 		size, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if b.BytesRemains() < int(size) {
-			return io.ErrUnexpectedEOF
+			return nil, io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
+		var ret []int32
 		for limitBuffer.BytesRemains() > 0 {
 			var element int32
-			err = UnmarshalInt32(limitBuffer, WireVarint, &element)
+			element, err = UnmarshalInt32(limitBuffer, WireVarint)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
-			*ret = append(*ret, element)
+			ret = append(ret, element)
 		}
 
-	default:
-		return ErrBadWireType
-	}
+		return ret, nil
 
-	return nil
+	default:
+		return nil, ErrBadWireType
+	}
 }
 
-func UnmarshalUInt32Slice(b *Buffer, wt WireType, ret *[]uint32) error {
+func UnmarshalUInt32Slice(b *Buffer, wt WireType) ([]uint32, error) {
 
 	switch wt {
 	case WireBytes:
 		size, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if b.BytesRemains() < int(size) {
-			return io.ErrUnexpectedEOF
+			return nil, io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
+		var ret []uint32
 		for limitBuffer.BytesRemains() > 0 {
 			var element uint32
-			err = UnmarshalUInt32(limitBuffer, WireVarint, &element)
+			element, err = UnmarshalUInt32(limitBuffer, WireVarint)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
-			*ret = append(*ret, element)
+			ret = append(ret, element)
 		}
 
-	default:
-		return ErrBadWireType
-	}
+		return ret, nil
 
-	return nil
+	default:
+		return nil, ErrBadWireType
+	}
 }
 
-func UnmarshalInt64Slice(b *Buffer, wt WireType, ret *[]int64) error {
+func UnmarshalInt64Slice(b *Buffer, wt WireType) ([]int64, error) {
 
 	switch wt {
 	case WireBytes:
 		size, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if b.BytesRemains() < int(size) {
-			return io.ErrUnexpectedEOF
+			return nil, io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
+		var ret []int64
 		for limitBuffer.BytesRemains() > 0 {
 			var element int64
-			err = UnmarshalInt64(limitBuffer, WireVarint, &element)
+			element, err = UnmarshalInt64(limitBuffer, WireVarint)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
-			*ret = append(*ret, element)
+			ret = append(ret, element)
 		}
+		return ret, nil
 
 	default:
-		return ErrBadWireType
+		return nil, ErrBadWireType
 	}
-
-	return nil
 }
 
-func UnmarshalUInt64Slice(b *Buffer, wt WireType, ret *[]uint64) error {
+func UnmarshalUInt64Slice(b *Buffer, wt WireType) ([]uint64, error) {
 
 	switch wt {
 	case WireBytes:
 		size, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if b.BytesRemains() < int(size) {
-			return io.ErrUnexpectedEOF
+			return nil, io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
+		var ret []uint64
 		for limitBuffer.BytesRemains() > 0 {
 			var element uint64
-			err = UnmarshalUInt64(limitBuffer, WireVarint, &element)
+			element, err = UnmarshalUInt64(limitBuffer, WireVarint)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
-			*ret = append(*ret, element)
+			ret = append(ret, element)
 		}
 
-	default:
-		return ErrBadWireType
-	}
+		return ret, nil
 
-	return nil
+	default:
+		return nil, ErrBadWireType
+	}
 }
 
-func UnmarshalStringSlice(b *Buffer, wt WireType, ret *[]string) error {
+func UnmarshalStringSlice(b *Buffer, wt WireType) ([]string, error) {
 	switch wt {
 	case WireBytes:
 		v, err := b.DecodeStringBytes()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
-		*ret = append(*ret, v)
+		return []string{v}, nil
 	default:
-		return ErrBadWireType
+		return nil, ErrBadWireType
 	}
-
-	return nil
 }
 
-func UnmarshalFloat32Slice(b *Buffer, wt WireType, ret *[]float32) error {
+func UnmarshalFloat32Slice(b *Buffer, wt WireType) ([]float32, error) {
 
 	switch wt {
 	case WireBytes:
 		size, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if b.BytesRemains() < int(size) {
-			return io.ErrUnexpectedEOF
+			return nil, io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
+		var ret []float32
 		for limitBuffer.BytesRemains() > 0 {
 			var element float32
-			err = UnmarshalFloat32(limitBuffer, WireFixed32, &element)
+			element, err = UnmarshalFloat32(limitBuffer, WireFixed32)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
-			*ret = append(*ret, element)
+			ret = append(ret, element)
 		}
 
-	default:
-		return ErrBadWireType
-	}
+		return ret, nil
 
-	return nil
+	default:
+		return nil, ErrBadWireType
+	}
 }
 
-func UnmarshalFloat64Slice(b *Buffer, wt WireType, ret *[]float64) error {
+func UnmarshalFloat64Slice(b *Buffer, wt WireType) ([]float64, error) {
 
 	switch wt {
 	case WireBytes:
 		size, err := b.DecodeVarint()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if b.BytesRemains() < int(size) {
-			return io.ErrUnexpectedEOF
+			return nil, io.ErrUnexpectedEOF
 		}
 
 		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
 
+		var ret []float64
 		for limitBuffer.BytesRemains() > 0 {
 			var element float64
-			err = UnmarshalFloat64(limitBuffer, WireFixed64, &element)
+			element, err = UnmarshalFloat64(limitBuffer, WireFixed64)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
-			*ret = append(*ret, element)
+			ret = append(ret, element)
 		}
 
-	default:
-		return ErrBadWireType
-	}
+		return ret, nil
 
-	return nil
+	default:
+		return nil, ErrBadWireType
+	}
 }

@@ -14,8 +14,14 @@ enum MyEnum {
 
 
 message MyTypeMini {	
-	string Str = 1; 
-	bool Bool = 2; 
+	bool Bool = 1; 
+	int32 Int32 = 2; 
+	uint32 UInt32 = 3; 
+	int64 Int64 = 4; 
+	uint64 UInt64 = 5; 
+	float Float32 = 6; 
+	double Float64 = 7; 
+	string Str = 8; 
 }
 
 
@@ -64,5 +70,13 @@ message MyType {
 	repeated MySubType StructSlice = 19; 
 	MyEnum Enum = 20; 
 	repeated MyEnum EnumSlice = 21; 
+}
+
+
+message LoginREQ {	
+}
+
+
+message LoginACK {	
 }
 

@@ -13,7 +13,6 @@ func MarshalBytes(b *Buffer, fieldIndex uint64, value []byte) error {
 
 	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
 
-	// 因为bool每一个value都是1个字节，size=1*count
 	b.EncodeVarint(uint64(size))
 	b.buf = append(b.buf, value...)
 
