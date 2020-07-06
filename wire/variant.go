@@ -1,4 +1,4 @@
-package proto
+package wire
 
 const maxVarintBytes = 10 // maximum length of a varint
 

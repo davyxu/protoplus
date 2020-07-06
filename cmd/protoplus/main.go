@@ -28,7 +28,7 @@ var (
 	flagStructBase = flag.String("structbase", "IProtoStruct", "struct inherite class type name in c#")
 )
 
-const Version = "0.1.0"
+const Version = "2.0.0"
 
 func main() {
 

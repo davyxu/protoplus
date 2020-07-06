@@ -1,4 +1,4 @@
-package proto
+package wire
 
 type WireType = uint64
 
@@ -11,11 +11,11 @@ const (
 	WireFixed64                      // 64位定长 float64
 )
 
-func makeWireTag(tag uint64, wt WireType) WireType {
+func MakeTag(tag uint64, wt WireType) WireType {
 	return uint64(tag)<<3 | uint64(wt)
 }
 
-func parseWireTag(wireTag WireType) (tag uint64, wt WireType) {
+func ParseTag(wireTag WireType) (tag uint64, wt WireType) {
 	tag = wireTag >> 3
 	wt = WireType(wireTag & 7)
 	return

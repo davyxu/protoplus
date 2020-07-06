@@ -1,4 +1,4 @@
-package proto
+package wire
 
 func SizeBytes(fieldIndex uint64, value []byte) int {
 
@@ -9,7 +9,7 @@ func SizeBytes(fieldIndex uint64, value []byte) int {
 
 	size := count * 1
 
-	return SizeVarint(makeWireTag(fieldIndex, WireBytes)) + SizeVarint(uint64(size)) + size
+	return SizeVarint(MakeTag(fieldIndex, WireBytes)) + SizeVarint(uint64(size)) + size
 }
 
 func SizeBoolSlice(fieldIndex uint64, value []bool) int {
@@ -21,7 +21,7 @@ func SizeBoolSlice(fieldIndex uint64, value []bool) int {
 
 	size := count * 1
 
-	return SizeVarint(makeWireTag(fieldIndex, WireBytes)) + SizeVarint(uint64(size)) + size
+	return SizeVarint(MakeTag(fieldIndex, WireBytes)) + SizeVarint(uint64(size)) + size
 }
 
 func SizeInt32Slice(fieldIndex uint64, value []int32) (ret int) {
@@ -31,7 +31,7 @@ func SizeInt32Slice(fieldIndex uint64, value []int32) (ret int) {
 		return 0
 	}
 
-	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+	ret = SizeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 后部分的长度
 	size := 0
@@ -53,7 +53,7 @@ func SizeUInt32Slice(fieldIndex uint64, value []uint32) (ret int) {
 		return 0
 	}
 
-	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+	ret = SizeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 后部分的长度
 	size := 0
@@ -75,7 +75,7 @@ func SizeInt64Slice(fieldIndex uint64, value []int64) (ret int) {
 		return 0
 	}
 
-	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+	ret = SizeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 后部分的长度
 	size := 0
@@ -97,7 +97,7 @@ func SizeUInt64Slice(fieldIndex uint64, value []uint64) (ret int) {
 		return 0
 	}
 
-	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+	ret = SizeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 后部分的长度
 	size := 0
@@ -132,7 +132,7 @@ func SizeFloat32Slice(fieldIndex uint64, value []float32) (ret int) {
 		return 0
 	}
 
-	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+	ret = SizeVarint(MakeTag(fieldIndex, WireBytes))
 
 	size := count * 4
 
@@ -150,7 +150,7 @@ func SizeFloat64Slice(fieldIndex uint64, value []float64) (ret int) {
 		return 0
 	}
 
-	ret = SizeVarint(makeWireTag(fieldIndex, WireBytes))
+	ret = SizeVarint(MakeTag(fieldIndex, WireBytes))
 
 	size := count * 8
 

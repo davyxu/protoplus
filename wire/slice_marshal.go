@@ -1,4 +1,4 @@
-package proto
+package wire
 
 import (
 	"math"
@@ -11,8 +11,9 @@ func MarshalBytes(b *Buffer, fieldIndex uint64, value []byte) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+	b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 
+	// 因为bool每一个value都是1个字节，size=1*count
 	b.EncodeVarint(uint64(size))
 	b.buf = append(b.buf, value...)
 
@@ -26,7 +27,7 @@ func MarshalBoolSlice(b *Buffer, fieldIndex uint64, value []bool) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+	b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 因为bool每一个value都是1个字节，size=1*count
 	b.EncodeVarint(uint64(size))
@@ -49,7 +50,7 @@ func MarshalInt32Slice(b *Buffer, fieldIndex uint64, value []int32) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+	b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 计算变长单元大小
 	var size int
@@ -72,7 +73,7 @@ func MarshalUInt32Slice(b *Buffer, fieldIndex uint64, value []uint32) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+	b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 计算变长单元大小
 	var size int
@@ -95,7 +96,7 @@ func MarshalInt64Slice(b *Buffer, fieldIndex uint64, value []int64) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+	b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 计算变长单元大小
 	var size int
@@ -118,7 +119,7 @@ func MarshalUInt64Slice(b *Buffer, fieldIndex uint64, value []uint64) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+	b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 计算变长单元大小
 	var size int
@@ -142,7 +143,7 @@ func MarshalStringSlice(b *Buffer, fieldIndex uint64, value []string) error {
 	}
 
 	for _, v := range value {
-		b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+		b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 		b.EncodeStringBytes(v)
 	}
 
@@ -156,7 +157,7 @@ func MarshalFloat32Slice(b *Buffer, fieldIndex uint64, value []float32) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+	b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 写入长度
 	b.EncodeVarint(uint64(count * 4))
@@ -175,7 +176,7 @@ func MarshalFloat64Slice(b *Buffer, fieldIndex uint64, value []float64) error {
 		return nil
 	}
 
-	b.EncodeVarint(makeWireTag(fieldIndex, WireBytes))
+	b.EncodeVarint(MakeTag(fieldIndex, WireBytes))
 
 	// 写入长度
 	b.EncodeVarint(uint64(count * 8))

@@ -1,4 +1,4 @@
-package proto
+package wire
 
 import (
 	"io"
@@ -164,52 +164,6 @@ func skipField(b *Buffer, wt WireType) error {
 	case WireFixed64:
 		_, err := b.DecodeFixed64()
 		return err
-	default:
-		return ErrBadWireType
-	}
-}
-
-func rawUnmarshalStruct(b *Buffer, msg Struct) error {
-
-	for b.BytesRemains() > 0 {
-		wireTag, err := b.DecodeVarint()
-
-		if err != nil {
-			return err
-		}
-
-		fieldIndex, wt := parseWireTag(wireTag)
-
-		err = msg.Unmarshal(b, fieldIndex, wt)
-
-		if err == ErrUnknownField {
-			err = skipField(b, wt)
-		}
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func UnmarshalStruct(b *Buffer, wt WireType, msgPtr Struct) error {
-	switch wt {
-	case WireBytes:
-		size, err := b.DecodeVarint()
-		if err != nil {
-			return err
-		}
-
-		if b.BytesRemains() < int(size) {
-			return io.ErrUnexpectedEOF
-		}
-
-		limitBuffer := NewBuffer(b.ConsumeBytes(int(size)))
-
-		return rawUnmarshalStruct(limitBuffer, msgPtr)
-
 	default:
 		return ErrBadWireType
 	}

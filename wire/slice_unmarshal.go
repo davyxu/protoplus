@@ -1,6 +1,8 @@
-package proto
+package wire
 
-import "io"
+import (
+	"io"
+)
 
 func UnmarshalBytes(b *Buffer, wt WireType) ([]byte, error) {
 

@@ -4,7 +4,7 @@ cd ../../../../..
 export GOPATH=`pwd`
 cd ${CURRDIR}
 
-go build -v -o=${GOPATH}/bin/protoplus github.com/davyxu/protoplus
+go build -v -o=${GOPATH}/bin/protoplus github.com/davyxu/protoplus/cmd/protoplus
 
 # code.proto为输入文件
 ${GOPATH}/bin/protoplus -go_out=code_gen.go -package=tests code.proto
