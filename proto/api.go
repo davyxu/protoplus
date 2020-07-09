@@ -4,7 +4,9 @@ import (
 	"github.com/davyxu/protoplus/wire"
 )
 
-func Marshal(msg wire.Struct) ([]byte, error) {
+type Struct = wire.Struct
+
+func Marshal(msg Struct) ([]byte, error) {
 
 	l := msg.Size()
 
@@ -21,12 +23,12 @@ func Marshal(msg wire.Struct) ([]byte, error) {
 
 }
 
-func Size(msg wire.Struct) int {
+func Size(msg Struct) int {
 
 	return msg.Size()
 }
 
-func Unmarshal(data []byte, msg wire.Struct) (err error) {
+func Unmarshal(data []byte, msg Struct) (err error) {
 
 	buffer := wire.NewBuffer(data)
 

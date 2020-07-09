@@ -2,7 +2,9 @@ package tests
 
 import (
 	"github.com/davyxu/protoplus/proto"
+	"github.com/davyxu/protoplus/text"
 	"github.com/davyxu/protoplus/wire"
+	"github.com/stretchr/testify/assert"
 	"math"
 	"reflect"
 	"testing"
@@ -11,18 +13,12 @@ import (
 func TestOptional(t *testing.T) {
 	bigData := makeMyType()
 	data, err := proto.Marshal(&bigData)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+	assert.Equal(t, err, nil)
 	var output MyTypeMini
-	err = proto.Unmarshal(data, &output)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+	assert.Equal(t, proto.Unmarshal(data, &output), nil)
 
 	t.Logf("%+v", output)
+	assert.Equal(t, bigData, output)
 
 }
 
@@ -61,34 +57,43 @@ func makeMyType() (input MyType) {
 	return
 }
 
-func verify(t *testing.T, raw wire.Struct) {
-	t.Logf("size: %d", proto.Size(raw))
-
+func verifyWire(t *testing.T, raw wire.Struct) {
 	data, err := proto.Marshal(raw)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+	assert.Equal(t, err, nil)
+
 	t.Log("proto+:", len(data), data)
 
 	newType := reflect.New(reflect.TypeOf(raw).Elem()).Interface().(wire.Struct)
 
-	err = proto.Unmarshal(data, newType)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
+	assert.Equal(t, proto.Unmarshal(data, newType), nil)
+
+	assert.Equal(t, raw, newType)
+}
+
+func verifyText(t *testing.T, raw interface{}) {
+
+	tRaw := reflect.TypeOf(raw)
+
+	if tRaw.Kind() != reflect.Ptr {
+		panic("expect ptr")
 	}
 
-	if !reflect.DeepEqual(raw, newType) {
-		t.FailNow()
-	}
+	data := proto.CompactTextString(raw)
+
+	t.Log(data)
+
+	newType := reflect.New(tRaw.Elem()).Interface()
+
+	assert.Equal(t, text.UnmarshalText(data, newType), nil)
+
+	assert.Equal(t, raw, newType)
 }
 
 func TestFull(t *testing.T) {
 
 	input := makeMyType()
 
-	verify(t, &input)
+	verifyWire(t, &input)
 
 	t.Logf("%v", proto.MarshalTextString(input))
 }
@@ -98,5 +103,45 @@ func TestIntSlice(t *testing.T) {
 	var input MyType
 	input.Int32Slice = []int32{-1, 1, 2}
 
-	verify(t, &input)
+	verifyWire(t, &input)
+}
+
+func TestText(t *testing.T) {
+
+	input := makeMyType()
+
+	//var input MyType
+	//input.Int32Slice = []int32{-1, 1, 2}
+
+	verifyText(t, &input)
+}
+
+func TestFloat(t *testing.T) {
+
+	type MyFloat struct {
+		Value float64
+	}
+
+	input := MyFloat{math.MaxFloat64}
+
+	verifyText(t, &input)
+}
+
+func TestSlice(t *testing.T) {
+
+	type DummyStruct struct {
+		Num int32
+	}
+
+	type MyFloat struct {
+		Value []int32
+		Dummy DummyStruct
+	}
+
+	input := MyFloat{
+		[]int32{-1, 1, 2},
+		DummyStruct{5},
+	}
+
+	verifyText(t, &input)
 }
