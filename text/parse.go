@@ -32,7 +32,13 @@ func parseStruct(lex *ulexer.Lexer, tObj reflect.Type, vObj reflect.Value, endLi
 
 		lex.Read(ulexer.WhiteSpace())
 
-		parseValue(lex, func(tk *ulexer.Token) {
+		parseMultiValue(lex, []ulexer.Matcher{ulexer.String(),
+			ulexer.Numeral(),
+			ulexer.Bool(),
+			ulexer.Contain("["),
+			ulexer.Contain("{"),
+			ulexer.Identifier(),
+		}, func(tk *ulexer.Token) {
 			if !fieldExists {
 				return
 			}
@@ -65,27 +71,20 @@ func parseStruct(lex *ulexer.Lexer, tObj reflect.Type, vObj reflect.Value, endLi
 	}
 }
 
-func parseValue(lex *ulexer.Lexer, action ulexer.MatchAction) {
+func parseMultiValue(lex *ulexer.Lexer, mlist []ulexer.Matcher, action ulexer.MatchAction) {
+
+	alist := make([]ulexer.MatchAction, 0, len(mlist))
+	for i := 0; i < len(mlist); i++ {
+		alist = append(alist, action)
+	}
+
 	lex.SelectAction(
-		[]ulexer.Matcher{ulexer.String(),
-			ulexer.Numeral(),
-			ulexer.Bool(),
-			ulexer.Contain("["),
-			ulexer.Contain("{"),
-			ulexer.Identifier(),
-		},
-		[]ulexer.MatchAction{
-			action,
-			action,
-			action,
-			action,
-			action,
-			action,
-		},
+		mlist,
+		alist,
 	)
 }
 
-func parseElement(lex *ulexer.Lexer, endLiteral string, onValue ulexer.MatchAction, onEnd func()) {
+func parseElement(lex *ulexer.Lexer, endLiteral string, m ulexer.Matcher, onValue ulexer.MatchAction, onEnd func()) {
 	for {
 
 		if detectEnd(lex, endLiteral) {
@@ -93,7 +92,8 @@ func parseElement(lex *ulexer.Lexer, endLiteral string, onValue ulexer.MatchActi
 			break
 		}
 
-		parseValue(lex, onValue)
+		tk := lex.Expect(m)
+		onValue(tk)
 	}
 
 }
@@ -108,7 +108,7 @@ func parseArray(lex *ulexer.Lexer, tField reflect.Type, vObj reflect.Value, endL
 
 			list := reflect.MakeSlice(vObj.Type(), 0, 0)
 
-			parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+			parseElement(lex, endLiteral, ulexer.Integer(), func(tk *ulexer.Token) {
 
 				vElm := reflect.ValueOf(tk.Int32())
 
@@ -120,8 +120,7 @@ func parseArray(lex *ulexer.Lexer, tField reflect.Type, vObj reflect.Value, endL
 
 		} else {
 			var value []int32
-			// TODO 按整数parse
-			parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+			parseElement(lex, endLiteral, ulexer.Integer(), func(tk *ulexer.Token) {
 				value = append(value, tk.Int32())
 			}, func() {
 
@@ -131,60 +130,56 @@ func parseArray(lex *ulexer.Lexer, tField reflect.Type, vObj reflect.Value, endL
 
 	case reflect.Int64:
 		var value []int64
-		// TODO 按整数parse
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+		parseElement(lex, endLiteral, ulexer.Integer(), func(tk *ulexer.Token) {
 			value = append(value, tk.Int64())
 		}, func() {
 			vObj.Set(reflect.ValueOf(value))
 		})
 	case reflect.Uint64:
 		var value []uint64
-		// TODO 按整数parse
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+		parseElement(lex, endLiteral, ulexer.UInteger(), func(tk *ulexer.Token) {
 			value = append(value, tk.UInt64())
 		}, func() {
 			vObj.Set(reflect.ValueOf(value))
 		})
 	case reflect.Float32:
 		var value []float32
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+		parseElement(lex, endLiteral, ulexer.Numeral(), func(tk *ulexer.Token) {
 			value = append(value, tk.Float32())
 		}, func() {
 			vObj.Set(reflect.ValueOf(value))
 		})
 	case reflect.Float64:
 		var value []float64
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+		parseElement(lex, endLiteral, ulexer.Numeral(), func(tk *ulexer.Token) {
 			value = append(value, tk.Float64())
 		}, func() {
 			vObj.Set(reflect.ValueOf(value))
 		})
 	case reflect.Uint32:
 		var value []uint32
-		// TODO 按整数parse
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+		parseElement(lex, endLiteral, ulexer.UInteger(), func(tk *ulexer.Token) {
 			value = append(value, tk.UInt32())
 		}, func() {
 			vObj.Set(reflect.ValueOf(value))
 		})
 	case reflect.Bool:
 		var value []bool
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+		parseElement(lex, endLiteral, ulexer.Bool(), func(tk *ulexer.Token) {
 			value = append(value, tk.Bool())
 		}, func() {
 			vObj.Set(reflect.ValueOf(value))
 		})
 	case reflect.String:
 		var value []string
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+		parseElement(lex, endLiteral, ulexer.String(), func(tk *ulexer.Token) {
 			value = append(value, tk.String())
 		}, func() {
 			vObj.Set(reflect.ValueOf(value))
 		})
 	case reflect.Uint8:
 		var value []byte
-		// TODO 按整数parse
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+		parseElement(lex, endLiteral, ulexer.Numeral(), func(tk *ulexer.Token) {
 			value = append(value, tk.UInt8())
 		}, func() {
 			vObj.SetBytes(value)
