@@ -159,6 +159,18 @@ func (self *TextMarshaler) writeAny(w *textWriter, v reflect.Value) error {
 		if err := w.WriteByte(ket); err != nil {
 			return err
 		}
+	case reflect.Int32:
+		// 枚举切片的值应该是输出整形
+		if _, ok := v.Interface().(fmt.Stringer); ok {
+
+			_, err := fmt.Fprint(w, v.Int())
+			return err
+
+		} else {
+			_, err := fmt.Fprint(w, v.Interface())
+			return err
+		}
+
 	default:
 		_, err := fmt.Fprint(w, v.Interface())
 		return err

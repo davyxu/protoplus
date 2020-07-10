@@ -2,7 +2,7 @@ package text
 
 import (
 	"github.com/davyxu/ulexer"
-	"github.com/davyxu/ureflect"
+	"reflect"
 )
 
 func detectEnd(lex *ulexer.Lexer, literal string) bool {
@@ -16,7 +16,7 @@ func detectEnd(lex *ulexer.Lexer, literal string) bool {
 	return false
 }
 
-func parseStruct(lex *ulexer.Lexer, tObj *ureflect.Type, vObj ureflect.Pointer, endLiteral string) {
+func parseStruct(lex *ulexer.Lexer, tObj reflect.Type, vObj reflect.Value, endLiteral string) {
 	for {
 
 		if detectEnd(lex, endLiteral) {
@@ -25,46 +25,41 @@ func parseStruct(lex *ulexer.Lexer, tObj *ureflect.Type, vObj ureflect.Pointer, 
 
 		fieldTk := ulexer.NextToken(lex, ulexer.Identifier())
 
-		tField := tObj.FieldByName(fieldTk.String())
-
-		//fmt.Println(tObj.Name(), tField.Name)
-
-		if tField.Name == "BytesSlice" {
-			tField.Name = tField.Name
-		}
+		tField, fieldExists := tObj.FieldByName(fieldTk.String())
+		vField := vObj.FieldByName(fieldTk.String())
 
 		ulexer.NextToken(lex, ulexer.Contain(":"))
 
 		lex.Read(ulexer.WhiteSpace())
 
 		parseValue(lex, func(tk *ulexer.Token) {
-			if tField == nil {
+			if !fieldExists {
 				return
 			}
 
-			switch tField.Type().Kind() {
-			case ureflect.Bool:
-				tField.SetBool(vObj, tk.Bool())
-			case ureflect.String:
-				tField.SetString(vObj, tk.String())
-			case ureflect.Int32:
-				tField.SetInt32(vObj, tk.Int32())
-			case ureflect.Int64:
-				tField.SetInt64(vObj, tk.Int64())
-			case ureflect.UInt32:
-				tField.SetUInt32(vObj, tk.UInt32())
-			case ureflect.UInt64:
-				tField.SetUInt64(vObj, tk.UInt64())
-			case ureflect.Float32:
-				tField.SetFloat32(vObj, tk.Float32())
-			case ureflect.Float64:
-				tField.SetFloat64(vObj, tk.Float64())
-			case ureflect.Slice:
-				parseArray(lex, tField, vObj, "]")
-			case ureflect.Struct:
-				parseStruct(lex, tField.Type(), tField.Value(vObj), "}")
+			switch tField.Type.Kind() {
+			case reflect.Bool:
+				vField.SetBool(tk.Bool())
+			case reflect.String:
+				vField.SetString(tk.String())
+			case reflect.Int32:
+				vField.SetInt(int64(tk.Int32()))
+			case reflect.Int64:
+				vField.SetInt(int64(tk.Int64()))
+			case reflect.Uint32:
+				vField.SetUint(uint64(tk.UInt32()))
+			case reflect.Uint64:
+				vField.SetUint(uint64(tk.UInt64()))
+			case reflect.Float32:
+				vField.SetFloat(float64(tk.Float32()))
+			case reflect.Float64:
+				vField.SetFloat(tk.Float64())
+			case reflect.Slice:
+				parseArray(lex, tField.Type, vField, "]")
+			case reflect.Struct:
+				parseStruct(lex, tField.Type, vField, "}")
 			default:
-				panic("unsupport field kind " + tField.Type().Kind().String())
+				panic("unsupport field kind " + tField.Type.Kind().String())
 			}
 		})
 	}
@@ -103,80 +98,100 @@ func parseElement(lex *ulexer.Lexer, endLiteral string, onValue ulexer.MatchActi
 
 }
 
-func parseArray(lex *ulexer.Lexer, tField *ureflect.Field, vObj ureflect.Pointer, endLiteral string) {
+func parseArray(lex *ulexer.Lexer, tField reflect.Type, vObj reflect.Value, endLiteral string) {
 
-	switch tField.Type().Elem().Kind() {
-	case ureflect.Int32:
-		var value []int32
-		// TODO 按整数parse
-		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
-			value = append(value, tk.Int32())
-		}, func() {
-			tField.SetInt32Slice(vObj, value)
-		})
-	case ureflect.Int64:
+	switch tField.Elem().Kind() {
+	case reflect.Int32:
+
+		// 枚举
+		if vObj.Kind() != reflect.Int32 {
+
+			list := reflect.MakeSlice(vObj.Type(), 0, 0)
+
+			parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+
+				vElm := reflect.ValueOf(tk.Int32())
+
+				list = reflect.Append(list, vElm.Convert(vObj.Type().Elem()))
+			}, func() {
+
+				vObj.Set(list)
+			})
+
+		} else {
+			var value []int32
+			// TODO 按整数parse
+			parseElement(lex, endLiteral, func(tk *ulexer.Token) {
+				value = append(value, tk.Int32())
+			}, func() {
+
+				vObj.Set(reflect.ValueOf(value))
+			})
+		}
+
+	case reflect.Int64:
 		var value []int64
 		// TODO 按整数parse
 		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
 			value = append(value, tk.Int64())
 		}, func() {
-			tField.SetInt64Slice(vObj, value)
+			vObj.Set(reflect.ValueOf(value))
 		})
-	case ureflect.UInt64:
+	case reflect.Uint64:
 		var value []uint64
 		// TODO 按整数parse
 		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
 			value = append(value, tk.UInt64())
 		}, func() {
-			tField.SetUInt64Slice(vObj, value)
+			vObj.Set(reflect.ValueOf(value))
 		})
-	case ureflect.Float32:
+	case reflect.Float32:
 		var value []float32
 		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
 			value = append(value, tk.Float32())
 		}, func() {
-			tField.SetFloat32Slice(vObj, value)
+			vObj.Set(reflect.ValueOf(value))
 		})
-	case ureflect.Float64:
+	case reflect.Float64:
 		var value []float64
 		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
 			value = append(value, tk.Float64())
 		}, func() {
-			tField.SetFloat64Slice(vObj, value)
+			vObj.Set(reflect.ValueOf(value))
 		})
-	case ureflect.UInt32:
+	case reflect.Uint32:
 		var value []uint32
 		// TODO 按整数parse
 		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
 			value = append(value, tk.UInt32())
 		}, func() {
-			tField.SetUInt32Slice(vObj, value)
+			vObj.Set(reflect.ValueOf(value))
 		})
-	case ureflect.Bool:
+	case reflect.Bool:
 		var value []bool
 		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
 			value = append(value, tk.Bool())
 		}, func() {
-			tField.SetBoolSlice(vObj, value)
+			vObj.Set(reflect.ValueOf(value))
 		})
-	case ureflect.String:
+	case reflect.String:
 		var value []string
 		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
 			value = append(value, tk.String())
 		}, func() {
-			tField.SetStringSlice(vObj, value)
+			vObj.Set(reflect.ValueOf(value))
 		})
-	case ureflect.UInt8:
+	case reflect.Uint8:
 		var value []byte
 		// TODO 按整数parse
 		parseElement(lex, endLiteral, func(tk *ulexer.Token) {
 			value = append(value, tk.UInt8())
 		}, func() {
-			tField.SetBytes(vObj, value)
+			vObj.SetBytes(value)
 		})
-	case ureflect.Struct:
+	case reflect.Struct:
 
-		list := tField.Type().New()
+		list := reflect.MakeSlice(tField, 0, 0)
 		for {
 
 			if detectEnd(lex, endLiteral) {
@@ -186,23 +201,43 @@ func parseArray(lex *ulexer.Lexer, tField *ureflect.Field, vObj ureflect.Pointer
 			lex.Read(ulexer.WhiteSpace())
 			lex.Expect(ulexer.Contain("{"))
 
-			element := tField.Type().Elem().New()
+			element := reflect.New(tField.Elem()).Elem()
 
-			parseStruct(lex, tField.Type().Elem(), element, "}")
+			parseStruct(lex, tField.Elem(), element, "}")
 
-			tField.SetValue(vObj, ureflect.PointerOf(list))
+			list = reflect.Append(list, element)
+
+			vObj.Set(list)
 		}
 
 	default:
-		panic("unsupport array element " + tField.Type().Kind().String())
+		panic("unsupport array element " + tField.Kind().String())
 	}
 
 }
 
+func safeValueOf(obj interface{}) reflect.Value {
+	vObj := reflect.ValueOf(obj)
+	if vObj.Kind() == reflect.Ptr {
+		return vObj.Elem()
+	}
+
+	return vObj
+}
+
+func safeTypeOf(obj interface{}) reflect.Type {
+	tObj := reflect.TypeOf(obj)
+	if tObj.Kind() == reflect.Ptr {
+		return tObj.Elem()
+	}
+
+	return tObj
+}
+
 func UnmarshalText(s string, obj interface{}) error {
 
-	vObj := ureflect.PointerOf(obj)
-	tObj := ureflect.TypeOf(obj)
+	vObj := safeValueOf(obj)
+	tObj := safeTypeOf(obj)
 
 	lex := ulexer.NewLexer(s)
 

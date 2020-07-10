@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/davyxu/protoplus/proto"
 	"github.com/davyxu/protoplus/text"
 	"github.com/davyxu/protoplus/wire"
@@ -110,6 +112,9 @@ func TestText(t *testing.T) {
 
 	input := makeMyType()
 
+	data, _ := json.Marshal(input)
+	fmt.Println(string(data))
+
 	//var input MyType
 	//input.Int32Slice = []int32{-1, 1, 2}
 
@@ -142,6 +147,17 @@ func TestSlice(t *testing.T) {
 		[]int32{-1, 1, 2},
 		DummyStruct{5},
 	}
+
+	verifyText(t, &input)
+}
+
+func TestEnum(t *testing.T) {
+
+	type MyFloat struct {
+		Value []MyEnum
+	}
+
+	input := MyFloat{Value: []MyEnum{MyEnum_One}}
 
 	verifyText(t, &input)
 }
