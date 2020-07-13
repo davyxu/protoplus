@@ -371,14 +371,3 @@ func (self *TextMarshaler) Text(obj interface{}) string {
 	self.Marshal(&buf, obj)
 	return buf.String()
 }
-
-var (
-	defaultTextMarshaler = TextMarshaler{}
-	compactTextMarshaler = TextMarshaler{Compact: true, IgnoreDefault: true, CompactBytesSize: 50}
-)
-
-func MarshalTextString(obj interface{}) string {
-	return defaultTextMarshaler.Text(obj)
-}
-
-func CompactTextString(obj interface{}) string { return compactTextMarshaler.Text(obj) }

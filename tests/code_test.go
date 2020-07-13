@@ -1,10 +1,7 @@
 package tests
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/davyxu/protoplus/proto"
-	"github.com/davyxu/protoplus/text"
 	"github.com/davyxu/protoplus/wire"
 	"github.com/stretchr/testify/assert"
 	"math"
@@ -86,7 +83,7 @@ func verifyText(t *testing.T, raw interface{}) {
 
 	newType := reflect.New(tRaw.Elem()).Interface()
 
-	assert.Equal(t, text.UnmarshalText(data, newType), nil)
+	assert.Equal(t, proto.UnmarshalText(data, newType), nil)
 
 	assert.Equal(t, raw, newType)
 }
@@ -111,12 +108,6 @@ func TestIntSlice(t *testing.T) {
 func TestText(t *testing.T) {
 
 	input := makeMyType()
-
-	data, _ := json.Marshal(input)
-	fmt.Println(string(data))
-
-	//var input MyType
-	//input.Int32Slice = []int32{-1, 1, 2}
 
 	verifyText(t, &input)
 }

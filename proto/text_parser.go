@@ -1,4 +1,4 @@
-package text
+package proto
 
 import (
 	"github.com/davyxu/ulexer"
@@ -7,7 +7,6 @@ import (
 
 func detectEnd(lex *ulexer.Lexer, literal string) bool {
 	if literal != "" {
-		lex.Read(ulexer.WhiteSpace())
 		if tk := lex.Read(ulexer.Contain(literal)); tk.String() == literal {
 			return true
 		}
@@ -23,14 +22,12 @@ func parseStruct(lex *ulexer.Lexer, tObj reflect.Type, vObj reflect.Value, endLi
 			break
 		}
 
-		fieldTk := ulexer.NextToken(lex, ulexer.Identifier())
+		fieldTk := lex.Expect(ulexer.Identifier())
 
 		tField, fieldExists := tObj.FieldByName(fieldTk.String())
 		vField := vObj.FieldByName(fieldTk.String())
 
-		ulexer.NextToken(lex, ulexer.Contain(":"))
-
-		lex.Read(ulexer.WhiteSpace())
+		lex.Expect(ulexer.Contain(":"))
 
 		parseMultiValue(lex, []ulexer.Matcher{ulexer.String(),
 			ulexer.Numeral(),
@@ -193,7 +190,6 @@ func parseArray(lex *ulexer.Lexer, tField reflect.Type, vObj reflect.Value, endL
 				break
 			}
 
-			lex.Read(ulexer.WhiteSpace())
 			lex.Expect(ulexer.Contain("{"))
 
 			element := reflect.New(tField.Elem()).Elem()
@@ -227,20 +223,4 @@ func safeTypeOf(obj interface{}) reflect.Type {
 	}
 
 	return tObj
-}
-
-func UnmarshalText(s string, obj interface{}) error {
-
-	vObj := safeValueOf(obj)
-	tObj := safeTypeOf(obj)
-
-	lex := ulexer.NewLexer(s)
-
-	err := lex.Run(func(lex *ulexer.Lexer) {
-
-		parseStruct(lex, tObj, vObj, "")
-
-	})
-
-	return err
 }
