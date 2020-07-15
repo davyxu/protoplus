@@ -9,6 +9,10 @@ type Struct = wire.Struct
 
 func Marshal(msg Struct) ([]byte, error) {
 
+	if msg == nil {
+		return nil, nil
+	}
+
 	l := msg.Size()
 
 	data := make([]byte, 0, l)
@@ -25,6 +29,10 @@ func Marshal(msg Struct) ([]byte, error) {
 }
 
 func Size(msg Struct) int {
+
+	if msg == nil {
+		return 0
+	}
 
 	return msg.Size()
 }
