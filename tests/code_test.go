@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"encoding/json"
 	"github.com/davyxu/protoplus/proto"
 	"github.com/davyxu/protoplus/wire"
 	"github.com/stretchr/testify/assert"
@@ -103,6 +104,31 @@ func TestIntSlice(t *testing.T) {
 	input.Int32Slice = []int32{-1, 1, 2}
 
 	verifyWire(t, &input)
+}
+
+func TestSkipField(t *testing.T) {
+
+	input := makeMyType()
+
+	data, err := proto.Marshal(&input)
+	assert.Equal(t, err, nil)
+
+	jsondata, _ := json.Marshal(&input)
+
+	var mini MyTypeMini
+	assert.Equal(t, proto.Unmarshal(data, &mini), nil)
+
+	var miniJson MyTypeMini
+	json.Unmarshal(jsondata, &miniJson)
+	assert.Equal(t, miniJson, mini)
+}
+
+func TestPtrField(t *testing.T) {
+
+	input := MyType{}
+	data, err := proto.Marshal(&input)
+	t.Log(data, err)
+
 }
 
 func TestText(t *testing.T) {

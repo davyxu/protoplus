@@ -23,15 +23,14 @@ namespace {{.PackageName}}
 		{{end}}
 		#region Serialize Code
 		public void Init( )
-		{   {{range .Fields}}{{if IsPrimitiveSlice .}}
-			{{.Name}} = new {{CSTypeNameFull .}}();	{{end}}{{end}}
- 			{{range .Fields}}{{if IsStruct .}}
-			{{.Name}} = ({{CSTypeNameFull .}}) InputStream.CreateStruct(typeof({{CSTypeNameFull .}})); {{end}} {{end}}
+		{   {{range .Fields}}{{if NoneStructCanInit . }}
+			{{.Name}} = new {{CSTypeNameFull .}}();	{{end}}{{end}}{{range .Fields}}{{if StructCanInit .}}
+			{{.Name}} = ({{CSTypeNameFull .}}) MessageMeta.NewStruct(typeof({{CSTypeNameFull .}})); {{end}} {{end}}
 		}
 
 		public void Marshal(OutputStream stream)
 		{ {{range .Fields}} 
-			stream.Write{{CodecName .}}({{PbTagNumber $obj .}}, {{.Name}} ); {{end}}
+			stream.Write{{CodecName .}}({{PbTagNumber $obj .}}, {{.Name}}); {{end}}
 		}
 
 		public int GetSize()

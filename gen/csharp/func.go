@@ -42,11 +42,28 @@ func init() {
 		return CSTypeNameFull(fd)
 	}
 
-	UsefulFunc["IsPrimitiveSlice"] = func(raw interface{}) bool {
+	// 原生类型/结构体 | 数组 | 导出方式
+	//   原生类型			  无初始化
+	//   原生类型        是     new Type[]()
+	//   结构体                MessageMeta.NewStruct()
+	//   结构体          是     new Type[]()
+
+	UsefulFunc["NoneStructCanInit"] = func(raw interface{}) bool {
 
 		fd := raw.(*model.FieldDescriptor)
 
-		return fd.Repeatd && fd.Kind != model.Kind_Struct
+		if fd.Kind == model.Kind_Primitive && fd.Type == "string" {
+			return false
+		}
+
+		return !fd.TagExists("NoInit") && fd.Repeatd
+	}
+
+	UsefulFunc["StructCanInit"] = func(raw interface{}) bool {
+
+		fd := raw.(*model.FieldDescriptor)
+
+		return !fd.TagExists("NoInit") && !fd.Repeatd && fd.Kind == model.Kind_Struct
 	}
 
 	UsefulFunc["IsStructSlice"] = func(raw interface{}) bool {

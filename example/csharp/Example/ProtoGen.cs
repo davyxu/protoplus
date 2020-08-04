@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using ProtoPlus;
 
-namespace proto
+namespace Proto
 {
 	
 	public enum MyEnum 
@@ -496,14 +496,14 @@ namespace proto
             meta.RegisterMeta(new MetaInfo
             {
 				Type = typeof(MySubType),	
-				ID = 33606, 	
+				ID = 16166, 	
 				SourcePeer = "client",
 				TargetPeer = "game",
             }); 
             meta.RegisterMeta(new MetaInfo
             {
 				Type = typeof(MyType),	
-				ID = 9980, 	
+				ID = 28380, 	
 				SourcePeer = "",
 				TargetPeer = "",
             });   

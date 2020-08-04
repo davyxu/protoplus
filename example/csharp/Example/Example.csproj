@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProtoPlus\ProtoPlus.csproj" />
+    <ProjectReference Include="..\..\..\api\csharp\ProtoPlus\ProtoPlus.csproj" />
   </ItemGroup>
 
 </Project>
