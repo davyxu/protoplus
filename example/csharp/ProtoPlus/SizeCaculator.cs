@@ -75,7 +75,7 @@ namespace ProtoPlus
 
         public static int SizeFloat(int fieldIndex, float value)
         {
-            if (value < float.Epsilon)
+            if (value == 0F)
             {
                 return 0;
             }
@@ -100,7 +100,7 @@ namespace ProtoPlus
 
         public static int SizeDouble(int fieldIndex, double value)
         {
-            if (value < double.Epsilon)
+            if (value == 0D)
             {
                 return 0;
             }

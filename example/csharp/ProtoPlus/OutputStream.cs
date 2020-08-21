@@ -273,7 +273,7 @@ namespace ProtoPlus
 
         public void WriteFloat(int fieldIndex, float value)
         {            
-            if (value < float.Epsilon)
+            if (value == 0F)
             {
                 return;
             }
@@ -307,7 +307,7 @@ namespace ProtoPlus
 
         public void WriteDouble(int fieldIndex, double value)
         {
-            if (value < double.Epsilon)
+            if (value == 0D)
             {
                 return;
             }
