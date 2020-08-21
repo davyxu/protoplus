@@ -56,7 +56,7 @@ struct MySubType
     EnumSlice []MyEnum
 }
 
-[AutoMsgID ]
+[AutoMsgID MsgDir: "client -> game"]
 struct MyType
 {
 	Bool   bool

@@ -29,20 +29,19 @@ namespace Proto
 		
 		#region Serialize Code
 		public void Init( )
-		{   
- 			        
+		{           
 		}
 
 		public void Marshal(OutputStream stream)
 		{  
-			stream.WriteBool(1, Bool );  
-			stream.WriteInt32(2, Int32 );  
-			stream.WriteUInt32(3, UInt32 );  
-			stream.WriteInt64(4, Int64 );  
-			stream.WriteUInt64(5, UInt64 );  
-			stream.WriteFloat(6, Float32 );  
-			stream.WriteDouble(7, Float64 );  
-			stream.WriteString(8, Str ); 
+			stream.WriteBool(1, Bool);  
+			stream.WriteInt32(2, Int32);  
+			stream.WriteUInt32(3, UInt32);  
+			stream.WriteInt64(4, Int64);  
+			stream.WriteUInt64(5, UInt64);  
+			stream.WriteFloat(6, Float32);  
+			stream.WriteDouble(7, Float64);  
+			stream.WriteString(8, Str); 
 		}
 
 		public int GetSize()
@@ -129,32 +128,30 @@ namespace Proto
 			UInt64Slice = new List<ulong>();	
 			Float32Slice = new List<float>();	
 			Float64Slice = new List<double>();	
-			StrSlice = new List<string>();	
-			EnumSlice = new List<MyEnum>();	
- 			                   
+			EnumSlice = new List<MyEnum>();	                   
 		}
 
 		public void Marshal(OutputStream stream)
 		{  
-			stream.WriteBool(1, Bool );  
-			stream.WriteInt32(2, Int32 );  
-			stream.WriteUInt32(3, UInt32 );  
-			stream.WriteInt64(4, Int64 );  
-			stream.WriteUInt64(5, UInt64 );  
-			stream.WriteFloat(6, Float32 );  
-			stream.WriteDouble(7, Float64 );  
-			stream.WriteString(8, Str );  
-			stream.WriteBytes(9, BytesSlice );  
-			stream.WriteBool(10, BoolSlice );  
-			stream.WriteInt32(11, Int32Slice );  
-			stream.WriteUInt32(12, UInt32Slice );  
-			stream.WriteInt64(13, Int64Slice );  
-			stream.WriteUInt64(14, UInt64Slice );  
-			stream.WriteFloat(15, Float32Slice );  
-			stream.WriteDouble(16, Float64Slice );  
-			stream.WriteString(17, StrSlice );  
-			stream.WriteEnum(18, Enum );  
-			stream.WriteEnum(19, EnumSlice ); 
+			stream.WriteBool(1, Bool);  
+			stream.WriteInt32(2, Int32);  
+			stream.WriteUInt32(3, UInt32);  
+			stream.WriteInt64(4, Int64);  
+			stream.WriteUInt64(5, UInt64);  
+			stream.WriteFloat(6, Float32);  
+			stream.WriteDouble(7, Float64);  
+			stream.WriteString(8, Str);  
+			stream.WriteBytes(9, BytesSlice);  
+			stream.WriteBool(10, BoolSlice);  
+			stream.WriteInt32(11, Int32Slice);  
+			stream.WriteUInt32(12, UInt32Slice);  
+			stream.WriteInt64(13, Int64Slice);  
+			stream.WriteUInt64(14, UInt64Slice);  
+			stream.WriteFloat(15, Float32Slice);  
+			stream.WriteDouble(16, Float64Slice);  
+			stream.WriteString(17, StrSlice);  
+			stream.WriteEnum(18, Enum);  
+			stream.WriteEnum(19, EnumSlice); 
 		}
 
 		public int GetSize()
@@ -287,35 +284,34 @@ namespace Proto
 			UInt64Slice = new List<ulong>();	
 			Float32Slice = new List<float>();	
 			Float64Slice = new List<double>();	
-			StrSlice = new List<string>();	
-			EnumSlice = new List<MyEnum>();	
- 			        
-			Struct = (MySubType) InputStream.CreateStruct(typeof(MySubType));              
+			StructSlice = new List<MySubType>();	
+			EnumSlice = new List<MyEnum>();	        
+			Struct = (MySubType) MessageMeta.NewStruct(typeof(MySubType));              
 		}
 
 		public void Marshal(OutputStream stream)
 		{  
-			stream.WriteBool(1, Bool );  
-			stream.WriteInt32(2, Int32 );  
-			stream.WriteUInt32(3, UInt32 );  
-			stream.WriteInt64(4, Int64 );  
-			stream.WriteUInt64(5, UInt64 );  
-			stream.WriteFloat(6, Float32 );  
-			stream.WriteDouble(7, Float64 );  
-			stream.WriteString(8, Str );  
-			stream.WriteStruct(9, Struct );  
-			stream.WriteBytes(10, BytesSlice );  
-			stream.WriteBool(11, BoolSlice );  
-			stream.WriteInt32(12, Int32Slice );  
-			stream.WriteUInt32(13, UInt32Slice );  
-			stream.WriteInt64(14, Int64Slice );  
-			stream.WriteUInt64(15, UInt64Slice );  
-			stream.WriteFloat(16, Float32Slice );  
-			stream.WriteDouble(17, Float64Slice );  
-			stream.WriteString(18, StrSlice );  
-			stream.WriteStruct(19, StructSlice );  
-			stream.WriteEnum(20, Enum );  
-			stream.WriteEnum(21, EnumSlice ); 
+			stream.WriteBool(1, Bool);  
+			stream.WriteInt32(2, Int32);  
+			stream.WriteUInt32(3, UInt32);  
+			stream.WriteInt64(4, Int64);  
+			stream.WriteUInt64(5, UInt64);  
+			stream.WriteFloat(6, Float32);  
+			stream.WriteDouble(7, Float64);  
+			stream.WriteString(8, Str);  
+			stream.WriteStruct(9, Struct);  
+			stream.WriteBytes(10, BytesSlice);  
+			stream.WriteBool(11, BoolSlice);  
+			stream.WriteInt32(12, Int32Slice);  
+			stream.WriteUInt32(13, UInt32Slice);  
+			stream.WriteInt64(14, Int64Slice);  
+			stream.WriteUInt64(15, UInt64Slice);  
+			stream.WriteFloat(16, Float32Slice);  
+			stream.WriteDouble(17, Float64Slice);  
+			stream.WriteString(18, StrSlice);  
+			stream.WriteStruct(19, StructSlice);  
+			stream.WriteEnum(20, Enum);  
+			stream.WriteEnum(21, EnumSlice); 
 		}
 
 		public int GetSize()
@@ -428,7 +424,6 @@ namespace Proto
 		#region Serialize Code
 		public void Init( )
 		{   
- 			
 		}
 
 		public void Marshal(OutputStream stream)
@@ -461,7 +456,6 @@ namespace Proto
 		#region Serialize Code
 		public void Init( )
 		{   
- 			
 		}
 
 		public void Marshal(OutputStream stream)
@@ -504,8 +498,8 @@ namespace Proto
             {
 				Type = typeof(MyType),	
 				ID = 28380, 	
-				SourcePeer = "",
-				TargetPeer = "",
+				SourcePeer = "client",
+				TargetPeer = "game",
             });   
 		}
     }
