@@ -61,14 +61,14 @@ namespace {{.PackageName}}
 	public static class MessageMetaRegister
     {
 		public static void RegisterGeneratedMeta(MessageMeta meta)
-		{	{{range .Structs}}{{ if IsMessage .}}
+		{	{{range .Structs}}
             meta.RegisterMeta(new MetaInfo
             {
 				Type = typeof({{.Name}}),	
 				ID = {{StructMsgID .}}, 	
 				SourcePeer = "{{GetSourcePeer .}}",
 				TargetPeer = "{{GetTargetPeer .}}",
-            });{{end}} {{end}}
+            });{{end}}
 		}
     }
 {{end}}
