@@ -58,11 +58,11 @@ namespace {{.PackageName}}
 {{end}}
 
 {{if .RegEntry}}
-	public static class MessageMetaRegister
+	public static class MessageVisitor
     {
-		public static void RegisterGeneratedMeta(MessageMeta meta)
+		public static void Visit(Action<MetaInfo> callback)
 		{	{{range .Structs}}
-            meta.RegisterMeta(new MetaInfo
+            callback(new MetaInfo
             {
 				Type = typeof({{.Name}}),	
 				ID = {{StructMsgID .}}, 	
