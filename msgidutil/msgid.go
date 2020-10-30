@@ -9,6 +9,7 @@ import (
 	"github.com/davyxu/protoplus/model"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 var skipDupCacheMsgIDTips bool // 跳过重复缓存消息ID的警告提示
@@ -174,7 +175,7 @@ func StructMsgID(d *model.Descriptor) (msgid int) {
 	if *flagAutoMsgIDCacheFile != "" {
 		msgid = autogenMsgIDByCacheFile(*flagAutoMsgIDCacheFile, d)
 	} else if msgid == 0 {
-		msgid = int(StringHash(d.DescriptorSet.PackageName + d.Name + *flagMsgIDSalt))
+		msgid = int(StringHash(strings.ToLower(d.DescriptorSet.PackageName + d.Name + *flagMsgIDSalt)))
 	}
 
 	if *flagCheckDuplicateMsgID {
