@@ -13,8 +13,13 @@ namespace ProtoPlus
 
         public int Position => _pos;
 
-        public int SpaceLeft => _len - _pos;
+        public int BufferLeft => _len - _pos;
 
+        public OutputStream()
+        {
+            
+        }
+        
         public OutputStream(byte[] buffer )
         {
             Init(buffer, 0, buffer.Length, false);
@@ -28,7 +33,10 @@ namespace ProtoPlus
             _extend = extend;
         }
 
-        
+        public void SetPos(int pos)
+        {
+            _pos = pos;
+        }
 
         void CheckBuffer(int requireSize)
         {
@@ -488,9 +496,14 @@ namespace ProtoPlus
                 WriteByte((byte) value);
             }            
         }
+        public  void WriteFixed16(ushort value)
+        {
+            CheckBuffer(2);
+            _buffer[_pos++] = ((byte)value);
+            _buffer[_pos++] = ((byte)(value >> 8));
+        }
 
-
-        internal void WriteFixed32(uint value)
+        public  void WriteFixed32(uint value)
         {
             CheckBuffer(4);
             _buffer[_pos++] = ((byte)value);
@@ -499,7 +512,7 @@ namespace ProtoPlus
             _buffer[_pos++] = ((byte)(value >> 24));
         }
 
-        internal void WriteFixed64(ulong value)
+        public  void WriteFixed64(ulong value)
         {
             CheckBuffer(8);
             _buffer[_pos++] = ((byte)value);
@@ -510,6 +523,31 @@ namespace ProtoPlus
             _buffer[_pos++] = ((byte)(value >> 40));
             _buffer[_pos++] = ((byte)(value >> 48));
             _buffer[_pos++] = ((byte)(value >> 56));
+        }
+        
+        public void WriteFixedString(string value )
+        {           
+            int strLen = Encoding.UTF8.GetByteCount(value);
+
+            WriteFixed16((ushort)strLen);
+
+            CheckBuffer(strLen);
+
+            // 全ASCII
+            if (strLen == value.Length)
+            {
+                for (int i = 0; i < strLen; i++)
+                {
+                    _buffer[_pos + i] = (byte)value[i];
+                }
+            }
+            else
+            {
+                Encoding.UTF8.GetBytes(value, 0, value.Length, _buffer, _pos);
+
+            }
+
+            _pos += strLen;
         }
 
         internal void WriteRawBytes(byte[] value, int length )

@@ -12,25 +12,58 @@ namespace ProtoPlus
         // 在proto中添加[MsgDir: "client -> game" ], 左边为源, 右边为目标
         public string SourcePeer;   // 消息发起的源
         public string TargetPeer;   // 消息的目标
+
+        public string Name;
     }
 
     // 消息扩展信息集合
     public partial class MessageMeta
     {
-        private Dictionary<ushort, MetaInfo> metaByID = new Dictionary<ushort, MetaInfo>();
-        private Dictionary<Type, MetaInfo> metaByType = new Dictionary<Type, MetaInfo>();
+        readonly Dictionary<ushort, MetaInfo> metaByID = new Dictionary<ushort, MetaInfo>();
+        readonly Dictionary<Type, MetaInfo> metaByType = new Dictionary<Type, MetaInfo>();
+        readonly Dictionary<string, MetaInfo> metaByName = new Dictionary<string, MetaInfo>();
+
+        static MessageMeta _ins;
+
+        public static MessageMeta Instance
+        {
+            get
+            {
+                if (_ins == null)
+                {
+                    _ins = new MessageMeta();
+                }
+
+                return _ins;
+            }
+        }  
 
         // 注册消息的扩展信息
         public void RegisterMeta(MetaInfo info)
         {
-            metaByID.Add(info.ID, info);
+            if (info.ID != 0)
+            {
+                metaByID.Add(info.ID, info);    
+            }
+            
             metaByType.Add(info.Type, info);
+            metaByName.Add(info.Name, info);
         }
 
         // 通过ID取信息
         public MetaInfo GetMetaByID(ushort msgid)
         {
             if (metaByID.TryGetValue(msgid, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+        
+        public MetaInfo GetMetaByName(string msgName)
+        {
+            if (metaByName.TryGetValue(msgName, out var value))
             {
                 return value;
             }
@@ -58,11 +91,29 @@ namespace ProtoPlus
 
             return meta.ID;
         }
+        
+        public string GetMsgNameByType(Type t)
+        {
+            var meta = GetMetaByType(t);
+            if (meta == null)
+                return string.Empty;
+
+            return meta.Type.FullName;
+        }
 
         // 通过消息ID创建消息
-        public IProtoStruct CreateMessageByID(ushort msgid)
+        public IProtoStruct NewStruct(ushort msgid)
         {
             var meta = GetMetaByID(msgid);
+            if (meta == null)
+                return null;
+
+            return NewStruct(meta.Type);            
+        }
+        
+        public IProtoStruct NewStruct(string msgName)
+        {
+            var meta = GetMetaByName(msgName);
             if (meta == null)
                 return null;
 
@@ -81,6 +132,11 @@ namespace ProtoPlus
             s.Init();
 
             return s;
+        }
+
+        public static T NewStruct<T>( ) where T: IProtoStruct
+        {
+            return (T)NewStruct(typeof(T));
         }
 
 

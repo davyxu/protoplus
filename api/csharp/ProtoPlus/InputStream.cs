@@ -12,7 +12,7 @@ namespace ProtoPlus
 
         public int Position => _pos;
 
-        public int SpaceLeft => _len - _pos;
+        public int BufferLeft => _len - _pos;
         
         public static Func<Type, IProtoStruct> CreateStructFunc = new Func<Type, IProtoStruct>(CreateStruct);
 
@@ -23,7 +23,7 @@ namespace ProtoPlus
 
         public static IProtoStruct CreateStruct(Type t)
         {
-            return MessageMeta.NewStruct(t );            
+            return MessageMeta.NewStruct(t);            
         }        
 
         
@@ -136,7 +136,7 @@ namespace ProtoPlus
                     value = new List<T>();
                 }
 
-                while (stream.SpaceLeft > 0)
+                while (stream.BufferLeft > 0)
                 {
                     int element = 0;
                     stream.ReadInt32(WireFormat.WireType.Varint, ref element);                   
@@ -180,7 +180,7 @@ namespace ProtoPlus
                     value = new List<int>();
                 }
                 
-                while(stream.SpaceLeft > 0 )
+                while(stream.BufferLeft > 0 )
                 {
                     int element = 0;
                     stream.ReadInt32(WireFormat.WireType.Varint, ref element);
@@ -220,7 +220,7 @@ namespace ProtoPlus
                     value = new List<uint>();
                 }
 
-                while (stream.SpaceLeft > 0)
+                while (stream.BufferLeft > 0)
                 {
                     uint element = 0;
                     stream.ReadUInt32(WireFormat.WireType.Varint, ref element);
@@ -264,7 +264,7 @@ namespace ProtoPlus
                     value = new List<long>();
                 }
 
-                while (stream.SpaceLeft > 0)
+                while (stream.BufferLeft > 0)
                 {
                     long element = 0;
                     stream.ReadInt64(WireFormat.WireType.Varint, ref element);
@@ -304,7 +304,7 @@ namespace ProtoPlus
                     value = new List<ulong>();
                 }
 
-                while (stream.SpaceLeft > 0)
+                while (stream.BufferLeft > 0)
                 {
                     ulong element = 0;
                     stream.ReadUInt64(WireFormat.WireType.Varint, ref element);
@@ -345,7 +345,7 @@ namespace ProtoPlus
                     value = new List<float>(size/4);
                 }
                 
-                while (stream.SpaceLeft > 0)
+                while (stream.BufferLeft > 0)
                 {
                     float element = 0;
                     stream.ReadFloat(WireFormat.WireType.Fixed32, ref element);
@@ -386,7 +386,7 @@ namespace ProtoPlus
                     value = new List<double>(size / 8);
                 }
 
-                while (stream.SpaceLeft > 0)
+                while (stream.BufferLeft > 0)
                 {
                     double element = 0;
                     stream.ReadDouble(WireFormat.WireType.Fixed64, ref element);
@@ -483,7 +483,7 @@ namespace ProtoPlus
 
         public void Unmarshal(IProtoStruct s)
         {
-            while(SpaceLeft > 0 )
+            while(BufferLeft > 0 )
             {
                 var tag = ReadVarint32();
 
@@ -578,7 +578,7 @@ namespace ProtoPlus
             return (uint)result;
         }
 
-        uint ReadFixed32()
+        public uint ReadFixed32()
         {
             CheckBuffer(4);
 
@@ -589,8 +589,18 @@ namespace ProtoPlus
 
             return b1 | (b2 << 8) | (b3 << 16) | (b4 << 24);
         }
+        
+        public ushort ReadFixed16()
+        {
+            CheckBuffer(2);
 
-        ulong ReadFixed64()
+            uint b1 = _buffer[_pos++];
+            uint b2 = _buffer[_pos++];
+
+            return (ushort)(b1 | (b2 << 8));
+        }
+
+        public ulong ReadFixed64()
         {
             CheckBuffer(8);
             
@@ -605,6 +615,20 @@ namespace ProtoPlus
 
             return b1 | (b2 << 8) | (b3 << 16) | (b4 << 24)
                    | (b5 << 32) | (b6 << 40) | (b7 << 48) | (b8 << 56);
+        }
+
+        public string ReadFixedString()
+        {
+            int len = (int)ReadFixed16();
+            if (len > 0)
+            {
+                
+                var ret = Encoding.UTF8.GetString(_buffer, _pos, len);
+                _pos += len;
+                return ret;
+            }
+
+            return string.Empty;
         }
 
         ulong ReadVarint64()
@@ -624,6 +648,7 @@ namespace ProtoPlus
 
             throw new Exception("MalformedVarint");
         }
+        
 
         uint ReadVarint32()
         {
