@@ -23,9 +23,11 @@ var (
 	flagGoOut      = flag.String("go_out", "", "output golang source file")
 	flagCSOut      = flag.String("cs_out", "", "output csharp source file")
 	flagJsonOut    = flag.String("json_out", "", "output json file")
+	flagGoRegOut   = flag.String("goreg_out", "", "output golang message register source file")
 	flagJson       = flag.Bool("json", false, "output json to std out")
 	flagGenReg     = flag.Bool("genreg", false, "gen message register entry")
 	flagStructBase = flag.String("structbase", "IProtoStruct", "struct inherite class type name in c#")
+	flagCodec      = flag.String("codec", "protoplus", "default codec in register entry")
 )
 
 const Version = "2.0.0"
@@ -46,6 +48,7 @@ func main() {
 	ctx.PackageName = *flagPackage
 	ctx.StructBase = *flagStructBase
 	ctx.RegEntry = *flagGenReg
+	ctx.Codec = *flagCodec
 
 	err = util.ParseFileList(ctx.DescriptorSet)
 
@@ -57,6 +60,16 @@ func main() {
 		ctx.OutputFileName = *flagGoOut
 
 		err = golang.GenGo(&ctx)
+
+		if err != nil {
+			goto OnError
+		}
+	}
+
+	if *flagGoRegOut != "" {
+		ctx.OutputFileName = *flagGoRegOut
+
+		err = golang.GenGoReg(&ctx)
 
 		if err != nil {
 			goto OnError

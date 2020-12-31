@@ -18,7 +18,7 @@ func init() {
 	UsefulFunc["StructCodec"] = func(d *model.Descriptor) string {
 		codecName := d.TagValueString("Codec")
 		if codecName == "" {
-			return "protoplus"
+			return d.DescriptorSet.Codec
 		}
 
 		return codecName

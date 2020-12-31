@@ -22,3 +22,19 @@ func GenGo(ctx *gen.Context) error {
 
 	return gen.WriteOutputFile(ctx.OutputFileName).Error()
 }
+
+func GenGoReg(ctx *gen.Context) error {
+
+	gen := codegen.NewCodeGen("goreg").
+		RegisterTemplateFunc(codegen.UsefulFunc).
+		RegisterTemplateFunc(UsefulFunc).
+		ParseTemplate(RegTemplateText, ctx).
+		FormatGoCode()
+
+	if gen.Error() != nil {
+		fmt.Println(string(gen.Code()))
+		return gen.Error()
+	}
+
+	return gen.WriteOutputFile(ctx.OutputFileName).Error()
+}
