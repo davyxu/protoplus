@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using ProtoPlus;
+#pragma warning disable 162
 
 namespace Proto
 {
@@ -482,26 +483,5 @@ namespace Proto
 	}
 
 
-
-	public static class MessageMetaRegister
-    {
-		public static void RegisterGeneratedMeta(MessageMeta meta)
-		{	 
-            meta.RegisterMeta(new MetaInfo
-            {
-				Type = typeof(MySubType),	
-				ID = 16166, 	
-				SourcePeer = "client",
-				TargetPeer = "game",
-            }); 
-            meta.RegisterMeta(new MetaInfo
-            {
-				Type = typeof(MyType),	
-				ID = 28380, 	
-				SourcePeer = "client",
-				TargetPeer = "game",
-            });   
-		}
-    }
 
 }

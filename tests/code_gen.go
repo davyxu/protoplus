@@ -598,7 +598,3 @@ func (self *LoginACK) Unmarshal(buffer *wire.Buffer, fieldIndex uint64, wt wire.
 
 	return wire.ErrUnknownField
 }
-
-func init() {
-
-}

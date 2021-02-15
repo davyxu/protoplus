@@ -19,7 +19,6 @@ enum MyEnum
     Two
 }
 
-[AutoMsgID MsgDir: "client -> game"]
 struct MySubType
 {
 	Bool   bool
@@ -56,7 +55,7 @@ struct MySubType
     EnumSlice []MyEnum
 }
 
-[AutoMsgID MsgDir: "client -> game"]
+
 struct MyType
 {
 	Bool   bool
@@ -95,6 +94,7 @@ struct MyType
     EnumSlice []MyEnum
 }
 
+[MsgDir: "client -> game"]
 struct LoginREQ {
 
 }
@@ -103,6 +103,10 @@ struct LoginREQ {
 struct LoginACK {
 
 }
+
+
+
+
 
 service login
 {

@@ -1,4 +1,4 @@
-package golang
+package ppgo
 
 import (
 	"github.com/davyxu/protoplus/codegen"

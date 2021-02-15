@@ -7,6 +7,6 @@ import (
 type Context struct {
 	*model.DescriptorSet
 	OutputFileName string
-	StructBase     string
+	ClassBase      string
 	RegEntry       bool
 }

@@ -5,39 +5,89 @@ import (
 	"fmt"
 	_ "github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/gen"
-	"github.com/davyxu/protoplus/gen/csharp"
-	"github.com/davyxu/protoplus/gen/gogopb"
-	"github.com/davyxu/protoplus/gen/golang"
-	"github.com/davyxu/protoplus/gen/json"
-	_ "github.com/davyxu/protoplus/gen/json"
+	"github.com/davyxu/protoplus/gen/pbscheme"
+	"github.com/davyxu/protoplus/gen/ppcs"
+	"github.com/davyxu/protoplus/gen/ppgo"
+	"github.com/davyxu/protoplus/gen/ppscheme"
+	_ "github.com/davyxu/protoplus/gen/ppscheme"
 	"github.com/davyxu/protoplus/gen/route"
 	"github.com/davyxu/protoplus/model"
 	"github.com/davyxu/protoplus/util"
 	"os"
 )
 
-// 显示版本号
 var (
-	flagVersion  = flag.Bool("version", false, "Show version")
-	flagPackage  = flag.String("package", "", "package name in source files")
-	flagPbOut    = flag.String("pb_out", "", "output google protobuf schema file")
-	flagGoOut    = flag.String("go_out", "", "output golang source file")
-	flagCSOut    = flag.String("cs_out", "", "output csharp source file")
-	flagJsonOut  = flag.String("json_out", "", "output descriptor json file")
-	flagGoRegOut = flag.String("goreg_out", "", "output golang message register source file")
-	flagRouteOut = flag.String("route_out", "", "output route table json file")
+	flagVersion = flag.Bool("version", false, "show version")
 
-	flagRoute = flag.Bool("route", false, "output route table json to std out")
-
-	flagJson       = flag.Bool("json", false, "output descriptor json to std out")
-	flagGenReg     = flag.Bool("genreg", false, "gen message register entry")
-	flagStructBase = flag.String("structbase", "IProtoStruct", "struct inherite class type name in c#")
-	flagCodec      = flag.String("codec", "protoplus", "default codec in register entry")
+	flagPackage   = flag.String("package", "", "package name in source files")
+	flagClassBase = flag.String("classbase", "IProtoStruct", "struct inherite class type name in c#")
+	flagCodec     = flag.String("codec", "protoplus", "default codec in register entry")
 )
 
 const Version = "2.0.0"
 
+type GenEntry struct {
+	name        string
+	usage       string
+	flagOutFile *string
+	flagExecute *bool
+
+	outfile func(ctx *gen.Context) error
+	execute func(ctx *gen.Context) error
+}
+
+var (
+	genEntryList = []*GenEntry{
+		{name: "ppgo_out", usage: "output protoplus message serialize golang source file", outfile: ppgo.GenGo},
+		{name: "ppgoreg_out", usage: "output protoplus message register entry", outfile: ppgo.GenGoReg},
+		{name: "ppcs_out", usage: "output protoplus message serialize csharp source file", outfile: ppcs.GenCSharp},
+		{name: "pbscheme_out", usage: "output google protobuf schema file", outfile: pbscheme.GenProto},
+		{name: "ppscheme_out", usage: "output protoplus scheme json file", outfile: ppscheme.GenJson},
+		{name: "route_out", usage: "output route table json file", outfile: route.GenJson},
+
+		{name: "ppscheme", usage: "output protoplus scheme json to std out", execute: ppscheme.OutputJson},
+		{name: "route", usage: "output route table json to std out", execute: route.OutputJson},
+	}
+)
+
+func defineEntryFlag() {
+	for _, entry := range genEntryList {
+		if entry.outfile != nil {
+			entry.flagOutFile = flag.String(entry.name, "", entry.usage)
+		}
+		if entry.execute != nil {
+			entry.flagExecute = flag.Bool(entry.name, false, entry.usage)
+		}
+
+	}
+}
+
+func runEntry(ctx *gen.Context) error {
+	for _, entry := range genEntryList {
+		if entry.flagOutFile != nil && *entry.flagOutFile != "" {
+			ctx.OutputFileName = *entry.flagOutFile
+
+			fmt.Printf("[%s] %s\n", entry.name, ctx.OutputFileName)
+			err := entry.outfile(ctx)
+			if err != nil {
+				return err
+			}
+		}
+
+		if entry.flagExecute != nil && *entry.flagExecute {
+			err := entry.execute(ctx)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func main() {
+
+	defineEntryFlag()
 
 	flag.Parse()
 
@@ -51,97 +101,20 @@ func main() {
 	var ctx gen.Context
 	ctx.DescriptorSet = new(model.DescriptorSet)
 	ctx.PackageName = *flagPackage
-	ctx.StructBase = *flagStructBase
-	ctx.RegEntry = *flagGenReg
+	ctx.ClassBase = *flagClassBase
 	ctx.Codec = *flagCodec
 
 	err = util.ParseFileList(ctx.DescriptorSet)
 
 	if err != nil {
-		goto OnError
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	if *flagGoOut != "" {
-		ctx.OutputFileName = *flagGoOut
-
-		err = golang.GenGo(&ctx)
-
-		if err != nil {
-			goto OnError
-		}
+	err = runEntry(&ctx)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	if *flagGoRegOut != "" {
-		ctx.OutputFileName = *flagGoRegOut
-
-		err = golang.GenGoReg(&ctx)
-
-		if err != nil {
-			goto OnError
-		}
-	}
-
-	if *flagCSOut != "" {
-		ctx.OutputFileName = *flagCSOut
-
-		err = csharp.GenCSharp(&ctx)
-
-		if err != nil {
-			goto OnError
-		}
-	}
-
-	if *flagPbOut != "" {
-		ctx.OutputFileName = *flagPbOut
-
-		err = gogopb.GenProto(&ctx)
-
-		if err != nil {
-			goto OnError
-		}
-	}
-
-	if *flagJsonOut != "" {
-		ctx.OutputFileName = *flagJsonOut
-
-		err = json.GenJson(&ctx)
-
-		if err != nil {
-			goto OnError
-		}
-	}
-
-	if *flagRouteOut != "" {
-		ctx.OutputFileName = *flagRouteOut
-
-		err = route.GenJson(&ctx)
-
-		if err != nil {
-			goto OnError
-		}
-	}
-
-	if *flagJson {
-
-		err = json.OutputJson(&ctx)
-
-		if err != nil {
-			goto OnError
-		}
-	}
-
-	if *flagRoute {
-
-		err = route.OutputJson(&ctx)
-
-		if err != nil {
-			goto OnError
-		}
-	}
-
-	return
-
-OnError:
-	fmt.Println(err)
-	os.Exit(1)
 }

@@ -3,9 +3,9 @@ package route
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/gen"
 	"github.com/davyxu/protoplus/model"
-	"github.com/davyxu/protoplus/msgidutil"
 	"io/ioutil"
 )
 
@@ -41,7 +41,7 @@ func genJsonData(ctx *gen.Context) ([]byte, error) {
 	for _, d := range ctx.Structs() {
 
 		msgDir := parseMessage(d)
-		msgID := msgidutil.StructMsgID(d)
+		msgID := codegen.StructMsgID(d)
 
 		if msgDir.Valid() {
 			rt.Rule = append(rt.Rule, &model.RouteRule{

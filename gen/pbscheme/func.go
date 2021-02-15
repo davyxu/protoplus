@@ -1,4 +1,4 @@
-package gogopb
+package pbscheme
 
 import (
 	"github.com/davyxu/protoplus/model"

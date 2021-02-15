@@ -1,10 +1,10 @@
-package json
+package ppscheme
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/gen"
-	"github.com/davyxu/protoplus/msgidutil"
 	"io/ioutil"
 	"strconv"
 )
@@ -13,7 +13,7 @@ func genJsonData(ctx *gen.Context) (error, []byte) {
 
 	for _, obj := range ctx.DescriptorSet.Objects {
 		if obj.TagExists("AutoMsgID") {
-			obj.SetTagValue("AutoMsgID", strconv.Itoa(msgidutil.StructMsgID(obj)))
+			obj.SetTagValue("AutoMsgID", strconv.Itoa(codegen.StructMsgID(obj)))
 		}
 
 	}

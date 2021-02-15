@@ -1,4 +1,4 @@
-package gogopb
+package pbscheme
 
 import (
 	"fmt"

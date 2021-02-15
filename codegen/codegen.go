@@ -129,8 +129,6 @@ func (self *CodeGen) WriteOutputFile(outputFileName string) *CodeGen {
 		return self
 	}
 
-	fmt.Printf("%s\n", outputFileName)
-
 	return self
 
 }
