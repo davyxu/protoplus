@@ -8,5 +8,4 @@ type Context struct {
 	*model.DescriptorSet
 	OutputFileName string
 	ClassBase      string
-	RegEntry       bool
 }

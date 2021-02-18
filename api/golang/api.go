@@ -1,7 +1,7 @@
-package proto
+package ppgo
 
 import (
-	"github.com/davyxu/protoplus/wire"
+	"github.com/davyxu/protoplus/api/golang/wire"
 	"github.com/davyxu/ulexer"
 )
 

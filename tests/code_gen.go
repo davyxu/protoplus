@@ -3,14 +3,14 @@
 package tests
 
 import (
-	"github.com/davyxu/protoplus/proto"
-	"github.com/davyxu/protoplus/wire"
+	"github.com/davyxu/protoplus/api/golang"
+	"github.com/davyxu/protoplus/api/golang/wire"
 	"unsafe"
 )
 
 var (
 	_ *wire.Buffer
-	_ = proto.Marshal
+	_ = ppgo.Marshal
 	_ unsafe.Pointer
 )
 
@@ -51,7 +51,7 @@ type MyTypeMini struct {
 	Str     string
 }
 
-func (self *MyTypeMini) String() string { return proto.CompactTextString(self) }
+func (self *MyTypeMini) String() string { return ppgo.CompactTextString(self) }
 
 func (self *MyTypeMini) Size() (ret int) {
 
@@ -157,7 +157,7 @@ type MySubType struct {
 	EnumSlice    []MyEnum
 }
 
-func (self *MySubType) String() string { return proto.CompactTextString(self) }
+func (self *MySubType) String() string { return ppgo.CompactTextString(self) }
 
 func (self *MySubType) Size() (ret int) {
 
@@ -340,7 +340,7 @@ type MyType struct {
 	Float32      float32
 	Float64      float64
 	Str          string
-	Struct       MySubType
+	Struct       *MySubType
 	BytesSlice   []byte
 	BoolSlice    []bool
 	Int32Slice   []int32
@@ -350,12 +350,12 @@ type MyType struct {
 	Float32Slice []float32
 	Float64Slice []float64
 	StrSlice     []string
-	StructSlice  []MySubType
+	StructSlice  []*MySubType
 	Enum         MyEnum
 	EnumSlice    []MyEnum
 }
 
-func (self *MyType) String() string { return proto.CompactTextString(self) }
+func (self *MyType) String() string { return ppgo.CompactTextString(self) }
 
 func (self *MyType) Size() (ret int) {
 
@@ -375,7 +375,7 @@ func (self *MyType) Size() (ret int) {
 
 	ret += wire.SizeString(8, self.Str)
 
-	ret += wire.SizeStruct(9, &self.Struct)
+	ret += wire.SizeStruct(9, self.Struct)
 
 	ret += wire.SizeBytes(10, self.BytesSlice)
 
@@ -397,7 +397,7 @@ func (self *MyType) Size() (ret int) {
 
 	if len(self.StructSlice) > 0 {
 		for _, elm := range self.StructSlice {
-			ret += wire.SizeStruct(19, &elm)
+			ret += wire.SizeStruct(19, elm)
 		}
 	}
 
@@ -426,7 +426,7 @@ func (self *MyType) Marshal(buffer *wire.Buffer) error {
 
 	wire.MarshalString(buffer, 8, self.Str)
 
-	wire.MarshalStruct(buffer, 9, &self.Struct)
+	wire.MarshalStruct(buffer, 9, self.Struct)
 
 	wire.MarshalBytes(buffer, 10, self.BytesSlice)
 
@@ -447,7 +447,7 @@ func (self *MyType) Marshal(buffer *wire.Buffer) error {
 	wire.MarshalStringSlice(buffer, 18, self.StrSlice)
 
 	for _, elm := range self.StructSlice {
-		wire.MarshalStruct(buffer, 19, &elm)
+		wire.MarshalStruct(buffer, 19, elm)
 	}
 
 	wire.MarshalInt32(buffer, 20, int32(self.Enum))
@@ -492,7 +492,9 @@ func (self *MyType) Unmarshal(buffer *wire.Buffer, fieldIndex uint64, wt wire.Wi
 		self.Str = v
 		return err
 	case 9:
-		return wire.UnmarshalStruct(buffer, wt, &self.Struct)
+		var elm MySubType
+		self.Struct = &elm
+		return wire.UnmarshalStruct(buffer, wt, self.Struct)
 	case 10:
 		v, err := wire.UnmarshalBytes(buffer, wt)
 		self.BytesSlice = v
@@ -534,7 +536,7 @@ func (self *MyType) Unmarshal(buffer *wire.Buffer, fieldIndex uint64, wt wire.Wi
 		if err := wire.UnmarshalStruct(buffer, wt, &elm); err != nil {
 			return err
 		} else {
-			self.StructSlice = append(self.StructSlice, elm)
+			self.StructSlice = append(self.StructSlice, &elm)
 			return nil
 		}
 	case 20:
@@ -556,7 +558,7 @@ func (self *MyType) Unmarshal(buffer *wire.Buffer, fieldIndex uint64, wt wire.Wi
 type LoginREQ struct {
 }
 
-func (self *LoginREQ) String() string { return proto.CompactTextString(self) }
+func (self *LoginREQ) String() string { return ppgo.CompactTextString(self) }
 
 func (self *LoginREQ) Size() (ret int) {
 
@@ -579,7 +581,7 @@ func (self *LoginREQ) Unmarshal(buffer *wire.Buffer, fieldIndex uint64, wt wire.
 type LoginACK struct {
 }
 
-func (self *LoginACK) String() string { return proto.CompactTextString(self) }
+func (self *LoginACK) String() string { return ppgo.CompactTextString(self) }
 
 func (self *LoginACK) Size() (ret int) {
 

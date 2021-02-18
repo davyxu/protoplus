@@ -151,23 +151,10 @@ namespace Example
             Debug.Assert(myType.Equals(myType2));
         }
 
-        static void TestMessage()
-        {
-            var mm = new MessageMeta();
-            MessageMetaRegister.RegisterGeneratedMeta(mm);
-            var msg = mm.CreateMessageByID(28380);
-
-            var meta = mm.GetMetaByType(msg.GetType());
-
-            Debug.Assert(meta.ID == 28380);
-
-            Debug.Assert(meta.SourcePeer == "client");
-        }
 
         static void Main(string[] args)
         {
             TestFull();
-            TestMessage();
             TestSkipField();
         }
     }

@@ -39,8 +39,9 @@ type GenEntry struct {
 var (
 	genEntryList = []*GenEntry{
 		{name: "ppgo_out", usage: "output protoplus message serialize golang source file", outfile: ppgo.GenGo},
-		{name: "ppgoreg_out", usage: "output protoplus message register entry", outfile: ppgo.GenGoReg},
-		{name: "ppcs_out", usage: "output protoplus message serialize csharp source file", outfile: ppcs.GenCSharp},
+		{name: "ppgoreg_out", usage: "output protoplus message register entry in golang", outfile: ppgo.GenGoReg},
+		{name: "ppcs_out", usage: "output protoplus message serialize csharp source file", outfile: ppcs.GenCS},
+		{name: "ppcsreg_out", usage: "output protoplus message register entry in csharp", outfile: ppcs.GenCSReg},
 		{name: "pbscheme_out", usage: "output google protobuf schema file", outfile: pbscheme.GenProto},
 		{name: "ppscheme_out", usage: "output protoplus scheme json file", outfile: ppscheme.GenJson},
 		{name: "route_out", usage: "output route table json file", outfile: route.GenJson},

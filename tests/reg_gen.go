@@ -7,6 +7,12 @@ import (
 	"reflect"
 )
 
+var (
+	_ cellnet.MessageMeta
+	_ codec.CodecRecycler
+	_ reflect.Kind
+)
+
 func init() {
 
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{

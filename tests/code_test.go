@@ -3,8 +3,7 @@ package tests
 import (
 	"encoding/json"
 	_ "github.com/davyxu/cellnet/codec/protoplus"
-	"github.com/davyxu/protoplus/proto"
-	"github.com/davyxu/protoplus/wire"
+	"github.com/davyxu/protoplus/api/golang"
 	"github.com/stretchr/testify/assert"
 	"math"
 	"reflect"
@@ -13,10 +12,10 @@ import (
 
 func TestOptional(t *testing.T) {
 	bigData := makeMyType()
-	data, err := proto.Marshal(&bigData)
+	data, err := ppgo.Marshal(&bigData)
 	assert.Equal(t, err, nil)
 	var output MyTypeMini
-	assert.Equal(t, proto.Unmarshal(data, &output), nil)
+	assert.Equal(t, ppgo.Unmarshal(data, &output), nil)
 
 	//t.Logf("%+v", output)
 	//assert.Equal(t, bigData, output)
@@ -46,11 +45,11 @@ func makeMyType() (input MyType) {
 	input.Enum = MyEnum_Two
 	input.EnumSlice = []MyEnum{MyEnum_Two, MyEnum_One, MyEnum_Zero}
 
-	input.Struct = MySubType{
+	input.Struct = &MySubType{
 		Str: "world",
 	}
 
-	input.StructSlice = []MySubType{
+	input.StructSlice = []*MySubType{
 		{Int32: 100},
 		{Str: "200"},
 	}
@@ -58,15 +57,15 @@ func makeMyType() (input MyType) {
 	return
 }
 
-func verifyWire(t *testing.T, raw wire.Struct) {
-	data, err := proto.Marshal(raw)
+func verifyWire(t *testing.T, raw ppgo.Struct) {
+	data, err := ppgo.Marshal(raw)
 	assert.Equal(t, err, nil)
 
 	t.Log("proto+:", len(data), data)
 
-	newType := reflect.New(reflect.TypeOf(raw).Elem()).Interface().(wire.Struct)
+	newType := reflect.New(reflect.TypeOf(raw).Elem()).Interface().(ppgo.Struct)
 
-	assert.Equal(t, proto.Unmarshal(data, newType), nil)
+	assert.Equal(t, ppgo.Unmarshal(data, newType), nil)
 
 	assert.Equal(t, raw, newType)
 }
@@ -79,13 +78,13 @@ func verifyText(t *testing.T, raw interface{}) {
 		panic("expect ptr")
 	}
 
-	data := proto.CompactTextString(raw)
+	data := ppgo.CompactTextString(raw)
 
 	t.Log(data)
 
 	newType := reflect.New(tRaw.Elem()).Interface()
 
-	assert.Equal(t, proto.UnmarshalText(data, newType), nil)
+	assert.Equal(t, ppgo.UnmarshalText(data, newType), nil)
 
 	assert.Equal(t, raw, newType)
 }
@@ -96,7 +95,7 @@ func TestFull(t *testing.T) {
 
 	verifyWire(t, &input)
 
-	t.Logf("%v", proto.MarshalTextString(input))
+	t.Logf("%v", ppgo.MarshalTextString(input))
 }
 
 func TestIntSlice(t *testing.T) {
@@ -111,13 +110,13 @@ func TestSkipField(t *testing.T) {
 
 	input := makeMyType()
 
-	data, err := proto.Marshal(&input)
+	data, err := ppgo.Marshal(&input)
 	assert.Equal(t, err, nil)
 
 	jsondata, _ := json.Marshal(&input)
 
 	var mini MyTypeMini
-	assert.Equal(t, proto.Unmarshal(data, &mini), nil)
+	assert.Equal(t, ppgo.Unmarshal(data, &mini), nil)
 
 	var miniJson MyTypeMini
 	json.Unmarshal(jsondata, &miniJson)
@@ -127,7 +126,7 @@ func TestSkipField(t *testing.T) {
 func TestPtrField(t *testing.T) {
 
 	input := MyType{}
-	data, err := proto.Marshal(&input)
+	data, err := ppgo.Marshal(&input)
 	t.Log(data, err)
 
 }

@@ -91,7 +91,7 @@ struct AddressBook {
 
 # 功能
 
-## 输出ProtoPlus编码的Go源码
+## 输出ProtoPlus编码消息序列化的Go源码
 
 命令行示例:
 ```bash
@@ -107,11 +107,29 @@ protoplus --ppgo_out=msg_gen.go --package=proto proto1.proto proto2.proto
 
     指定输出时的Go包名
 
-* codec
-    
+## 输出消息绑定的Go源码
+
+输出源码被引用时, 自动注册到cellnet的消息Registry中
+
+命令行示例:
+```bash
+protoplus --ppgoreg_out=msg_gen.go --package=proto proto1.proto proto2.proto
+```
+
+参数说明:
+* ppgoreg_out
+
+  Go源码文件名
+
+* package
+
+  指定输出时的Go包名
+
+* codec   
     生成消息注册的默认编码，如在消息中指定编码时，优先使用指定的编码
+  
     
-## 输出ProtoPlus编码的C#源码
+## 输出ProtoPlus编码的消息序列化C#源码
 
 输出的C#源码, 需要配合[ProtoPlus C# SDK](https://github.com/davyxu/protoplus/tree/master/api/csharp/ProtoPlus) 使用
 
@@ -132,6 +150,26 @@ protoplus --ppcs_out=MsgGen.cs --package=Proto proto1.proto proto2.proto
 * classbase
 
     C#代码生成时，消息类默认基类名称, 默认基类为IProtoStruct
+
+
+## 输出消息绑定的C#源码
+
+输出的C#源码, 需要配合[ProtoPlus C# SDK](https://github.com/davyxu/protoplus/tree/master/api/csharp/ProtoPlus) 使用
+
+命令行示例:
+```bash
+protoplus --ppcsreg_out=MsgGen.cs --package=Proto proto1.proto proto2.proto
+```
+
+参数说明:
+* ppcsreg_out
+
+  C#源码文件名
+
+* package
+
+  指定输出时的C#命名空间
+
 
 ## 输出Protobuf协议描述文件
 
