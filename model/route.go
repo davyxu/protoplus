@@ -6,6 +6,7 @@ type RouteRule struct {
 	MsgID   int
 
 	SvcName string
+	Router  string `json:",omitempty"`
 }
 
 // 路由表，包含多条路由规则

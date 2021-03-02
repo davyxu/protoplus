@@ -47,6 +47,7 @@ func genJsonData(ctx *gen.Context) ([]byte, error) {
 			rt.Rule = append(rt.Rule, &model.RouteRule{
 				MsgName: ctx.PackageName + "." + d.Name,
 				SvcName: msgDir.To,
+				Router:  msgDir.Mid,
 				MsgID:   msgID,
 			})
 		}
