@@ -36,14 +36,14 @@ namespace Proto
             callback(new MetaInfo
             {
 				Type = typeof(LoginREQ),	
-				ID = 0, 	
+				ID = 45589, 	
 				SourcePeer = "client",
 				TargetPeer = "game",
             });
             callback(new MetaInfo
             {
 				Type = typeof(LoginACK),	
-				ID = 0, 	
+				ID = 7420, 	
 				SourcePeer = "",
 				TargetPeer = "",
             });

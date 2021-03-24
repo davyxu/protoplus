@@ -94,12 +94,12 @@ struct MyType
     EnumSlice []MyEnum
 }
 
-[MsgDir: "client -> game"]
+[AutoMsgID MsgDir: "client -> game"]
 struct LoginREQ {
 
 }
 
-
+[AutoMsgID]
 struct LoginACK {
 
 }

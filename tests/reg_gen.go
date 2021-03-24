@@ -36,13 +36,13 @@ func init() {
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
 		Codec: codec.MustGetCodec("protoplus"),
 		Type:  reflect.TypeOf((*LoginREQ)(nil)).Elem(),
-		ID:    0,
+		ID:    17076,
 		New:   func() interface{} { return &LoginREQ{} },
 	})
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
 		Codec: codec.MustGetCodec("protoplus"),
 		Type:  reflect.TypeOf((*LoginACK)(nil)).Elem(),
-		ID:    0,
+		ID:    44443,
 		New:   func() interface{} { return &LoginACK{} },
 	})
 }

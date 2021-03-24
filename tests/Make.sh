@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set -e
+
 go build -v -o=${GOPATH}/bin/protoplus github.com/davyxu/protoplus/cmd/protoplus
 
 # code.proto为输入文件
