@@ -3,7 +3,6 @@ module github.com/davyxu/protoplus
 go 1.12
 
 require (
-    github.com/davyxu/x v0.0.0
 	github.com/davyxu/cellnet v4.1.0+incompatible
 	github.com/davyxu/golexer v0.0.0-20180314091252-f048a86ae200
 	github.com/davyxu/ulexer v0.0.0-20200705151509-86177890ec50
@@ -11,5 +10,7 @@ require (
 )
 
 replace github.com/davyxu/ulexer => ../ulexer
+
 replace github.com/davyxu/cellnet => ../cellnet
+
 replace github.com/davyxu/x => ../x

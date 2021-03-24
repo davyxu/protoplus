@@ -7,6 +7,7 @@ import (
 	"github.com/davyxu/protoplus/model"
 	"io"
 	"io/ioutil"
+	"strings"
 )
 
 // 解析字符串
@@ -91,6 +92,13 @@ func checkAndFix(ctx *Context) error {
 			}
 		}
 
+		if !d.TagExists("AutoMsgID") && !d.TagExists("MsgID") && (strings.HasSuffix(d.Name, "REQ") || strings.HasSuffix(d.Name, "ACK")) {
+			return fmt.Errorf("struct like message but not gen msgid: %s", d.Name)
+		}
+
+		if d.Kind == model.Kind_Struct && (d.TagExists("AutoMsgID") || d.TagExists("MsgID")) && (!strings.HasSuffix(d.Name, "REQ") && !strings.HasSuffix(d.Name, "ACK")) {
+			return fmt.Errorf("struct gen msgid, but not like a message(REQ/ACK) : %s", d.Name)
+		}
 	}
 
 	return nil
