@@ -8,38 +8,38 @@ import (
 )
 
 var (
-	_ cellnet.MessageMeta
+	_ cellmeta.Meta
 	_ codec.CodecRecycler
 	_ reflect.Kind
 )
 
 func init() {
 
-	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+	cellnet.RegisterMessageMeta(&cellmeta.Meta{
 		Codec: codec.MustGetCodec("protoplus"),
 		Type:  reflect.TypeOf((*MyTypeMini)(nil)).Elem(),
 		ID:    0,
 		New:   func() interface{} { return &MyTypeMini{} },
 	})
-	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+	cellnet.RegisterMessageMeta(&cellmeta.Meta{
 		Codec: codec.MustGetCodec("protoplus"),
 		Type:  reflect.TypeOf((*MySubType)(nil)).Elem(),
 		ID:    0,
 		New:   func() interface{} { return &MySubType{} },
 	})
-	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+	cellnet.RegisterMessageMeta(&cellmeta.Meta{
 		Codec: codec.MustGetCodec("protoplus"),
 		Type:  reflect.TypeOf((*MyType)(nil)).Elem(),
 		ID:    0,
 		New:   func() interface{} { return &MyType{} },
 	})
-	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+	cellnet.RegisterMessageMeta(&cellmeta.Meta{
 		Codec: codec.MustGetCodec("protoplus"),
 		Type:  reflect.TypeOf((*LoginREQ)(nil)).Elem(),
 		ID:    17076,
 		New:   func() interface{} { return &LoginREQ{} },
 	})
-	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+	cellnet.RegisterMessageMeta(&cellmeta.Meta{
 		Codec: codec.MustGetCodec("protoplus"),
 		Type:  reflect.TypeOf((*LoginACK)(nil)).Elem(),
 		ID:    44443,
