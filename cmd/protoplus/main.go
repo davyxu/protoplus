@@ -42,7 +42,10 @@ var (
 		{name: "ppgoreg_out", usage: "output protoplus message register entry in golang", outfile: ppgo.GenGoReg},
 		{name: "ppcs_out", usage: "output protoplus message serialize csharp source file", outfile: ppcs.GenCS},
 		{name: "ppcsreg_out", usage: "output protoplus message register entry in csharp", outfile: ppcs.GenCSReg},
-		{name: "pbscheme_out", usage: "output google protobuf schema file", outfile: pbscheme.GenProto},
+		{name: "pbscheme_out", usage: "output google protobuf schema file as single file", outfile: pbscheme.GenProto},
+
+		// 使用例子: protoc $(cat filelist.txt)
+		{name: "pbscheme_dir", usage: "output google protobuf schema files into dir", outfile: pbscheme.GenProtoDir},
 		{name: "ppscheme_out", usage: "output protoplus scheme json file", outfile: ppscheme.GenJson},
 		{name: "route_out", usage: "output route table json file", outfile: route.GenJson},
 

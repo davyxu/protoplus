@@ -12,7 +12,7 @@ type FieldDescriptor struct {
 	Tag     int  `json:",omitempty"`
 	Repeatd bool `json:",omitempty"`
 
-	Descriptor *Descriptor `json:"-"`
+	Descriptor *Descriptor `json:"-"` // 字段归属的父级描述符
 }
 
 func (self *FieldDescriptor) ParseType(str string) {
