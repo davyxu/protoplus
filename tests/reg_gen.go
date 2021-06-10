@@ -2,45 +2,45 @@
 package tests
 
 import (
-	"github.com/davyxu/cellnet"
 	"github.com/davyxu/cellnet/codec"
+	"github.com/davyxu/cellnet/meta"
 	"reflect"
 )
 
 var (
 	_ cellmeta.Meta
-	_ codec.CodecRecycler
+	_ cellcodec.CodecRecycler
 	_ reflect.Kind
 )
 
 func init() {
 
-	cellnet.RegisterMessageMeta(&cellmeta.Meta{
-		Codec: codec.MustGetCodec("protoplus"),
+	cellmeta.Register(&cellmeta.Meta{
+		Codec: cellcodec.MustGetByName("protoplus"),
 		Type:  reflect.TypeOf((*MyTypeMini)(nil)).Elem(),
 		ID:    0,
 		New:   func() interface{} { return &MyTypeMini{} },
 	})
-	cellnet.RegisterMessageMeta(&cellmeta.Meta{
-		Codec: codec.MustGetCodec("protoplus"),
+	cellmeta.Register(&cellmeta.Meta{
+		Codec: cellcodec.MustGetByName("protoplus"),
 		Type:  reflect.TypeOf((*MySubType)(nil)).Elem(),
 		ID:    0,
 		New:   func() interface{} { return &MySubType{} },
 	})
-	cellnet.RegisterMessageMeta(&cellmeta.Meta{
-		Codec: codec.MustGetCodec("protoplus"),
+	cellmeta.Register(&cellmeta.Meta{
+		Codec: cellcodec.MustGetByName("protoplus"),
 		Type:  reflect.TypeOf((*MyType)(nil)).Elem(),
 		ID:    0,
 		New:   func() interface{} { return &MyType{} },
 	})
-	cellnet.RegisterMessageMeta(&cellmeta.Meta{
-		Codec: codec.MustGetCodec("protoplus"),
+	cellmeta.Register(&cellmeta.Meta{
+		Codec: cellcodec.MustGetByName("protoplus"),
 		Type:  reflect.TypeOf((*LoginREQ)(nil)).Elem(),
 		ID:    17076,
 		New:   func() interface{} { return &LoginREQ{} },
 	})
-	cellnet.RegisterMessageMeta(&cellmeta.Meta{
-		Codec: codec.MustGetCodec("protoplus"),
+	cellmeta.Register(&cellmeta.Meta{
+		Codec: cellcodec.MustGetByName("protoplus"),
 		Type:  reflect.TypeOf((*LoginACK)(nil)).Elem(),
 		ID:    44443,
 		New:   func() interface{} { return &LoginACK{} },
