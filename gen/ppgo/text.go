@@ -139,10 +139,11 @@ var (
 func init() {
 	{{range .Structs}}
 	cellmeta.Register(&cellmeta.Meta{
-		Codec: cellcodec.MustGetByName("{{StructCodec .}}"),	
-		Type:  reflect.TypeOf((*{{.Name}})(nil)).Elem(),
+		FullName: "{{$.PackageName}}.{{.Name}}",
 		ID:    {{StructMsgID .}},
 		New:  func() interface{} { return &{{.Name}}{} },
+		Type:  reflect.TypeOf((*{{.Name}})(nil)).Elem(),
+		Codec: cellcodec.MustGetByName("{{StructCodec .}}"),
 	}) {{end}}
 }
 `
