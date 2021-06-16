@@ -2,7 +2,6 @@ package parser
 
 import (
 	"github.com/davyxu/protoplus/model"
-	"os"
 	"strings"
 )
 
@@ -32,23 +31,10 @@ func ParseFileList(dset *model.DescriptorSet, filelist ...string) error {
 	ctx.DescriptorSet = dset
 
 	for _, filename := range filelist {
-
-		ctx.SourceName = filename
-
-		if file, err := os.Open(filename); err != nil {
+		err := parseFile(ctx, filename)
+		if err != nil {
 			return err
-		} else {
-
-			if err := rawParse(ctx, file); err != nil {
-				file.Close()
-
-				return err
-			}
-
-			file.Close()
-
 		}
-
 	}
 
 	return checkAndFix(ctx)

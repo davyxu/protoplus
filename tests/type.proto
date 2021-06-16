@@ -93,24 +93,3 @@ struct MyType
 
     EnumSlice []MyEnum
 }
-
-[AutoMsgID MsgDir: "client -> game"]
-struct LoginREQ {
-
-}
-
-[AutoMsgID]
-struct LoginACK {
-
-}
-
-
-
-
-
-service login
-{
-	LoginStd(LoginREQ) LoginACK
-	rpc Login
-
-}

@@ -33,6 +33,7 @@ const (
 	Token_Assign      // =
 	Token_Service     // service
 	Token_RPC         // rpc
+	Token_Import      // import
 )
 
 type protoParser struct {
@@ -137,6 +138,7 @@ func newProtoParser(srcName string) *protoParser {
 	l.AddMatcher(golexer.NewKeywordMatcher(Token_Struct, "struct"))
 	l.AddMatcher(golexer.NewKeywordMatcher(Token_Service, "service"))
 	l.AddMatcher(golexer.NewKeywordMatcher(Token_RPC, "rpc"))
+	l.AddMatcher(golexer.NewKeywordMatcher(Token_Import, "import"))
 
 	l.AddMatcher(golexer.NewIdentifierMatcher(Token_Identifier))
 

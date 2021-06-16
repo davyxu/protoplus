@@ -131,12 +131,12 @@ func TestPtrField(t *testing.T) {
 
 }
 
-func TestText(t *testing.T) {
-
-	input := makeMyType()
-
-	verifyText(t, &input)
-}
+//func TestText(t *testing.T) {
+//
+//	input := makeMyType()
+//
+//	verifyText(t, &input)
+//}
 
 func TestFloat(t *testing.T) {
 

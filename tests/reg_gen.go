@@ -16,33 +16,38 @@ var (
 func init() {
 
 	cellmeta.Register(&cellmeta.Meta{
-		Codec: cellcodec.MustGetByName("protoplus"),
-		Type:  reflect.TypeOf((*MyTypeMini)(nil)).Elem(),
-		ID:    0,
-		New:   func() interface{} { return &MyTypeMini{} },
+		FullName: "tests.MyTypeMini",
+		ID:       0,
+		New:      func() interface{} { return &MyTypeMini{} },
+		Type:     reflect.TypeOf((*MyTypeMini)(nil)).Elem(),
+		Codec:    cellcodec.MustGetByName("protoplus"),
 	})
 	cellmeta.Register(&cellmeta.Meta{
-		Codec: cellcodec.MustGetByName("protoplus"),
-		Type:  reflect.TypeOf((*MySubType)(nil)).Elem(),
-		ID:    0,
-		New:   func() interface{} { return &MySubType{} },
+		FullName: "tests.MySubType",
+		ID:       0,
+		New:      func() interface{} { return &MySubType{} },
+		Type:     reflect.TypeOf((*MySubType)(nil)).Elem(),
+		Codec:    cellcodec.MustGetByName("protoplus"),
 	})
 	cellmeta.Register(&cellmeta.Meta{
-		Codec: cellcodec.MustGetByName("protoplus"),
-		Type:  reflect.TypeOf((*MyType)(nil)).Elem(),
-		ID:    0,
-		New:   func() interface{} { return &MyType{} },
+		FullName: "tests.MyType",
+		ID:       0,
+		New:      func() interface{} { return &MyType{} },
+		Type:     reflect.TypeOf((*MyType)(nil)).Elem(),
+		Codec:    cellcodec.MustGetByName("protoplus"),
 	})
 	cellmeta.Register(&cellmeta.Meta{
-		Codec: cellcodec.MustGetByName("protoplus"),
-		Type:  reflect.TypeOf((*LoginREQ)(nil)).Elem(),
-		ID:    17076,
-		New:   func() interface{} { return &LoginREQ{} },
+		FullName: "tests.LoginREQ",
+		ID:       17076,
+		New:      func() interface{} { return &LoginREQ{} },
+		Type:     reflect.TypeOf((*LoginREQ)(nil)).Elem(),
+		Codec:    cellcodec.MustGetByName("protoplus"),
 	})
 	cellmeta.Register(&cellmeta.Meta{
-		Codec: cellcodec.MustGetByName("protoplus"),
-		Type:  reflect.TypeOf((*LoginACK)(nil)).Elem(),
-		ID:    44443,
-		New:   func() interface{} { return &LoginACK{} },
+		FullName: "tests.LoginACK",
+		ID:       44443,
+		New:      func() interface{} { return &LoginACK{} },
+		Type:     reflect.TypeOf((*LoginACK)(nil)).Elem(),
+		Codec:    cellcodec.MustGetByName("protoplus"),
 	})
 }
