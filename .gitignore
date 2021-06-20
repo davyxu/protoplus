@@ -3,3 +3,5 @@ example/csharp/Example/bin
 example/csharp/Example/obj
 api/csharp/ProtoPlus/obj
 api/csharp/ProtoPlus/bin
+bin
+*.gz

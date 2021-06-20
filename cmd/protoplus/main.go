@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/davyxu/protoplus/build"
 	_ "github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/gen"
 	"github.com/davyxu/protoplus/gen/pbscheme"
@@ -23,8 +24,6 @@ var (
 	flagClassBase = flag.String("classbase", "IProtoStruct", "struct inherite class type name in c#")
 	flagCodec     = flag.String("codec", "protoplus", "default codec in register entry")
 )
-
-const Version = "2.0.0"
 
 type GenEntry struct {
 	name        string
@@ -97,7 +96,7 @@ func main() {
 
 	// 版本
 	if *flagVersion {
-		fmt.Println(Version)
+		build.Print()
 		return
 	}
 
