@@ -30,8 +30,6 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/davyxu/golexer v0.1.1-0.20200202091144-a15ddde83f6a h1:VYps2zwgBJPNuLGLiPrR4w6ud6cJpwlBA1OOytrCpx4=
 github.com/davyxu/golexer v0.1.1-0.20200202091144-a15ddde83f6a/go.mod h1:dCUDBJcBQ9/AOzz6++KvSetGgVf5zXphevt6LQvKy0A=
 github.com/davyxu/protoplus v0.1.0/go.mod h1:WzmNYPvYsyks3G81jCJ/vGY2ljs49qFMfCmXGwvxFLA=
-github.com/davyxu/ulexer v0.0.0-20200705151509-86177890ec50 h1:LhNcRLxSnxoE6nfEEBdNib+r932OtQoea7ZUZNh27zs=
-github.com/davyxu/ulexer v0.0.0-20200705151509-86177890ec50/go.mod h1:0aiydOTmjo/kWslAOerN4nz9Mlia75fwDs9LXp+Ed1c=
 github.com/davyxu/ulexer v0.0.0-20200713054812-c9bb8db3521f h1:SFjXhw0I9cfLbLtHFF/V7z1uTeBllXsahtQLoPmXWu4=
 github.com/davyxu/ulexer v0.0.0-20200713054812-c9bb8db3521f/go.mod h1:0aiydOTmjo/kWslAOerN4nz9Mlia75fwDs9LXp+Ed1c=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
