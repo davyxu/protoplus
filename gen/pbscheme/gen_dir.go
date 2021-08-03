@@ -7,6 +7,7 @@ import (
 	"github.com/davyxu/protoplus/model"
 	"io/ioutil"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -105,7 +106,10 @@ func GenProtoDir(ctx *gen.Context) error {
 
 	var sb strings.Builder
 
+	var srcNameList []string
 	for srcName, ds := range rootDS.DescriptorSetBySource() {
+
+		srcNameList = append(srcNameList, srcName)
 
 		gen := codegen.NewCodeGen("dirproto").
 			RegisterTemplateFunc(codegen.UsefulFunc).
@@ -119,12 +123,16 @@ func GenProtoDir(ctx *gen.Context) error {
 
 		fullPathName := filepath.Join(ctx.OutputFileName, srcName)
 
-		fmt.Fprintf(&sb, "%s ", srcName)
-
 		err := gen.WriteOutputFile(fullPathName).Error()
 		if err != nil {
 			return err
 		}
+	}
+
+	sort.Strings(srcNameList)
+
+	for _, d := range srcNameList {
+		fmt.Fprintf(&sb, "%s ", d)
 	}
 
 	err := ioutil.WriteFile(filepath.Join(ctx.OutputFileName, "filelist.txt"), []byte(sb.String()), 0666)
