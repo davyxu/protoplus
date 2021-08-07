@@ -5,7 +5,7 @@ type RouteRule struct {
 	MsgName string
 	MsgID   int
 
-	SvcName string
+	SvcType string
 	Router  string `json:",omitempty"`
 }
 
