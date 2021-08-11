@@ -26,7 +26,8 @@ func StructMsgID(d *model.Descriptor) (msgid int) {
 	}
 
 	if msgid == 0 {
-		msgid = int(stringHash(strings.ToLower(d.DescriptorSet.PackageName + d.Name)))
+		// 这里不能引入packageName, 不同语言的package设置为不同, 造成消息id不一致
+		msgid = int(stringHash(strings.ToLower(d.Name)))
 	}
 
 	return
