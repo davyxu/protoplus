@@ -2,9 +2,10 @@ package tests
 
 import (
 	"encoding/json"
-	_ "github.com/davyxu/cellnet/codec/protoplus"
-	"github.com/davyxu/protoplus/api/golang"
 	"github.com/stretchr/testify/assert"
+	//_ "github.com/davyxu/cellnet/codec/protoplus"
+	"github.com/davyxu/protoplus/api/golang"
+	//"github.com/stretchr/testify/assert"
 	"math"
 	"reflect"
 	"testing"
