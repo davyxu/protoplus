@@ -3,7 +3,47 @@ package ppgo
 import (
 	"github.com/davyxu/ulexer"
 	"reflect"
+	"strings"
 )
+
+type MatchAction func(tk *ulexer.Token)
+
+func selectAction(self *ulexer.Lexer, mlist []ulexer.Matcher, alist []MatchAction) {
+
+	if len(mlist) != len(alist) {
+		panic("Matcher list should equal to Action list length")
+	}
+
+	var hit bool
+	for index, m := range mlist {
+		tk := self.Read(m)
+
+		if tk != ulexer.EmptyToken {
+
+			action := alist[index]
+			if action != nil {
+				action(tk)
+			}
+			hit = true
+			break
+		}
+	}
+
+	if !hit {
+
+		var sb strings.Builder
+
+		for index, m := range mlist {
+			if index > 0 {
+				sb.WriteString(" ")
+			}
+			sb.WriteString(m.TokenType())
+		}
+
+		self.Error("Expect %s", sb.String())
+	}
+
+}
 
 func detectEnd(lex *ulexer.Lexer, literal string) bool {
 	if literal != "" {
@@ -22,12 +62,12 @@ func parseStruct(lex *ulexer.Lexer, tObj reflect.Type, vObj reflect.Value, endLi
 			break
 		}
 
-		fieldTk := lex.Expect(ulexer.Identifier())
+		fieldTk := ulexer.Expect(lex, ulexer.Identifier())
 
 		tField, fieldExists := tObj.FieldByName(fieldTk.String())
 		vField := vObj.FieldByName(fieldTk.String())
 
-		lex.Expect(ulexer.Contain(":"))
+		ulexer.Expect(lex, ulexer.Contain(":"))
 
 		parseMultiValue(lex, []ulexer.Matcher{ulexer.String(),
 			ulexer.Numeral(),
@@ -68,20 +108,20 @@ func parseStruct(lex *ulexer.Lexer, tObj reflect.Type, vObj reflect.Value, endLi
 	}
 }
 
-func parseMultiValue(lex *ulexer.Lexer, mlist []ulexer.Matcher, action ulexer.MatchAction) {
+func parseMultiValue(lex *ulexer.Lexer, mlist []ulexer.Matcher, action MatchAction) {
 
-	alist := make([]ulexer.MatchAction, 0, len(mlist))
+	alist := make([]MatchAction, 0, len(mlist))
 	for i := 0; i < len(mlist); i++ {
 		alist = append(alist, action)
 	}
 
-	lex.SelectAction(
+	selectAction(lex,
 		mlist,
 		alist,
 	)
 }
 
-func parseElement(lex *ulexer.Lexer, endLiteral string, m ulexer.Matcher, onValue ulexer.MatchAction, onEnd func()) {
+func parseElement(lex *ulexer.Lexer, endLiteral string, m ulexer.Matcher, onValue MatchAction, onEnd func()) {
 	for {
 
 		if detectEnd(lex, endLiteral) {
@@ -89,7 +129,7 @@ func parseElement(lex *ulexer.Lexer, endLiteral string, m ulexer.Matcher, onValu
 			break
 		}
 
-		tk := lex.Expect(m)
+		tk := ulexer.Expect(lex, m)
 		onValue(tk)
 	}
 
@@ -190,7 +230,7 @@ func parseArray(lex *ulexer.Lexer, tField reflect.Type, vObj reflect.Value, endL
 				break
 			}
 
-			lex.Expect(ulexer.Contain("{"))
+			ulexer.Expect(lex, ulexer.Contain("{"))
 
 			element := reflect.New(tField.Elem()).Elem()
 

@@ -69,7 +69,7 @@ func UnmarshalText(s string, obj interface{}) error {
 		return nil
 	})
 
-	err := lex.Run(func(lex *ulexer.Lexer) {
+	err := ulexer.Try(lex, func(lex *ulexer.Lexer) {
 
 		parseStruct(lex, tObj, vObj, "")
 
