@@ -18,7 +18,7 @@ func selectAction(self *ulexer.Lexer, mlist []ulexer.Matcher, alist []MatchActio
 	for index, m := range mlist {
 		tk := self.Read(m)
 
-		if tk != ulexer.EmptyToken {
+		if tk != nil {
 
 			action := alist[index]
 			if action != nil {
