@@ -2,11 +2,22 @@
 // DO NOT EDIT!
 using System;
 using System.Collections.Generic;
-using ProtoPlus;
 #pragma warning disable 162
 
 namespace Proto
 {
+	public class MetaInfo
+	{        
+		public ushort ID;           // 消息ID
+		public Type Type;           // 消息类型
+
+		// 消息方向
+		// 在proto中添加[MsgDir: "client -> game" ], 左边为源, 右边为目标
+		public string SourcePeer;   // 消息发起的源
+		public string TargetPeer;   // 消息的目标
+
+		public string Name;
+	}
 
 	public static class MessageVisitor
     {
@@ -36,14 +47,14 @@ namespace Proto
             callback(new MetaInfo
             {
 				Type = typeof(LoginREQ),	
-				ID = 45589, 	
+				ID = 225, 	
 				SourcePeer = "client",
 				TargetPeer = "game",
             });
             callback(new MetaInfo
             {
 				Type = typeof(LoginACK),	
-				ID = 7420, 	
+				ID = 27592, 	
 				SourcePeer = "",
 				TargetPeer = "",
             });

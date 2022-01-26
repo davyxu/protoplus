@@ -2,8 +2,8 @@
 	"Rule": [
 		{
 			"MsgName": "proto.LoginREQ",
-			"MsgID": 45589,
-			"SvcName": "game"
+			"MsgID": 225,
+			"SvcType": "game"
 		}
 	]
 }
