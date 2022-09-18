@@ -7,6 +7,7 @@ import (
 	"github.com/davyxu/protoplus/model"
 	"io"
 	"io/ioutil"
+	"strings"
 )
 
 // 解析字符串
@@ -33,7 +34,7 @@ func rawParse(ctx *Context, reader io.Reader) (retErr error) {
 	for ctx.TokenID() != Token_EOF {
 
 		var d model.Descriptor
-		ctx.Descriptor = &d
+		d.SrcName = ctx.SourceName
 
 		if ctx.TokenID() == Token_BracketL {
 			d.TagSet = parseTagSet(ctx)
@@ -42,13 +43,12 @@ func rawParse(ctx *Context, reader io.Reader) (retErr error) {
 		switch ctx.TokenID() {
 		case Token_Struct:
 			d.Kind = model.Kind_Struct
-			parseObject(ctx)
+			parseObject(ctx, &d)
 		case Token_Enum:
 			d.Kind = model.Kind_Enum
-			parseObject(ctx)
-		case Token_Service:
-			d.Kind = model.Kind_Service
-			parseObject(ctx)
+			parseObject(ctx, &d)
+		case Token_Import:
+			parseImport(ctx)
 		default:
 			panic(errors.New("Unknown token: " + ctx.TokenValue()))
 		}
@@ -91,6 +91,13 @@ func checkAndFix(ctx *Context) error {
 			}
 		}
 
+		if !d.TagExists("AutoMsgID") && !d.TagExists("MsgID") && (strings.HasSuffix(d.Name, "REQ") || strings.HasSuffix(d.Name, "ACK")) {
+			return fmt.Errorf("struct like message but not gen msgid: %s", d.Name)
+		}
+
+		if d.Kind == model.Kind_Struct && (d.TagExists("AutoMsgID") || d.TagExists("MsgID")) && (!strings.HasSuffix(d.Name, "REQ") && !strings.HasSuffix(d.Name, "ACK")) {
+			return fmt.Errorf("struct gen msgid, but not like a message(REQ/ACK) : %s", d.Name)
+		}
 	}
 
 	return nil

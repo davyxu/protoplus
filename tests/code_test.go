@@ -1,7 +1,11 @@
 package tests
 
 import (
-	"github.com/davyxu/protoplus/proto"
+	"encoding/json"
+	"github.com/stretchr/testify/assert"
+	//_ "github.com/davyxu/cellnet/codec/protoplus"
+	"github.com/davyxu/protoplus/api/golang"
+	//"github.com/stretchr/testify/assert"
 	"math"
 	"reflect"
 	"testing"
@@ -9,19 +13,13 @@ import (
 
 func TestOptional(t *testing.T) {
 	bigData := makeMyType()
-	data, err := proto.Marshal(&bigData)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+	data, err := ppgo.Marshal(&bigData)
+	assert.Equal(t, err, nil)
 	var output MyTypeMini
-	err = proto.Unmarshal(data, &output)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+	assert.Equal(t, ppgo.Unmarshal(data, &output), nil)
 
-	t.Logf("%+v", output)
+	//t.Logf("%+v", output)
+	//assert.Equal(t, bigData, output)
 
 }
 
@@ -48,11 +46,11 @@ func makeMyType() (input MyType) {
 	input.Enum = MyEnum_Two
 	input.EnumSlice = []MyEnum{MyEnum_Two, MyEnum_One, MyEnum_Zero}
 
-	input.Struct = MySubType{
+	input.Struct = &MySubType{
 		Str: "world",
 	}
 
-	input.StructSlice = []MySubType{
+	input.StructSlice = []*MySubType{
 		{Int32: 100},
 		{Str: "200"},
 	}
@@ -60,36 +58,45 @@ func makeMyType() (input MyType) {
 	return
 }
 
-func verify(t *testing.T, raw interface{}) {
-	t.Logf("size: %d", proto.Size(raw))
+func verifyWire(t *testing.T, raw ppgo.Struct) {
+	data, err := ppgo.Marshal(raw)
+	assert.Equal(t, err, nil)
 
-	data, err := proto.Marshal(raw)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
 	t.Log("proto+:", len(data), data)
 
-	newType := reflect.New(reflect.TypeOf(raw).Elem()).Interface()
+	newType := reflect.New(reflect.TypeOf(raw).Elem()).Interface().(ppgo.Struct)
 
-	err = proto.Unmarshal(data, newType)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
+	assert.Equal(t, ppgo.Unmarshal(data, newType), nil)
+
+	assert.Equal(t, raw, newType)
+}
+
+func verifyText(t *testing.T, raw interface{}) {
+
+	tRaw := reflect.TypeOf(raw)
+
+	if tRaw.Kind() != reflect.Ptr {
+		panic("expect ptr")
 	}
 
-	if !reflect.DeepEqual(raw, newType) {
-		t.FailNow()
-	}
+	data := ppgo.CompactTextString(raw)
+
+	t.Log(data)
+
+	newType := reflect.New(tRaw.Elem()).Interface()
+
+	assert.Equal(t, ppgo.UnmarshalText(data, newType), nil)
+
+	assert.Equal(t, raw, newType)
 }
 
 func TestFull(t *testing.T) {
 
 	input := makeMyType()
 
-	verify(t, &input)
+	verifyWire(t, &input)
 
-	t.Logf("%v", input.String())
+	t.Logf("%v", ppgo.MarshalTextString(input))
 }
 
 func TestIntSlice(t *testing.T) {
@@ -97,8 +104,80 @@ func TestIntSlice(t *testing.T) {
 	var input MyType
 	input.Int32Slice = []int32{-1, 1, 2}
 
-	verify(t, &input)
+	verifyWire(t, &input)
+}
 
+func TestSkipField(t *testing.T) {
+
+	input := makeMyType()
+
+	data, err := ppgo.Marshal(&input)
+	assert.Equal(t, err, nil)
+
+	jsondata, _ := json.Marshal(&input)
+
+	var mini MyTypeMini
+	assert.Equal(t, ppgo.Unmarshal(data, &mini), nil)
+
+	var miniJson MyTypeMini
+	json.Unmarshal(jsondata, &miniJson)
+	assert.Equal(t, miniJson, mini)
+}
+
+func TestPtrField(t *testing.T) {
+
+	input := MyType{}
+	data, err := ppgo.Marshal(&input)
+	t.Log(data, err)
+
+}
+
+//func TestText(t *testing.T) {
+//
+//	input := makeMyType()
+//
+//	verifyText(t, &input)
+//}
+
+func TestFloat(t *testing.T) {
+
+	type MyFloat struct {
+		Value float64
+	}
+
+	input := MyFloat{math.MaxFloat64}
+
+	verifyText(t, &input)
+}
+
+func TestSlice(t *testing.T) {
+
+	type DummyStruct struct {
+		Num int32
+	}
+
+	type MyFloat struct {
+		Value []int32
+		Dummy DummyStruct
+	}
+
+	input := MyFloat{
+		[]int32{-1, 1, 2},
+		DummyStruct{5},
+	}
+
+	verifyText(t, &input)
+}
+
+func TestEnum(t *testing.T) {
+
+	type MyFloat struct {
+		Value []MyEnum
+	}
+
+	input := MyFloat{Value: []MyEnum{MyEnum_One}}
+
+	verifyText(t, &input)
 }
 
 func TestCompatible(t *testing.T) {

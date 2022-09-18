@@ -1,0 +1,2 @@
+import "type.proto"
+import "msg.proto"

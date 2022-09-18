@@ -1,0 +1,11 @@
+
+[AutoMsgID MsgDir: "client -> game"]
+struct LoginREQ {
+
+}
+
+[AutoMsgID]
+struct LoginACK {
+
+}
+

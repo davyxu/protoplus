@@ -3,17 +3,7 @@ package model
 type DescriptorSet struct {
 	Objects     []*Descriptor `json:",omitempty"`
 	PackageName string
-}
-
-func (self *DescriptorSet) Services() (ret []*Descriptor) {
-
-	for _, o := range self.Objects {
-		if o.Kind == Kind_Service {
-			ret = append(ret, o)
-		}
-	}
-
-	return
+	Codec       string
 }
 
 func (self *DescriptorSet) Structs() (ret []*Descriptor) {

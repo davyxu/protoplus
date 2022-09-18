@@ -110,6 +110,28 @@ namespace Example
             };
         }
 
+        static void TestSkipField()
+        {
+            byte[] data = new byte[256];
+            var s = new OutputStream(data);
+
+            var myType = MakeMyType();
+
+            s.Marshal(myType);
+
+            var s2 = new InputStream();
+            s2.Init(data, 0, s.Position);
+
+            var myType2 = InputStream.CreateStruct<MyTypeMini>();
+
+            s2.Unmarshal(myType2);
+
+            Debug.Assert(myType2.Bool == myType2.Bool && myType2.Float32 == myType.Float32 &&
+                         myType2.Int32 == myType.Int32 && myType2.Int64 == myType.Int64
+                         && myType2.UInt64 == myType.UInt64 && myType2.UInt32 == myType.UInt32
+                         && myType2.Str == myType.Str);
+        }
+
         static void TestFull()
         {
             byte[] data = new byte[256];
@@ -129,23 +151,11 @@ namespace Example
             Debug.Assert(myType.Equals(myType2));
         }
 
-        static void TestMessage()
-        {
-            var mm = new MessageMeta();
-            MessageMetaRegister.RegisterGeneratedMeta(mm);
-            var msg = mm.CreateMessageByID(33606);
-
-            var meta = mm.GetMetaByType(msg.GetType());
-
-            Debug.Assert(meta.ID == 33606);
-
-            Debug.Assert(meta.SourcePeer == "client");
-        }
 
         static void Main(string[] args)
         {
             TestFull();
-            TestMessage();
+            TestSkipField();
         }
     }
 

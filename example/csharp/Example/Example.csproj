@@ -2,8 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <StartupObject>Example.Program</StartupObject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProtoPlus\ProtoPlus.csproj" />
+    <ProjectReference Include="..\..\..\api\csharp\ProtoPlus\ProtoPlus.csproj" />
   </ItemGroup>
 
 </Project>
