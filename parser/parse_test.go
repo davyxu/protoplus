@@ -14,7 +14,7 @@ func checkString(t *testing.T, script string) *model.DescriptorSet {
 		t.Error(err)
 		t.FailNow()
 	} else {
-		if data, err := json.Marshal(ds); err != nil {
+		if data, err := json.MarshalIndent(ds, "", "\t"); err != nil {
 			t.Error(err)
 			t.FailNow()
 		} else {
@@ -283,4 +283,16 @@ struct Person {
 		t.FailNow()
 	}
 
+}
+
+func TestMap(t *testing.T) {
+	ds := checkString(t, `
+struct Data {
+
+	idList  []int32
+	Mapper map[int32]string
+}
+`)
+
+	ds.ObjectByName("Data")
 }

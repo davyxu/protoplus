@@ -1,6 +1,8 @@
 package parser
 
-import "os"
+import (
+	"os"
+)
 
 func parseImport(ctx *Context) error {
 

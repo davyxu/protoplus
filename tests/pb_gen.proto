@@ -72,6 +72,7 @@ message MyType {
 	repeated MySubType StructSlice = 19; 
 	MyEnum Enum = 20; 
 	repeated MyEnum EnumSlice = 21; 
+	map<int32,string> Map = 22; 
 }
 
 

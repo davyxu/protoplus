@@ -38,9 +38,10 @@ type GenEntry struct {
 var (
 	genEntryList = []*GenEntry{
 		// 单文件生成
-		{name: "ppgo_out", usage: "output protoplus message serialize golang source file", outfile: ppgo.GenGo},
+		//{name: "ppgo_out", usage: "output protoplus message serialize golang source file", outfile: ppgo.GenGo},
+		//{name: "ppcs_out", usage: "output protoplus message serialize csharp source file", outfile: ppcs.GenCS},
+
 		{name: "ppgoreg_out", usage: "output protoplus message register entry in golang", outfile: ppgo.GenGoReg},
-		{name: "ppcs_out", usage: "output protoplus message serialize csharp source file", outfile: ppcs.GenCS},
 		{name: "ppcsreg_out", usage: "output protoplus message register entry in csharp", outfile: ppcs.GenCSReg},
 		{name: "pbscheme_out", usage: "output google protobuf schema file as single file", outfile: pbscheme.GenProto},
 

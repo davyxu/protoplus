@@ -1,6 +1,6 @@
 struct MyTypeMini
 {
-    Bool   bool
+	Bool   bool
 	Int32  int32
 	UInt32 uint32
 
@@ -44,15 +44,15 @@ struct MySubType
 
 	UInt64Slice []uint64
 
-    Float32Slice []float32
+	Float32Slice []float32
 
-    Float64Slice []float64
+	Float64Slice []float64
 
 	StrSlice []string
 
-    Enum MyEnum
+	Enum MyEnum
 
-    EnumSlice []MyEnum
+	EnumSlice []MyEnum
 }
 
 
@@ -82,14 +82,16 @@ struct MyType
 
 	UInt64Slice []uint64
 
-    Float32Slice []float32
+	Float32Slice []float32
 
-    Float64Slice []float64
+	Float64Slice []float64
 
 	StrSlice []string
 
-    StructSlice []MySubType
-    Enum MyEnum
+	StructSlice []MySubType
+	Enum MyEnum
 
-    EnumSlice []MyEnum
+	EnumSlice []MyEnum
+
+	Map map[int32]string
 }

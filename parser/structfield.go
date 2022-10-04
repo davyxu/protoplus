@@ -19,15 +19,23 @@ func parseStructField(ctx *Context, fd *model.FieldDescriptor) {
 
 	tp := ctx.TokenPos()
 
-	// [  数组类型
-	if ctx.TokenID() == Token_BracketL {
+	switch ctx.TokenID() {
+	case Token_BracketL: // [  数组类型
 		ctx.NextToken()
 		ctx.Expect(Token_BracketR)
 		fd.Repeatd = true
+		// 延后在所有解析完后，检查TypeName是否合法，通过symbol还原位置并报错
+		fd.ParseType(ctx.Expect(Token_Identifier).Value())
+	case Token_Map:
+		ctx.NextToken()
+		ctx.Expect(Token_BracketL)
+		fd.MapKey = ctx.Expect(Token_Identifier).Value()
+		ctx.Expect(Token_BracketR)
+		fd.MapValue = ctx.Expect(Token_Identifier).Value()
+	default:
+		// 延后在所有解析完后，检查TypeName是否合法，通过symbol还原位置并报错
+		fd.ParseType(ctx.Expect(Token_Identifier).Value())
 	}
-
-	// 延后在所有解析完后，检查TypeName是否合法，通过symbol还原位置并报错
-	fd.ParseType(ctx.Expect(Token_Identifier).Value())
 
 	fd.Comment = ctx.CommentGroupByLine(nameToken.Line())
 

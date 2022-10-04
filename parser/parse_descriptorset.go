@@ -48,14 +48,17 @@ func rawParse(ctx *Context, reader io.Reader) (retErr error) {
 			d.Kind = model.Kind_Enum
 			parseObject(ctx, &d)
 		case Token_Import:
-			parseImport(ctx)
+			retErr = parseImport(ctx)
+			if retErr != nil {
+				return retErr
+			}
 		default:
 			panic(errors.New("Unknown token: " + ctx.TokenValue()))
 		}
 
 	}
 
-	return nil
+	return
 }
 
 func checkAndFix(ctx *Context) error {
@@ -69,13 +72,17 @@ func checkAndFix(ctx *Context) error {
 
 			if fd.Kind == "" {
 
-				// 将字段中使用的结构体的Kind确认为struct
-				findD := ctx.ObjectByName(fd.Type)
-				if findD == nil {
-					return errors.New(fmt.Sprintf("type not found: %s at %s", fd.Type, ctx.QuerySymbolPosString(fd)))
+				if fd.IsMap() {
+
+				} else {
+					// 将字段中使用的结构体的Kind确认为struct
+					findD := ctx.ObjectByName(fd.Type)
+					if findD == nil {
+						return errors.New(fmt.Sprintf("type not found: %s at %s", fd.Type, ctx.QuerySymbolPosString(fd)))
+					}
+					fd.Kind = findD.Kind
 				}
 
-				fd.Kind = findD.Kind
 			}
 		}
 
