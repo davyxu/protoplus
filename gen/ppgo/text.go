@@ -140,7 +140,7 @@ func init() {
 	{{range .Structs}}
 	cellmeta.Register(&cellmeta.Meta{
 		FullName: "{{$.PackageName}}.{{.Name}}",
-		ID:    {{StructMsgID .}},
+		Id:    {{StructMsgID .}},
 		New:  func() interface{} { return &{{.Name}}{} },
 		Type:  reflect.TypeOf((*{{.Name}})(nil)).Elem(),
 		Codec: cellcodec.MustGetByName("{{StructCodec .}}"),
