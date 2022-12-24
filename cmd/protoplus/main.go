@@ -7,6 +7,7 @@ import (
 	_ "github.com/davyxu/protoplus/codegen"
 	"github.com/davyxu/protoplus/gen"
 	"github.com/davyxu/protoplus/gen/pbscheme"
+	"github.com/davyxu/protoplus/gen/ppcpp"
 	"github.com/davyxu/protoplus/gen/ppcs"
 	"github.com/davyxu/protoplus/gen/ppgo"
 	"github.com/davyxu/protoplus/gen/ppscheme"
@@ -42,7 +43,8 @@ var (
 		//{name: "ppcs_out", usage: "output protoplus message serialize csharp source file", outfile: ppcs.GenCS},
 
 		{name: "ppgoreg_out", usage: "output protoplus message register entry in golang", outfile: ppgo.GenGoReg},
-		{name: "ppcsreg_out", usage: "output protoplus message register entry in csharp", outfile: ppcs.GenCSReg},
+		{name: "ppcppreg_out", usage: "output protoplus message register entry in c++", outfile: ppcpp.GenCppReg},
+		{name: "ppcsreg_out", usage: "output protoplus message register entry in c#", outfile: ppcs.GenCSReg},
 		{name: "pbscheme_out", usage: "output google protobuf schema file as single file", outfile: pbscheme.GenProto},
 
 		// 文件夹输出 使用例子: protoc $(cat filelist.txt)
